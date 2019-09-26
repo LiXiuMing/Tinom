@@ -1,0 +1,21 @@
+## Interface: 80200
+## Title: 测试插件B
+## Notes: 这个插件什么也不做,就是用来测试的.
+## Author: Tinom
+## Version: 1.0.0
+## SavedVariables: globaldb, characterDB, filterDB
+
+# 角色变量,存储于角色下.","分隔多个变量
+# SavedVariablesPerCharacter: chardb
+
+# 账号变量,存储于账号下.","分隔多个变量
+# SavedVariables: globaldb, characterDB, filterDB
+
+
+# 一个井号的属于注释行.
+# 索引需要载入的文件,将按照顺序加载.
+
+#Tinom.lua
+Tinom.xml
+Locale\zhCN.lua
+ChatStat\ChatStat.xml
