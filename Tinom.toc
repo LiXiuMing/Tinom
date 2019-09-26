@@ -1,6 +1,6 @@
-## Interface: 80200
-## Title: 测试插件B
-## Notes: 这个插件什么也不做,就是用来测试的.
+## Interface: 80205
+## Title: Tinom 聊天增强
+## Notes: 这个插件用于优化聊天体验,包括过滤,统计,游戏等功能.
 ## Author: Tinom
 ## Version: 1.0.0
 ## SavedVariables: globaldb, characterDB, filterDB
