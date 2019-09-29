@@ -15,7 +15,8 @@
 # 一个井号的属于注释行.
 # 索引需要载入的文件,将按照顺序加载.
 
-#Tinom.lua
 Tinom.xml
-Locale\zhCN.lua
+Locale\Locale.xml
 ChatStat\ChatStat.xml
+Options\Options.xml
+test\test.xml

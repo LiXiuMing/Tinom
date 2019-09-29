@@ -5,7 +5,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
 
 <Frame name="OnLoadFrame">
  <Scripts>
-   <OnLoad> chat_start(self); </OnLoad>
+   <OnLoad> chat_start(self) </OnLoad>
   </Scripts>
 </Frame>
 

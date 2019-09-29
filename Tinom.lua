@@ -1,20 +1,5 @@
-
---  获取插件的插件名和插件表
-local addonName, addon = ...
-print(addonName,addon)
-
--- 设置插件的全局名称
---_G[addonName] = addon
-
--- 从TOC文件中提取版本信息
-addon.version = GetAddOnMetadata(addonName, "Version")
-print(addon.version)
-if addon.version == "@project-version" or addon.version == "wowi:version" then
-    addon.version = "SCM"
-end
-
 --  模块化封装
-Tinom = {}
+Tinom = {};
 
 --[[-------------------------------------------------------------------------
 --  本地化函数
@@ -46,6 +31,9 @@ function Tinom:RegisterLocale(tablelocale)
     end
 end
 
+--[[-------------------------------------------------------------------------
+--  问候与测试本地化字符串
+-------------------------------------------------------------------------]]--
 local namea = UnitName("player");
 function Tinom.OnLoad(self)
     self:RegisterEvent("ADDON_LOADED")
@@ -58,16 +46,9 @@ function Tinom.OnLoad(self)
 end
 
 
-
-function Tinom.Test( ... )
-    print("呱唧")
-    return "O(∩_∩)O"
-end
-SLASH_MYTEST1 = "/test"
-SlashCmdList["MYTEST"] = Tinom.Test;
-
-
-
+--[[-------------------------------------------------------------------------
+--  角色登陆次数统计
+-------------------------------------------------------------------------]]--
 function Tinom.Login_log( ... )
     --设置保存模块实例
     local myframe = CreateFrame("Frame")
@@ -110,8 +91,10 @@ function Tinom.Login_log( ... )
     end
 end
 
---消息字符串替换函数:类似把大脚世界频道替换为世界,
---此处为把频道序号后的频道名隐藏.
+--[[-------------------------------------------------------------------------
+--  消息字符串替换函数:类似把大脚世界频道替换为世界,
+--  此处为把频道序号后的频道名隐藏.
+-------------------------------------------------------------------------]]--
 function Tinom.Msg_Replace()
     for i=1,NUM_CHAT_WINDOWS do
         if (i ~= 2) then
@@ -126,57 +109,63 @@ function Tinom.Msg_Replace()
     end
 end
 
---消息过滤函数
-function Tinom.Msg_Show(  )
-    local function MsgShow(self,event,arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13,...)
-        --text, playerName,... = arg1, arg2,...
-        --local arg = {arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13}
-        --[[ for i,v in ipairs(arg) do
-            print(i,v)
+--[[-------------------------------------------------------------------------
+--  消息过滤函数
+-------------------------------------------------------------------------]]--
+kwordDB_Temp = {"小红"};
+function Tinom.MsgFilter( Filter_Switch )
+    local function MsgFilterHandler(self,event,...)
+        --[[ if ((Filter_Switch == false) or (arg2 == UnitName("player"))) then
+            return;
         end ]]
-        --print( self , event , msg )
-        --return true
-        --break
-        if arg1:find("buy gold") then
-            return true
-        end
-        if arg2 == "Knownspammer" then    --Knownspammer:Known spammer(已知的垃圾邮件制作者)
-            return true
-        end
-        --DEFAULT_CHAT_FRAME:AddMessage(msg, 0.0, 0.0, 0.0)
 
-        if arg9 == "秋水测试频道1" then
-            arg4 = arg4:gsub( "秋水测试频道", "秋水测-------" )
-            --arg9 = "秋水测试----"
-            return false, arg1,arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13,...
+        if ( event ~= "CHAT_MSG_CHANNEL" ) then return end
+        local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = ...;
+        local authorname, authorserver = arg2:match( "(.-)%-(.*)" )
+
+        if (arg16) then
+			-- hiding sender in letterbox: do NOT even show in chat window (only shows in cinematic frame)
+			return true;
+        end
+
+        --  屏蔽列表过滤
+        if ( filterDB_Temp[authorname] ) then            
+            return true;
+        end
+
+        --  关键字过滤
+        for i,v in pairs(kwordDB_Temp) do
+            if arg1:find(v) then
+                return true;
+            end
+        end
+    end
+
+        --[[if arg9 == "秋水世界频道" then      --/dump _G["ChatFrame3"].channelList
+            arg4 = arg4:gsub( "大脚世界频道", "世界--------" )
+            --arg9 = "大脚世界频道"
+            --arg1 = "你好小黑"
+            return false, arg1,arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14
             --ChatFrame1:AddMessage(arg1)
         else
             return false
-        end
-    end
-    ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", MsgShow)
-    ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", MsgShow)
-    --ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", Msg_Show)
-    --ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", Msg_Show)
-end
-Tinom.Msg_Show()
+        end ]]
 
---小地图显示ping的人
---[[ local addona = CreateFrame('ScrollingMessageFrame', false, Minimap)
-　　addona:SetHeight(10)
-　　addona:SetWidth(100)
-　　addona:SetPoint('BOTTOM', Minimap, 0, 20)
-　　addona:SetFont(STANDARD_TEXT_FONT, 12, 'OUTLINE')
-　　addona:SetJustifyH'CENTER'
-　　addona:SetJustifyV'CENTER'
-　　addona:SetMaxLines(1)
-　　addona:SetFading(true)
-　　addona:SetFadeDuration(3)
-　　addona:SetTimeVisible(5)
-　　addona:RegisterEvent'MINIMAP_PING'
-　　addona:SetScript('OnEvent', function(self, event, u)
-　　    local c = RAID_CLASS_COLORS[select(2,UnitClass(u))]
-　　    local name = UnitName(u)
-　　    addona:AddMessage(name, c.r, c.g, c.b)
-　　end) ]]
+    if (Filter_Switch == true) then
+        filterDB_Temp = filterDB;
+        ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", MsgFilterHandler)
+        ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", MsgFilterHandler)
+        --ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", MsgFilterHandler)
+        --ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", MsgFilterHandler)
+        print("开启过滤")
+    elseif (Filter_Switch == false) then
+        filterDB_Temp = {};
+        ChatFrame_RemoveMessageEventFilter("CHAT_MSG_CHANNEL", MsgFilterHandler)
+        ChatFrame_RemoveMessageEventFilter("CHAT_MSG_SAY", MsgFilterHandler)
+        --ChatFrame_RemoveMessageEventFilter("CHAT_MSG_YELL", MsgFilterHandler)
+        --ChatFrame_RemoveMessageEventFilter("CHAT_MSG_WHISPER", MsgFilterHandler)
+        print("关闭过滤")
+    end
+
+end
 

@@ -4,7 +4,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
     <Frame name="Tinom_Frame">
 		<Scripts>
             <OnLoad>
-                Tinom.Msg_Replace();
+                <!-- Tinom.Msg_Replace(); -->
                 Tinom.OnLoad(self);
                 Tinom.Login_log();
             </OnLoad>
@@ -14,7 +14,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
     <Frame name="Tinom_Frame2">
 		<Scripts>
             <OnLoad>
-                Tinom.Test(self);
+                <!-- Tinom.Test(self); -->
             </OnLoad>
 		</Scripts>
 	</Frame>

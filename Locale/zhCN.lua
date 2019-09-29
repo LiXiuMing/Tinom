@@ -5,11 +5,14 @@ if(GetLocale() ~= "zhCN") then return end
 local _, addon = ...
 
 local L = {
-    ["Hello Azeroth!"] = "你好艾泽拉斯!"
+    ["Hello Azeroth!"] = "你好艾泽拉斯!",
+    ["Tinom插件设置"] = "Tinom插件设置",
+    ["在这里你可以控制插件主要功能的 开启/关闭 ."] = "在这里你可以控制插件主要功能的 开启/关闭 .",
+    ["开启插件"] = "开启插件",
 }
 
 --  执行本地化函数
-MyAddon:RegisterLocale(L)
+Tinom:RegisterLocale(L)
 
 --  释放内存
 L = nil
