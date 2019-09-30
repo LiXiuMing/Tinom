@@ -1,5 +1,98 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
-  <!-- <Script file="Options.lua"/> -->
+  <Script file="Options.lua"/>
   
+  <Frame name="TinomOptionsMainPanel" text="TINOM_OPTION_MAINPANEL_LABEL" hidden="true" parent="InterfaceOptionsFramePanelContainer">
+    <Layers>
+      <Layer level="ARTWORK">
+
+        <!-- 主配置页面标题 -->
+        <FontString name="$parentTitle" text="TINOM_OPTION_MAINPANEL_TITLE" inherits="GameFontNormalLarge" justifyH="LEFT" justifyV="TOP">
+          <Anchors>
+            <Anchor point="TOPLEFT">
+              <Offset>
+                <AbsDimension x="16" y="-16"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </FontString>
+
+        <!-- 主配置页面插件说明 -->
+        <FontString name="$parentSubText" text="TINOM_OPTION_MAINPANEL_SUBTEXT" inherits="GameFontHighlightSmall" justifyH="LEFT" justifyV="TOP" maxLines="3">
+          <Size>
+            <AbsDimension x="0" y="42"/>
+          </Size>
+          <Anchors>
+            <Anchor point="TOPLEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT">
+              <Offset>
+                <AbsDimension x="16" y="-8"/>
+              </Offset>
+            </Anchor>
+            <Anchor point="TOPRIGHT">
+              <Offset>
+                <AbsDimension x="-32" y="0"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </FontString>
+
+        <!-- 分割条 -->
+        <Texture name="$parentTextureLine">
+          <Anchors>
+            <Anchor point="LEFT" relativeTo="$parentSubText" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+            <Anchor point="RIGHT" relativeTo="$parentSubText" x="0" y="0"/>
+          </Anchors>
+          <Color r="1" g="1" b="0" a="1"/>
+        </Texture>
+
+      </Layer>
+    </Layers>
+
+    <Frames>
+      <!-- 插件开启按钮 -->
+      <CheckButton name="$parentCheckButton_MainEnable" inherits="InterfaceOptionsCheckButtonTemplate" virtual="true">
+        <Layers>
+          <Layer level="ARTWORK">
+            <FontString name="$parentText" text="TINOM_OPTION_MAINPANEL_CHACKBUTTON_MAINENABLE_TEXT" inherits="GameFontHighlightLeft" parentKey="Text">
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+                  <Offset>
+                    <AbsDimension x="0" y="0"/>
+                  </Offset>
+                </Anchor>
+              </Anchors>
+            </FontString>
+          </Layer>
+        </Layers>
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentSubText" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="-18"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            self.tooltipText = "这是按钮的鼠标提示信息";
+          </OnLoad>
+          <OnClick>
+            if ( self:GetChecked() ) then
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+            else
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
+            end
+          </OnClick>
+        </Scripts>
+      </CheckButton>
+
+    </Frames>
+
+    <Scripts>
+      <OnLoad>
+        self.name = TINOM_OPTION_MAINPANEL_LABEL;
+        Tinom.OptionsMainPanel_OnLoad(self);
+      </OnLoad>
+    </Scripts>
+  </Frame>
+
 </Ui>

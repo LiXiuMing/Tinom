@@ -17,6 +17,19 @@ if addon.version == "@project-version" or addon.version == "wowi:version" then
 end
 
 --[[-------------------------------------------------------------------------
+--  问候与测试本地化字符串
+-------------------------------------------------------------------------]]--
+function Tinom.OnLoad(self)
+    self:RegisterEvent("ADDON_LOADED")
+    self:SetScript("OnEvent", function(self, event, addon)
+        if addon == "Tinom" then
+            print(format("你好%s,%s插件已加载完成.",UnitName("player"),addon))
+            print(Tinom.L["Hello Azeroth!"])
+        end
+    end)
+end
+
+--[[-------------------------------------------------------------------------
 --  呱呱叫
 -------------------------------------------------------------------------]]--
 function Tinom.Test( ... )
@@ -147,17 +160,17 @@ end
 --[[-------------------------------------------------------------------------
 --  弹出对话框
 -------------------------------------------------------------------------]]--
-StaticPopupDialogs["EXAMPLE_HELLOWORLD"] = {
-    text = "Do you want to greet the world today?",
-    button1 = "Yes",
-    button2 = "No",
-    OnAccept = function()
-        GreetTheWorld()
-    end,
-    timeout = 0,
-    whileDead = true,
-    hideOnEscape = true,
-}
+-- StaticPopupDialogs["EXAMPLE_HELLOWORLD"] = {
+--     text = "Do you want to greet the world today?",
+--     button1 = "Yes",
+--     button2 = "No",
+--     OnAccept = function()
+--         GreetTheWorld()
+--     end,
+--     timeout = 0,
+--     whileDead = true,
+--     hideOnEscape = true,
+-- }
 
 --[[-------------------------------------------------------------------------
 --  设置面板
@@ -311,7 +324,7 @@ function WhoIsTinomColorSlider_OnLoad(  )
         _G[frame]:SetMinMaxValues(0,1);
         _G[frame]:SetValueStep(0.05);
         _G[frame]:SetValue(0.5);
-        if (color == "alpha") then
+        if (v == "ColorAlphaSlider") then
             _G[frame.."Low"]:SetText("");
             _G[frame.."High"]:SetText("");
         else
@@ -333,17 +346,12 @@ function WhoIsTinomColorSlider_OnChange( self,color,value )
     if (color ~= "alpha") then
         _G[self:GetName().."Text2"]:SetText(self.value);
     end
-    --if (color == "red") then
-        ColorRedSlider = WhoIsTinomColorRedSlider:GetValue();
-    --elseif (color == "green") then
-        ColorGreenSlider = WhoIsTinomColorGreenSlider:GetValue();
-    --elseif (color == "blue") then
-        ColorBlueSlider = WhoIsTinomColorBlueSlider:GetValue();
-    --elseif (color == "alpha")
-        ColorAlphaSlider = WhoIsTinomColorAlphaSlider:GetValue();
-    --d
+	ColorRedSlider = WhoIsTinomColorRedSlider:GetValue();
+	ColorGreenSlider = WhoIsTinomColorGreenSlider:GetValue();
+	ColorBlueSlider = WhoIsTinomColorBlueSlider:GetValue();
+	ColorAlphaSlider = WhoIsTinomColorAlphaSlider:GetValue();
     
-    WhoIsTinom:SetBackdropBorderColor(ColorRedSlider, ColorGreenSlider, ColorBlueSlider, ColorAlphaSlider);
+    WhoIsTinom:SetBackdropBorderColor(ColorRedSlider, ColorGreenSlider, ColorBlueSlider, 1 - ColorAlphaSlider);
     WhoIsTinom:SetBackdropColor(ColorRedSlider, ColorGreenSlider, ColorBlueSlider, 1 - ColorAlphaSlider);
 end
 --[[-------------------------------------------------------------------------

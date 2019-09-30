@@ -2,55 +2,11 @@
 Tinom = {};
 
 --[[-------------------------------------------------------------------------
---  本地化函数
--------------------------------------------------------------------------]]--
-Tinom.L = Tinom.L or setmetatable({}, {
-    __index = function(table, key)
-        rawset(table, key, key)
-        return key
-    end,
-    __newindex = function(table, key, value)
-        if v == true then
-            rawset(table, key, key)
-        else
-            rawset(table, key, value)
-        end
-    end,
-})
-
-function Tinom:RegisterLocale(tablelocale)
-    if not tablelocale then return end
-    for k,v in pairs(tablelocale) do
-        if v == true then
-            self.L[k] = k
-        elseif type(v) == "string" then
-            self.L[k] = v
-        else
-            self.L[k] = k
-        end
-    end
-end
-
---[[-------------------------------------------------------------------------
---  问候与测试本地化字符串
--------------------------------------------------------------------------]]--
-local namea = UnitName("player");
-function Tinom.OnLoad(self)
-    self:RegisterEvent("ADDON_LOADED")
-    self:SetScript("OnEvent", function(self, event, addon)
-        if addon == "Tinom" then
-            print(format("你好%s,%s插件已加载完成.",namea,addon))
-            print(Tinom.L["Hello Azeroth!"])
-        end
-    end)
-end
-
-
---[[-------------------------------------------------------------------------
 --  角色登陆次数统计
 -------------------------------------------------------------------------]]--
 function Tinom.Login_log( ... )
     --设置保存模块实例
+    local namea = UnitName("player");
     local myframe = CreateFrame("Frame")
     myframe:RegisterEvent("ADDON_LOADED")
     myframe:RegisterEvent("PLAYER_LOGOUT")
@@ -101,7 +57,6 @@ function Tinom.Msg_Replace()
             local chatframe = _G["ChatFrame"..i]
             local addmsg = chatframe.AddMessage
             chatframe.AddMessage = function(frame, text,...)
-                --_G["ChatFrame3"]:AddMessage(text,...);
                 text = text:gsub( "%[(%d)%..-%]", "%[%1%]" )
                 return addmsg(frame,text,...)
             end
@@ -140,16 +95,6 @@ function Tinom.MsgFilter( Filter_Switch )
             end
         end
     end
-
-        --[[if arg9 == "秋水世界频道" then      --/dump _G["ChatFrame3"].channelList
-            arg4 = arg4:gsub( "大脚世界频道", "世界--------" )
-            --arg9 = "大脚世界频道"
-            --arg1 = "你好小黑"
-            return false, arg1,arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14
-            --ChatFrame1:AddMessage(arg1)
-        else
-            return false
-        end ]]
 
     if (Filter_Switch == true) then
         filterDB_Temp = filterDB;
