@@ -1,62 +1,35 @@
 --  模块化封装
 Tinom = {};
 
---[[-------------------------------------------------------------------------
---  角色登陆次数统计
--------------------------------------------------------------------------]]--
-function Tinom.Login_log( ... )
-    --设置保存模块实例
-    local namea = UnitName("player");
-    local myframe = CreateFrame("Frame")
-    myframe:RegisterEvent("ADDON_LOADED")
-    myframe:RegisterEvent("PLAYER_LOGOUT")
+Tinom_Switch_MsgFilter_ReplaceName = false;
+Tinom_Switch_MsgFilter_ReplaceKeyWord = false;
+Tinom_Switch_MsgFilter_ReplaceNameMsg = false;
+Tinom_Switch_MsgFilter_ReplaceKeyWordMsg = false;
 
-    myframe:SetScript("OnEvent", function(self, event, arg1)
-        --print("本次激活的事件是:"..event..",\narg1是"..arg1)
-        if (globaldb_Temp == nil ) then
-            if ( globaldb == nil ) then
-                globaldb = {}
-                print("初始化数据库")
-            end
-            globaldb_Temp = globaldb;
-        end
+Tinom_Switch_MsgFilter_WhiteList = false;
+Tinom_Switch_MsgFilter_BlackList = false;
+Tinom_Switch_MsgFilter_WhiteListKeyWord = false;
+Tinom_Switch_MsgFilter_BlackListKeyWord = false;
 
-        if event == "ADDON_LOADED" and arg1 == "Tinom" then
-            -- 触发事件为插件载入,并且插件名是"Tinom"
-            if globaldb_Temp[namea] == nil then
-                --如果无此角色记录则初始化一个
-                print("创建角色:"..namea);
-                --此处需要格式化角色名,不然会导致覆盖而不是添加.
-                globaldb_Temp[string.format(namea)] = {times=1;time=0;};
-            else
-                globaldb_Temp[namea].times = globaldb_Temp[namea].times + 1
-                local elapsed = time() - globaldb_Temp[namea].time
-                print("你好 "..namea .. " \n这是我们第".. globaldb_Temp[namea].times .."次相见.\n距离你上次登出的时间是" .. SecondsToTime(elapsed))
-            end
-            globaldb_Temp[namea].time = time();
-        elseif event == "PLAYER_LOGOUT" then
-                -- 保存角色退出游戏的时间
-                globaldb_Temp[namea].time = time();
-                globaldb = globaldb_Temp;
-        end
-    end)
+Tinom_Switch_MsgFilter_CacheMsgRepeat = false;
+Tinom_Switch_MsgFilter_WhiteListOnly = false;
 
-    SLASH_HAVEWEMET1 = "/hwm"
-    SlashCmdList["HAVEWEMET"] = function(msg)
-        print("这个角色一共登陆过 " .. globaldb_Temp[namea].times .. " 次.")
-    end
-end
+TinomDB_filterDB_cacheMsgTemp = {};
+TinomDB_filterDB_whiteListTemp = {};
+TinomDB_filterDB_blackListTemp = {};
+
+
 
 --[[-------------------------------------------------------------------------
---  消息字符串替换函数:类似把大脚世界频道替换为世界,
---  此处为把频道序号后的频道名隐藏.
+--  聊天频道名替换函数:因上级函数使用频道名字符串长度作为逻辑条件不便更改,
+--  故通过接管聊天框的AddMessage函数替换字符串,此处为把频道序号后的频道名隐藏.
 -------------------------------------------------------------------------]]--
-function Tinom.Msg_Replace()
+function Tinom.ReplaceChannelName()
     for i=1,NUM_CHAT_WINDOWS do
         if (i ~= 2) then
-            local chatframe = _G["ChatFrame"..i]
-            local addmsg = chatframe.AddMessage
-            chatframe.AddMessage = function(frame, text,...)
+            local chatFrame = _G["ChatFrame"..i]
+            local addmsg = chatFrame.AddMessage
+            chatFrame.AddMessage = function(frame, text,...)
                 text = text:gsub( "%[(%d)%..-%]", "%[%1%]" )
                 return addmsg(frame,text,...)
             end
@@ -65,52 +38,166 @@ function Tinom.Msg_Replace()
 end
 
 --[[-------------------------------------------------------------------------
---  消息过滤函数
+--  角色名替换函数:替换角色消息开关,替换名单
 -------------------------------------------------------------------------]]--
-kwordDB_Temp = {"小红"};
-function Tinom.MsgFilter( Filter_Switch )
-    local function MsgFilterHandler(self,event,...)
-        --[[ if ((Filter_Switch == false) or (arg2 == UnitName("player"))) then
-            return;
-        end ]]
+function Tinom.ReplaceName( name )
+    local authorName, authorServer = name:match( "(.-)(%-.*)" );
+    local newName,newMsg = nil, nil;
 
-        if ( event ~= "CHAT_MSG_CHANNEL" ) then return end
-        local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = ...;
-        local authorname, authorserver = arg2:match( "(.-)%-(.*)" )
-
-        if (arg16) then
-			-- hiding sender in letterbox: do NOT even show in chat window (only shows in cinematic frame)
-			return true;
+    for k,v in pairs(TinomDB.filterDB.replaceName) do
+        if ( name == k ) then
+            newName = v.newName;
+            if ( ( Tinom_Switch_MsgFilter_ReplaceNameMsg == true ) and v.newMsg ) then
+                newMsg = v.newMsg;
+            end
+            return newMsg, newName;
+        elseif ( authorName == k ) then
+            newName = v.newName..authorServer;
+            if ( ( Tinom_Switch_MsgFilter_ReplaceNameMsg == true ) and v.newMsg ) then
+                newMsg = v.newMsg;
+            end
+            return newMsg, newName;
         end
+    end
+    return newMsg, newName;
+end
 
-        --  屏蔽列表过滤
-        if ( filterDB_Temp[authorname] ) then            
+--[[-------------------------------------------------------------------------
+--  消息替换函数:替换关键字消息开关,替换关键字名单
+-------------------------------------------------------------------------]]--
+function Tinom.ReplaceMsg( msg )
+    local newMsg = nil;
+    for k,v in pairs(TinomDB.filterDB.replaceKeyWord) do
+        if ( msg:find(k) ) then
+            if ( ( Tinom_Switch_MsgFilter_ReplaceKeyWordMsg == true ) and v.newMsg ) then
+                newMsg = v.newMsg;
+            else
+                newMsg = msg:gsub(k,v.newWord);
+            end
+            return newMsg;
+        end
+    end
+    return newMsg;
+end
+
+--[[-------------------------------------------------------------------------
+--  重复信息过滤函数:过滤频道内所有人的重复发言
+--                  缓存20条消息进行对比,若重复则丢弃
+-------------------------------------------------------------------------]]--
+function Tinom.CacheMsgRepeat( msg )
+    for i=1,20 do
+        if ( msg == TinomDB_filterDB_cacheMsgTemp[i] ) then
+            return true;
+        else
+            table.insert( TinomDB_filterDB_cacheMsgTemp, i, msg )
+        end
+    end
+    return false;
+end
+
+--[[-------------------------------------------------------------------------
+--  消息过滤函数:白名单开关,黑名单开关,白名单,临时白名单,黑名单,临时黑名单,
+--              替换角色名开关,替换关键字开关
+-------------------------------------------------------------------------]]--
+function Tinom.MsgFilter( self,event,... )
+    --[[ if ((Filter_Switch == false) or (arg2 == UnitName("player"))) then
+        return;
+    end ]]
+
+    if ( event ~= "CHAT_MSG_CHANNEL" ) then return end
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = ...;
+    local authorName, authorServer = arg2:match( "(.-)%-(.*)" )
+
+    --  统计函数  --
+    --统计函数
+    
+    --  白名单过滤  --
+    if ( Tinom_Switch_MsgFilter_WhiteList ) then
+        if ( TinomDB.filterDB.whiteList[authorName] or TinomDB_filterDB_whiteListTemp[authorName] ) then
+            return false;
+        end
+    end
+
+    --  关键字白名单  --
+    if ( Tinom_Switch_MsgFilter_WhiteListKeyWord ) then
+        for _,v in pairs(TinomDB.filterDB.whiteListKeyWord) do
+            if arg1:find(v) then
+                return false;
+            end
+        end
+    end
+
+    --白名单模式
+    if ( Tinom_Switch_MsgFilter_WhiteListOnly ) then
+        return true;
+    end
+
+    --  历史20条信息内重复,不区分角色  --
+    if ( Tinom_Switch_MsgFilter_CacheMsgRepeat ) then
+        if ( Tinom.CacheMsgRepeat( arg1 ) ) then
             return true;
         end
+    end
 
-        --  关键字过滤
-        for i,v in pairs(kwordDB_Temp) do
+    --  黑名单过滤  --
+    if ( Tinom_Switch_MsgFilter_BlackList ) then
+        if ( TinomDB.filterDB.blackList[authorName] or TinomDB_filterDB_blackListTemp[authorName]) then
+            return true;
+        end
+    end
+    
+    --  关键字黑名单过滤  --
+    if ( Tinom_Switch_MsgFilter_BlackListKeyWord ) then
+        for _,v in pairs(TinomDB.filterDB.blackListKeyWord) do
             if arg1:find(v) then
                 return true;
             end
         end
     end
 
-    if (Filter_Switch == true) then
-        filterDB_Temp = filterDB;
-        ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", MsgFilterHandler)
-        ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", MsgFilterHandler)
-        --ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", MsgFilterHandler)
-        --ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", MsgFilterHandler)
-        print("开启过滤")
-    elseif (Filter_Switch == false) then
-        filterDB_Temp = {};
-        ChatFrame_RemoveMessageEventFilter("CHAT_MSG_CHANNEL", MsgFilterHandler)
-        ChatFrame_RemoveMessageEventFilter("CHAT_MSG_SAY", MsgFilterHandler)
-        --ChatFrame_RemoveMessageEventFilter("CHAT_MSG_YELL", MsgFilterHandler)
-        --ChatFrame_RemoveMessageEventFilter("CHAT_MSG_WHISPER", MsgFilterHandler)
-        print("关闭过滤")
+
+    --  替换功能  --也可以使用元表方法setmetatable(table1,table2)
+    if ((Tinom_Switch_MsgFilter_ReplaceName) or (Tinom_Switch_MsgFilter_ReplaceKeyWord)) then
+        local newArg1, newArg2 = nil, nil;
+
+        if (Tinom_Switch_MsgFilter_ReplaceName) then
+            newArg1, newArg2 = Tinom.ReplaceName( arg2 );
+        end
+
+        if ((Tinom_Switch_MsgFilter_ReplaceKeyWord) and (newArg1 == nil)) then
+            newArg1 = Tinom.ReplaceMsg( arg1 );
+        end
+
+        if ( newArg1 == nil ) then newArg1 = arg1; end
+        if ( newArg2 == nil ) then newArg2 = arg2; end
+
+        return false, newArg1, newArg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14; 
+    else
+        return false;
     end
 
 end
 
+--[[-------------------------------------------------------------------------
+--  消息过滤函数:开
+-------------------------------------------------------------------------]]--
+function Tinom.MsgFilterOn( )
+    filterDB_Temp = filterDB;
+    ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", Tinom.MsgFilter)
+    ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", Tinom.MsgFilter)
+    --ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", Tinom.MsgFilter)
+    --ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", Tinom.MsgFilter)
+    print("开启过滤")
+end
+
+--[[-------------------------------------------------------------------------
+--  消息过滤函数:关
+-------------------------------------------------------------------------]]--
+function Tinom.MsgFilterOff( )
+    filterDB_Temp = {};
+    ChatFrame_RemoveMessageEventFilter("CHAT_MSG_CHANNEL", Tinom.MsgFilter)
+    ChatFrame_RemoveMessageEventFilter("CHAT_MSG_SAY", Tinom.MsgFilter)
+    --ChatFrame_RemoveMessageEventFilter("CHAT_MSG_YELL", Tinom.MsgFilter)
+    --ChatFrame_RemoveMessageEventFilter("CHAT_MSG_WHISPER", Tinom.MsgFilter)
+    print("关闭过滤")
+end

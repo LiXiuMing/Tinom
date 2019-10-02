@@ -354,6 +354,27 @@ function WhoIsTinomColorSlider_OnChange( self,color,value )
     WhoIsTinom:SetBackdropBorderColor(ColorRedSlider, ColorGreenSlider, ColorBlueSlider, 1 - ColorAlphaSlider);
     WhoIsTinom:SetBackdropColor(ColorRedSlider, ColorGreenSlider, ColorBlueSlider, 1 - ColorAlphaSlider);
 end
+
+--[[-------------------------------------------------------------------------
+--  一个带滚动条的编辑框
+-------------------------------------------------------------------------]]--
+-- local s = CreateFrame("ScrollFrame", nil, UIParent, "UIPanelScrollFrameTemplate") -- or you actual parent instead
+-- s:SetSize(300,200)
+-- s:SetPoint("CENTER")
+-- local e = CreateFrame("EditBox", nil, s)
+-- e:SetMultiLine(true)
+-- e:SetFontObject(ChatFontNormal)
+-- e:SetWidth(300)
+-- s:SetScrollChild(e)
+-- --- demo multi line text
+-- e:SetText("line 1\nline 2\nline 3\nmore...\n\n\n\n\n\nanother one\n"
+-- .."some very long...dsf v asdf a sdf asd df as df asdf a sdfd as ddf as df asd f asd fd asd f asdf LONG LINE\n\n\nsome more.\nlast!")
+-- e:HighlightText() -- select all (if to be used for copy paste)
+-- -- optional/just to close that frame
+-- e:SetScript("OnEscapePressed", function()
+--   s:Hide()
+-- end)
+
 --[[-------------------------------------------------------------------------
 --  重置的消息事件处理函数
 -------------------------------------------------------------------------]]--

@@ -268,7 +268,7 @@
         <HighlightFont style="GameFontHighlightSmall"/>
       </Button>
 
-      <!-- 新增框架 -->
+      <!-- 内部界面子框架 -->
       <Frame name="WhoIsTinom" hidden="false" parent="TinomInterfaceOptionsMainPanel">
         <Anchors>
           <Anchor point="TOPLEFT" x="5" y="-300"/>
@@ -548,7 +548,7 @@
     <Scripts>
       <OnLoad>
         self.name = MAINPANEL_LABEL;
-        <!-- Tinom.InterfaceOptionsMainPanel_OnLoad(self); -->
+        Tinom.InterfaceOptionsMainPanel_OnLoad(self);
       </OnLoad>
     </Scripts>
 
@@ -556,12 +556,59 @@
 
   <!-- 设置:菜单 子面板1,可折叠-->
   <Frame name="TinomInterfaceOptionsMainPanel_Child1" parent="TinomInterfaceOptionsMainPanel" >
-
+    <Frames>
+      <EditBox name="$parentEditBox" letters="10" multiLine="true" password="true">
+        <Size>
+          <AbsDimension x="100" y="200"></AbsDimension>
+        </Size>
+        <Anchors>
+          <Anchor point="LEFT">
+            <Offset>
+              <AbsDimension x="50" y="0"></AbsDimension>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Layers>
+          <Layer level="BACKGROUND">
+            <Texture file="Interface\ChatFrame\UI-ChatInputBorder-Left">
+              <Size>
+                <AbsDimension x="75" y="200"></AbsDimension>
+              </Size>
+              <Anchors>
+                <Anchor point="LEFT">
+                  <Offset>
+                    <AbsDimension x="-10" y="0"></AbsDimension>
+                  </Offset>
+                </Anchor>
+              </Anchors>
+              <TexCoords left="0" right="0.2" top="0" bottom="1.0"></TexCoords>
+            </Texture>
+            <Texture file="Interface\ChatFrame\UI-ChatInputBorder-Right">
+              <Size>
+                <AbsDimension x="75" y="32"></AbsDimension>
+              </Size>
+              <Anchors>
+                <Anchor point="RIGHT">
+                  <Offset>
+                    <AbsDimension x="10" y="0"></AbsDimension>
+                  </Offset>
+                </Anchor>
+              </Anchors>
+              <TexCoords left="0.7" right="1.0" top="0" bottom="1.0"></TexCoords>
+            </Texture>
+          </Layer>
+        </Layers>
+        <Scripts>
+          <OnLoad></OnLoad>
+        </Scripts>
+        <FontString inherits="ChatFontNormal"></FontString>
+      </EditBox>
+    </Frames>
     <Scripts>
       <OnLoad>
-        <!-- self.name = "子面板1可折叠";
+        self.name = "子面板1可折叠";
         self.parent = TinomInterfaceOptionsMainPanel.name;
-        InterfaceOptions_AddCategory(self); -->
+        InterfaceOptions_AddCategory(self);
       </OnLoad>
     </Scripts>
 
@@ -572,15 +619,15 @@
 
     <Scripts>
       <OnLoad>
-        <!-- self.name = "子面板2不折叠";
+        self.name = "子面板2不折叠";
         self.parent = TinomInterfaceOptionsMainPanel;
-        InterfaceOptions_AddCategory(self); -->
+        InterfaceOptions_AddCategory(self);
       </OnLoad>
     </Scripts>
 
   </Frame>
 
-  <!-- 测试框架 -->
+  <!-- 测试框架可拖动框架 -->
   <Frame name="WhoIsTinomss" hidden="false" parent="UIParent" frameStrata="HIGH" toplevel="true" enableMouse="true" movable="true" clampedToScreen="true" >
     <Size>
       <RelDimension x="0.2" y="0.2"/>
@@ -629,7 +676,7 @@
         </Texture>
 
       </Layer>
-    </Layers>
+    </Layers>      
 
     <Frames>
       <!-- 按钮模块 -->
@@ -638,9 +685,280 @@
           <AbsDimension x="128" y="26"/>
         </Size>
         <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentUnderline" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="-4"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnShow>
+            if ( Tinom_Switch_MsgFilter_WhiteList ) then
+            self:SetText("白名单:开");
+            else
+            self:SetText("白名单:关");
+            end
+          </OnShow>
+          <OnClick>
+            PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
+            if ( Tinom_Switch_MsgFilter_WhiteList ) then
+            self:SetText("白名单:关");
+            else
+            self:SetText("白名单:开");
+            end
+            Tinom_Switch_MsgFilter_WhiteList = not(Tinom_Switch_MsgFilter_WhiteList);
+          </OnClick>
+        </Scripts>
+        <NormalFont style="GameFontNormalSmall"/>
+        <HighlightFont style="GameFontHighlightSmall"/>
+      </Button>
+      <!-- 按钮模块 -->
+      <Button name="$parentButton2" inherits="UIPanelButtonTemplate" text="TINOM_BUTTON1">
+        <Size>
+          <AbsDimension x="128" y="26"/>
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentButton1" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="-2"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnShow>
+            if ( Tinom_Switch_MsgFilter_BlackList ) then
+            self:SetText("黑名单:开");
+            else
+            self:SetText("黑名单:关");
+            end
+          </OnShow>
+          <OnClick>
+            PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
+            if ( Tinom_Switch_MsgFilter_BlackList ) then
+            self:SetText("黑名单:关");
+            Tinom_Switch_MsgFilter_BlackList = false;
+            else
+            self:SetText("黑名单:开");
+            Tinom_Switch_MsgFilter_BlackList = true;
+            end
+          </OnClick>
+        </Scripts>
+        <NormalFont style="GameFontNormalSmall"/>
+        <HighlightFont style="GameFontHighlightSmall"/>
+      </Button>
+      <!-- 按钮模块 -->
+      <Button name="$parentButton3" inherits="UIPanelButtonTemplate" text="TINOM_BUTTON1">
+        <Size>
+          <AbsDimension x="128" y="26"/>
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentButton2" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="-2"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnShow>
+            if ( Tinom_Switch_MsgFilter_WhiteListKeyWord ) then
+            self:SetText("关键字白名单:开");
+            else
+            self:SetText("关键字白名单:关");
+            end
+          </OnShow>
+          <OnClick>
+            PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
+            if ( Tinom_Switch_MsgFilter_WhiteListKeyWord ) then
+            self:SetText("关键字白名单:关");
+            Tinom_Switch_MsgFilter_WhiteListKeyWord = false;
+            else
+            self:SetText("关键字白名单:开");
+            Tinom_Switch_MsgFilter_WhiteListKeyWord = true;
+            end
+          </OnClick>
+        </Scripts>
+        <NormalFont style="GameFontNormalSmall"/>
+        <HighlightFont style="GameFontHighlightSmall"/>
+      </Button>
+      <!-- 按钮模块 -->
+      <Button name="$parentButton4" inherits="UIPanelButtonTemplate" text="TINOM_BUTTON1">
+        <Size>
+          <AbsDimension x="128" y="26"/>
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentButton3" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="-2"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnShow>
+            if ( Tinom_Switch_MsgFilter_BlackListKeyWord ) then
+            self:SetText("关键字黑名单:开");
+            else
+            self:SetText("关键字黑名单:关");
+            end
+          </OnShow>
+          <OnClick>
+            PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
+            if ( Tinom_Switch_MsgFilter_BlackListKeyWord ) then
+            self:SetText("关键字黑名单:关");
+            Tinom_Switch_MsgFilter_BlackListKeyWord = false;
+            else
+            self:SetText("关键字黑名单:开");
+            Tinom_Switch_MsgFilter_BlackListKeyWord = true;
+            end
+          </OnClick>
+        </Scripts>
+        <NormalFont style="GameFontNormalSmall"/>
+        <HighlightFont style="GameFontHighlightSmall"/>
+      </Button>
+      <!-- 按钮模块 -->
+      <Button name="$parentButton5" inherits="UIPanelButtonTemplate" text="TINOM_BUTTON1">
+        <Size>
+          <AbsDimension x="128" y="26"/>
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentButton4" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="-2"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnShow>
+            if ( Tinom_Switch_MsgFilter_ReplaceName ) then
+            self:SetText("替换角色名:开");
+            else
+            self:SetText("替换角色名:关");
+            end
+          </OnShow>
+          <OnClick>
+            PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
+            if ( Tinom_Switch_MsgFilter_ReplaceName ) then
+            self:SetText("替换角色名:关");
+            Tinom_Switch_MsgFilter_ReplaceName = false;
+            else
+            self:SetText("替换角色名:开");
+            Tinom_Switch_MsgFilter_ReplaceName = true;
+            end
+          </OnClick>
+        </Scripts>
+        <NormalFont style="GameFontNormalSmall"/>
+        <HighlightFont style="GameFontHighlightSmall"/>
+      </Button>
+      <!-- 按钮模块 -->
+      <Button name="$parentButton6" inherits="UIPanelButtonTemplate" text="TINOM_BUTTON1">
+        <Size>
+          <AbsDimension x="128" y="26"/>
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentButton5" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="-2"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnShow>
+            if ( Tinom_Switch_MsgFilter_ReplaceKeyWord ) then
+            self:SetText("替换关键字:开");
+            else
+            self:SetText("替换关键字:关");
+            end
+          </OnShow>
+          <OnClick>
+            PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
+            if ( Tinom_Switch_MsgFilter_ReplaceKeyWord ) then
+            self:SetText("替换关键字:关");
+            Tinom_Switch_MsgFilter_ReplaceKeyWord = false;
+            else
+            self:SetText("替换关键字:开");
+            Tinom_Switch_MsgFilter_ReplaceKeyWord = true;
+            end
+          </OnClick>
+        </Scripts>
+        <NormalFont style="GameFontNormalSmall"/>
+        <HighlightFont style="GameFontHighlightSmall"/>
+      </Button>
+      <!-- 按钮模块 -->
+      <Button name="$parentButton7" inherits="UIPanelButtonTemplate" text="TINOM_BUTTON1">
+        <Size>
+          <AbsDimension x="128" y="26"/>
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentButton6" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="-2"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnShow>
+            if ( Tinom_Switch_MsgFilter_ReplaceNameMsg ) then
+            self:SetText("替换名与消息:开");
+            else
+            self:SetText("替换名与消息:关");
+            end
+          </OnShow>
+          <OnClick>
+            PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
+            if ( Tinom_Switch_MsgFilter_ReplaceNameMsg ) then
+            self:SetText("替换名与消息:关");
+            Tinom_Switch_MsgFilter_ReplaceNameMsg = false;
+            else
+            self:SetText("替换名与消息:开");
+            Tinom_Switch_MsgFilter_ReplaceNameMsg = true;
+            end
+          </OnClick>
+        </Scripts>
+        <NormalFont style="GameFontNormalSmall"/>
+        <HighlightFont style="GameFontHighlightSmall"/>
+      </Button>
+      <!-- 按钮模块 -->
+      <Button name="$parentButton8" inherits="UIPanelButtonTemplate" text="TINOM_BUTTON1">
+        <Size>
+          <AbsDimension x="128" y="26"/>
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentButton7" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="-2"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnShow>
+            if ( Tinom_Switch_MsgFilter_ReplaceKeyWordMsg ) then
+            self:SetText("替换字与消息:开");
+            else
+            self:SetText("替换字与消息:关");
+            end
+          </OnShow>
+          <OnClick>
+            PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
+            if ( Tinom_Switch_MsgFilter_ReplaceKeyWordMsg ) then
+            self:SetText("替换字与消息:关");
+            Tinom_Switch_MsgFilter_ReplaceKeyWordMsg = false;
+            else
+            self:SetText("替换字与消息:开");
+            Tinom_Switch_MsgFilter_ReplaceKeyWordMsg = true;
+            end
+          </OnClick>
+        </Scripts>
+        <NormalFont style="GameFontNormalSmall"/>
+        <HighlightFont style="GameFontHighlightSmall"/>
+      </Button>
+      <!-- 按钮模块 -->
+      <Button name="$parentButtonZ" inherits="UIPanelButtonTemplate" text="TINOM_BUTTON1">
+        <Size>
+          <AbsDimension x="128" y="26"/>
+        </Size>
+        <Anchors>
           <Anchor point="CENTER" relativeTo="$parent" relativePoint="CENTER">
             <Offset>
-              <AbsDimension x="0" y="0"/>
+              <AbsDimension x="60" y="0"/>
             </Offset>
           </Anchor>
         </Anchors>
@@ -703,6 +1021,54 @@
 
     </Scripts>
   </Frame>
+
+  <!-- 测试框架:带滚动条的编辑框 -->
+  <ScrollFrame name="ScrollFrame" parent="UIParent" inherits="UIPanelScrollFrameTemplate">
+    <Size x="300" y="200"/>
+    <Anchors>
+      <Anchor point="CENTER">
+        <Offset>
+          <AbsDimension x="0" y="0"></AbsDimension>
+        </Offset>
+      </Anchor>
+    </Anchors>
+    <Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+          <EdgeSize>
+            <AbsValue val="16"/>
+          </EdgeSize>
+
+          <TileSize>
+            <AbsValue val="50"/>
+          </TileSize>
+
+          <BorderColor r="1" g="1" b="0" a="1" />
+          <Color r="0.2" g="0.2" b="0.2" a="1" />
+
+          <BackgroundInsets>
+            <AbsInset left="5" right="-20" top="5" bottom="5"/>
+          </BackgroundInsets>
+    </Backdrop>
+    <Frames>
+      <EditBox name="$parentEditBox" parent="ScrollFrame" multiLine="true" >
+        <FontString inherits="ChatFontNormal"></FontString>
+        <Scripts>
+          <OnLoad>
+            self:SetText("Hello Azelaz!");
+            self:SetWidth(300);
+          </OnLoad>
+          <OnEscapePressed>
+            ScrollFrame:Hide();
+          </OnEscapePressed>
+        </Scripts>
+      </EditBox>
+    </Frames>
+    <Scripts>
+      <OnLoad>
+        self:SetScrollChild(ScrollFrameEditBox);
+      </OnLoad>
+    </Scripts>
+  </ScrollFrame>
+
 
   <Frame>
     <Scripts>

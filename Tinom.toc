@@ -3,7 +3,7 @@
 ## Notes: 这个插件用于优化聊天体验,包括过滤,统计,游戏等功能.
 ## Author: Tinom
 ## Version: 1.0.0
-## SavedVariables: globaldb, characterDB, filterDB
+## SavedVariables: TinomDB, CharacterDB
 
 # 角色变量,存储于角色下.","分隔多个变量
 # SavedVariablesPerCharacter: chardb
@@ -19,4 +19,5 @@ Tinom.xml
 Locale\Locale.xml
 ChatStat\ChatStat.xml
 Options\Options.xml
+AccountStat\AccountStat.xml
 test\test.xml

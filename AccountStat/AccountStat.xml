@@ -1,12 +1,13 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\..\..\..\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
-	<Script file="Tinom.lua" />
-	<Frame name="TinomFrame">
+	<Script file="AccountStat.lua" />
+	<Frame name="TinomAccountStat">
 		<Scripts>
 			<OnLoad>
-			self:RegisterEvent("ADDON_LOADED");
+				self:RegisterEvent("ADDON_LOADED");
+				self:RegisterEvent("PLAYER_LOGOUT");
 			</OnLoad>
 			<OnEvent>
-			Tinom.MsgFilterOn( );
+				Tinom.LoginLog(self,event,...);
 			</OnEvent>
 		</Scripts>
 	</Frame>
