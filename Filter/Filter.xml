@@ -1,13 +1,12 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\..\..\..\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
-	<Script file="Tinom.lua" />
-	<Frame name="TinomFrame">
+	<Script file="Filter.lua" />
+	<Frame name="TinomFilterFrame">
 		<Scripts>
 			<OnLoad>
-				Tdebug(self,"log","Tinom.xml加载");
-				self:RegisterEvent("ADDON_LOADED");
+
 			</OnLoad>
 			<OnEvent>
-				Tinom.OnLoaded(self,event,...);
+				
 			</OnEvent>
 		</Scripts>
 	</Frame>

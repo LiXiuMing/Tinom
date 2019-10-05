@@ -1,5 +1,11 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
   <Script file="zhCN.lua"/>
-  
+  <Frame name="TinomLocalizationFrame">
+		<Scripts>
+			<OnLoad>
+				Tdebug(self,"log","Locale.xml加载");
+			</OnLoad>
+		</Scripts>
+	</Frame>
 </Ui>

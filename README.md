@@ -5,6 +5,7 @@
 1. 统计功能:
     - [OK]角色信息: GUID(唯一标识),姓名,服务器,等级,职业,种族,性别,当前地区,历史姓名
     - [OK]发言信息: 上次发言内容,上次发言时间,总发言计数,总重复发言计数,所获成就
+    - 聊天排行榜:统计本服最爱唠嗑的前几名显示于设置界面
 2. 聊天过滤:
     - 自动添加过滤: 将重复发言到指定值的角色GUID加入到过滤列表.
     - 深度分析: 将发言累计到一定程度(发言频率固定)的角色加入特别审查函数甄别.
@@ -31,6 +32,7 @@
     - 右键角色名功能
     - 关键字规避提醒:即将发出的消息中是否含有屏蔽关键字,有则提醒,或者选项:自动更改谐音字或夹杂字符
     - LFG:公会浏览功能,公会申请...
+    - 社区增强,消息提醒等功能加入社区选择的功能,有人可能加入了多个社区,只想监视某一个社区的化...
     - ~~聊天成就: 角色发言达到一定次数给予相应[聊天成就]并通报,角色重复发言达到一定次数给予相应[广告成就]并通报.~~
     - ~~聊天时段: 每小时统计一次发言次数最多的前几名玩家,给予相应[聊天时段成就]并通报.~~
     - ~~升级鼓励: 角色与上一次等级相差超过指定值并且达到指定值则给予相应鼓励和[升级成就].~~
@@ -55,58 +57,68 @@
 **框架名**: Tinom  功能组  框架名, 所有单词首字母大写  
 **框架用字符串**: TINOM_功能组_框架名_字符串名, 所有字母大写,酌情_下划线_
 
-    替换角色名开关:Tinom_Switch_MsgFilter_ReplaceName
-    替换关键字开关:Tinom_Switch_MsgFilter_ReplaceKeyWord
-    替换角色消息开关:Tinom_Switch_MsgFilter_ReplaceNameMsg
-    替换关键字消息开关:Tinom_Switch_MsgFilter_ReplaceKeyWordMsg
+开关:
+    替换角色名开关:         Tinom_Switch_MsgFilter_ReplaceName
+    替换关键字开关:         Tinom_Switch_MsgFilter_ReplaceKeyWord
+    替换角色消息开关:       Tinom_Switch_MsgFilter_ReplaceNameMsg
+    替换关键字消息开关:     Tinom_Switch_MsgFilter_ReplaceKeyWordMsg
 
-    白名单开关:Tinom_Switch_MsgFilter_WhiteList
-    黑名单开关:Tinom_Switch_MsgFilter_BlackList
-    白名单关键字开关:Tinom_Switch_MsgFilter_WhiteListKeyWord
-    黑名单关键字开关:Tinom_Switch_MsgFilter_BlackListKeyWord
+    白名单开关:             Tinom_Switch_MsgFilter_WhiteList
+    黑名单开关:             Tinom_Switch_MsgFilter_BlackList
+    白名单关键字开关:       Tinom_Switch_MsgFilter_WhiteListKeyWord
+    黑名单关键字开关:       Tinom_Switch_MsgFilter_BlackListKeyWord
 
-    重复发言开关:Tinom_Switch_MsgFilter_Repeat
+    重复发言开关:           Tinom_Switch_MsgFilter_Repeat
+    只显示白名单开关:       Tinom_Switch_MsgFilter_WhiteListOnly
 
-    白名单地址:TinomDB.filterDB.whiteList
-    黑名单地址:TinomDB.filterDB.blackList
-    白名单关键字地址:TinomDB.filterDB.whiteListKeyWord
-    黑名单关键字地址:TinomDB.filterDB.blackListKeyWord
+数据库:
+    白名单地址:             TinomDB.filterDB.whiteList
+    黑名单地址:             TinomDB.filterDB.blackList
+    白名单关键字地址:       TinomDB.filterDB.whiteListKeyWord
+    黑名单关键字地址:       TinomDB.filterDB.blackListKeyWord
 
-    替换角色名地址:TinomDB.filterDB.replaceName[].newName
-    替换关键字地址:TinomDB.filterDB.replaceKeyWord[].newWord
-    替换角色消息地址:TinomDB.filterDB.replaceName[].newMsg
-    替换关键字消息地址:TinomDB.filterDB.replaceKeyWord[].newMsg
+    替换角色名地址:         TinomDB.filterDB.replaceName[].newName
+    替换关键字地址:         TinomDB.filterDB.replaceKeyWord[].newWord
+    替换角色消息地址:       TinomDB.filterDB.replaceName[].newMsg
+    替换关键字消息地址:     TinomDB.filterDB.replaceKeyWord[].newMsg
 
-    20条信息缓存表:TinomDB_filterDB_cacheMsgTemp
-    临时白名单:TinomDB_filterDB_whiteListTemp
-    临时黑名单:TinomDB_filterDB_blackListTemp
+    20条信息缓存表:         TinomDB_filterDB_cacheMsgTemp
+    临时白名单:             TinomDB_filterDB_whiteListTemp
+    临时黑名单:             TinomDB_filterDB_blackListTemp
 
 ## 数据库结构:
 
 TinomDB={
     Options = {
         Default = {
-
+            Tinom_Switch_MsgFilter_ReplaceName = false;
+            Tinom_Switch_MsgFilter_ReplaceKeyWord = false;
+            Tinom_Switch_MsgFilter_ReplaceNameMsg = false;
+            Tinom_Switch_MsgFilter_ReplaceKeyWordMsg = false;
+            Tinom_Switch_MsgFilter_WhiteList = false;
+            Tinom_Switch_MsgFilter_BlackList = false;
+            Tinom_Switch_MsgFilter_WhiteListKeyWord = false;
+            Tinom_Switch_MsgFilter_BlackListKeyWord = false;
+            Tinom_Switch_MsgFilter_CacheMsgRepeat = false;
+            Tinom_Switch_MsgFilter_WhiteListOnly = false;
         },
     },
 
     playerDB = {
-        player = {
-            GUID = "string",
-            Class = "string",
-            GUID = "string",
-            Sex = number,
-            Race = "string",
+        GUID = {
+            name = "string",
+            class = "string",
+            sex = number,
+            race = "string",
         },
     },
 
     accountDB = {
         character = {
-            GUID = "string",
-            Class = "string",
-            GUID = "string",
-            Sex = number,
-            Race = "string",
+            class = "string",
+            guid = "string",
+            sex = number,
+            race = "string",
         },
     },
 

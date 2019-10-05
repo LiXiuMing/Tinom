@@ -1,3 +1,4 @@
+Tdebug(self,"log","zhCN.lua加载开始");
 --  判断本地语言是否为指定值,否则直接退出,不再进行之后动作.
 if(GetLocale() ~= "zhCN") then return end
 
@@ -15,11 +16,12 @@ local Locale = {
 --  本地化函数
 -------------------------------------------------------------------------]]--
 Tinom.L = setmetatable(Locale, {
-    __index = function(table, key)
-        rawset(table, key, key)     --尝试搞清楚这个方法是干嘛的!
+    __index = function(_, key)
         return key;
     end
 })
 
 --释放内存
 Locale = nil;
+
+Tdebug(self,"log","zhCN.lua加载完成");

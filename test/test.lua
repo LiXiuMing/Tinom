@@ -1,10 +1,9 @@
 
 --  获取插件的插件名和插件表
 local addonName, addon = ...
-print(addonName,addon)
 
 -- 设置插件的全局名称
---_G[addonName] = addon
+Test = {};
 
 
 --[[-------------------------------------------------------------------------
@@ -24,7 +23,7 @@ function Tinom.OnLoad(self)
     self:SetScript("OnEvent", function(self, event, addon)
         if addon == "Tinom" then
             print(format("你好%s,%s插件已加载完成.",UnitName("player"),addon))
-            print(Tinom.L["Hello Azeroth!"])
+            print("本地化测试:"..Tinom.L["Hello Azeroth!"])
         end
     end)
 end
@@ -136,21 +135,17 @@ end
 --[[-------------------------------------------------------------------------
 --  播放游戏音效
 -------------------------------------------------------------------------]]--
-local list;
+local listSounds = {};
 local i = 1;
 function Test_PlaySound()
-    
-    if list == nil then
-        list = {}
-        for _,v in pairs(SOUNDKIT) do
-            table.insert(list,v)
-        end
-        table.sort(list)
-    end
+	for _,v in pairs(SOUNDKIT) do
+		table.insert(listSounds,v)
+	end
+	table.sort(listSounds)
 
-    if i < #list then
-        PlaySound(list[i])
-        print(list[i])
+    if i < #listSounds then
+        PlaySound(listSounds[i])
+        print("当前播放:"..listSounds[i])
         i = i + 1;
     else
         print("播放完了")
@@ -353,6 +348,63 @@ function WhoIsTinomColorSlider_OnChange( self,color,value )
     
     WhoIsTinom:SetBackdropBorderColor(ColorRedSlider, ColorGreenSlider, ColorBlueSlider, 1 - ColorAlphaSlider);
     WhoIsTinom:SetBackdropColor(ColorRedSlider, ColorGreenSlider, ColorBlueSlider, 1 - ColorAlphaSlider);
+end
+
+--[[-------------------------------------------------------------------------
+--  一个带滚动条的编辑框:自动滚动
+-------------------------------------------------------------------------]]--
+function Test.ScrollFrame_EditBox_OnLoad(self)
+	self:SetScript("OnCursorChanged",function (self, arg1, arg2,arg3,arg4)
+		-- self:SetID(self:GetID() + 1)
+		-- if taunts[self:GetID()] then
+		-- self:SetText(taunts[self:GetID()])
+		-- else
+		-- self:Hide()
+		-- end
+		--arg1 = math.floor(arg1 + 0.5)
+		--arg2 = math.floor(arg2 + 0.5)
+		--arg3 = math.floor(arg3 + 0.5)
+		--arg4 = math.floor(arg4 + 0.5)
+
+		Test.ScrollFrame_EditBox_OnCursorChanged(self,arg1,arg2,arg3,arg4)
+	end)
+end
+
+--[[-------------------------------------------------------------------------
+--  一个带滚动条的编辑框:自动滚动
+-------------------------------------------------------------------------]]--
+local arrow = 0
+function Test.ScrollFrame_EditBox_OnCursorChanged(self,arg1,arg2,arg3,arg4)
+	local vsv = self:GetParent():GetVerticalScroll();
+	local vsh  = self:GetParent():GetHeight();
+	local ebh  = self:GetHeight();
+	--vsv = math.floor(vsv + 0.5)
+	--vsh = math.floor(vsh + 0.5)
+	--<!-- self:SetCursorPosition(1) -->
+	--<!-- self:GetCursorPosition() -->
+	print("滚当条值:"..vsv.."滚动条高"..vsh.."光标Y:"..arg2.."行高:"..arg4.."文本框高度:"..ebh)
+
+	-- if (滚动条当前值 + 文本框光标位置Y > 0) then
+	-- 	光标在滚动条上方
+	-- else (0 > 滚动条当前值 + 光标位置Y - 行高 + 滚动条高度)
+	-- if (vs + arg2 > 0) or (0 > vs + arg2 - arg4 + h) then
+	--   self:GetParent():SetVerticalScroll((arg2+h-arg4*2)*-1);
+	-- end
+	local eby = arg2;
+	
+	-- if ( ebh > vsh ) then
+	-- 	if ( (eby+vsh-arg4) < 0) then
+	-- 		self:GetParent():SetVerticalScroll((eby+vsh-arg4)*-1);
+	-- 	end
+	-- 	if ( (eby+vsh-arg4) > 0 ) then
+	-- 		self:GetParent():SetVerticalScroll(0);
+	-- 	end
+	-- end
+	if ( eby < arrow)then
+		self:GetParent():SetVerticalScroll(eby*-1);
+	end
+
+	arrow = arg2;
 end
 
 --[[-------------------------------------------------------------------------

@@ -3,17 +3,15 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
 
 <Script file="ChatStat.lua" />
 
-<Frame name="OnLoadFrame">
+<Frame name="TinomChatStatFrame">
  <Scripts>
-   <OnLoad> chat_start(self) </OnLoad>
+   <OnLoad>
+    Tdebug(self,"log","ChatStat.xml加载");
+   </OnLoad>
+   <OnEvent>
+    
+   </OnEvent>
   </Scripts>
 </Frame>
-
-<!--   <Frame name="ChatHandlerFrame" >
-    <Scripts>
-      <OnLoad> chat_start(); </OnLoad>
-    </Scripts>
-  </Frame> -->
-
 
 </Ui>

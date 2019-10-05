@@ -6,7 +6,7 @@
 --  功能:统计角色频道发言,重复发言,广告等信息.
 --
 -------------------------------------------------------------------------]]--
-
+Tdebug(self,"log","ChatStat.lua加载开始");
 --测试开关:测试时处理自己的发言,反之则不处理自己的发言.
 local IsTest = true;
 
@@ -21,8 +21,19 @@ Chat_Switch = {
 }
 
 --  成就变量
-local Achievement_Normal = {"侃侃而谈","论今评古","入门问讳","软言细语","谈词如云","谈吐风生","白费口舌","笨嘴笨舌","不言不语","钝口拙腮","娇声娇气","缄口不言","口干舌燥","伶牙俐齿","唠唠叨叨","能言善辩"};
-local Achievement_Spammer = {"喃喃自语","半吞半吐","不动声色","不讳之门","沉静寡言","尺水丈波","出口成章","喋喋不休","对牛弹琴","隔墙有耳","拐弯抹角","祸从口出","尖酸刻薄"};
+local Achievement_Normal = {
+    "侃侃而谈","论今评古","入门问讳","软言细语",
+    "谈词如云","谈吐风生","白费口舌","笨嘴笨舌",
+    "不言不语","钝口拙腮","娇声娇气","缄口不言",
+    "口干舌燥","伶牙俐齿","唠唠叨叨","能言善辩",
+};
+
+local Achievement_Spammer = {
+    "喃喃自语","半吞半吐","不动声色","不讳之门",
+    "沉静寡言","尺水丈波","出口成章","喋喋不休",
+    "对牛弹琴","隔墙有耳","拐弯抹角","祸从口出",
+    "尖酸刻薄",
+};
 
 --[[-------------------------------------------------------------------------
 --  成就返回函数
@@ -120,27 +131,31 @@ local function chat_stat_handler(self, event, msg, author,_,_,_,_,_,channelIndex
 
 
     -- 初始化服务器信息
-    if chatStatDB[authorServer] == nil then
-        chatStatDB[format(authorServer)] = {}
+    if TinomDB.chatStatDB[authorServer] == nil then
+        TinomDB.chatStatDB[format(authorServer)] = {}
         print("==初始化服务器信息==")
     end
 
     -- 初始化角色信息
     local _, Class, _, Race, Sex  = GetPlayerInfoByGUID(guid)
-    local authorNameDB_read = chatStatDB[authorServer][authorName]
-    local authorNameDB_write = chatStatDB[format(authorServer)][format(authorName)]
+    local authorNameDB_read = TinomDB.chatStatDB[authorServer][authorName]
+    local authorNameDB_write = TinomDB.chatStatDB[format(authorServer)][format(authorName)]
     if authorNameDB_read == nil then
         --初始化角色信息
-        TinomDB.chatStatDB[format(authorServer)][format(authorName)] = {
+        TinomDB.chatStatDB[authorServer][authorName] = {
             msg_count = 1;          --发言次数
             msg_last_text = msg;    --上次发言内容
             msg_last_time = time(); --上次发言时间
             msg_repeat_times = 0;   --发言重复次数
-            author_guid = guid;     --角色唯一标识
-            author_Class = Class;   --角色职业
-            author_Race = Race;     --角色种族
-            author_Sex = Sex;       --角色性别
         }
+
+        TinomDB.playerDB[guid] = {
+            name = authorName;  --角色姓名
+            class = Class;      --角色职业
+            race = Race;        --角色种族
+            sex = Sex;          --角色性别
+        };
+
         print(format("==初始化角色%s信息==",authorName))
         PlaySound(120)
     elseif authorNameDB_read.msg_last_text == msg then
@@ -154,7 +169,7 @@ local function chat_stat_handler(self, event, msg, author,_,_,_,_,_,channelIndex
         PlaySound(10590)
         spammer = chat_spammer( channelIndex, authorName, authorNameDB_read.msg_repeat_times, SecondsToTime(elapsed) );
         if spammer then
-            filterDB.blackList[format(authorName)] = guid;
+            TinomDB.filterDB.blackList:insert(authorName);
         end
     else
         --正常发言
@@ -171,16 +186,8 @@ end
 --  数据库初始化函数
 -------------------------------------------------------------------------]]--
 local function initializer_DB(...)
-    if ( TinomDB == nil ) then
-        TinomDB = {
-            chatStatDB = {};
-            filterDB = {};
-        };
-        print("==未发现数据库,已初始化数据库==")
-    end
-    chatStatDB = TinomDB.chatStatDB;
-    filterDB = TinomDB.filterDB;
-    if ( chatStatDB ~= nil ) and (filterDB ~= nil ) then
+    --##--
+    if ( TinomDB.chatStatDB ~= nil ) and (TinomDB.filterDB ~= nil ) then
             --注册聊天统计函数触发事件
             local chat_stat_frame = CreateFrame("Frame")
             chat_stat_frame:RegisterEvent("CHAT_MSG_CHANNEL")
@@ -194,15 +201,9 @@ end
 --[[-------------------------------------------------------------------------
 --  入口,注册初始化触发事件
 -------------------------------------------------------------------------]]--
-function chat_start(self)
-    self:RegisterEvent("ADDON_LOADED")
-    self:SetScript("OnEvent",function(self,event,addon)
-        print(self,event,addon)
-        if (addon == "Tinom") then
-            --因为会有多个插件同时触发,所以要匹配插件名,不然会重复动作.
-            --Tinom,Blizzard_TimeManager,Blizzard_CombatLog
-            --若加载插件名匹配则启动初始化函数
-            initializer_DB();
-        end
-    end)
+function Tinom.ChatStat_OnLoad()
+
+    initializer_DB();
 end
+
+Tdebug(self,"log","ChatStat.lua加载完成");

@@ -628,7 +628,7 @@
   </Frame>
 
   <!-- 测试框架可拖动框架 -->
-  <Frame name="WhoIsTinomss" hidden="false" parent="UIParent" frameStrata="HIGH" toplevel="true" enableMouse="true" movable="true" clampedToScreen="true" >
+  <Frame name="WhoIsTinomss" hidden="true" parent="UIParent" frameStrata="HIGH" toplevel="true" enableMouse="true" movable="true" clampedToScreen="true" >
     <Size>
       <RelDimension x="0.2" y="0.2"/>
     </Size>
@@ -693,7 +693,7 @@
         </Anchors>
         <Scripts>
           <OnShow>
-            if ( Tinom_Switch_MsgFilter_WhiteList ) then
+            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteList ) then
             self:SetText("白名单:开");
             else
             self:SetText("白名单:关");
@@ -701,12 +701,12 @@
           </OnShow>
           <OnClick>
             PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
-            if ( Tinom_Switch_MsgFilter_WhiteList ) then
+            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteList ) then
             self:SetText("白名单:关");
             else
             self:SetText("白名单:开");
             end
-            Tinom_Switch_MsgFilter_WhiteList = not(Tinom_Switch_MsgFilter_WhiteList);
+            TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteList = not(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteList);
           </OnClick>
         </Scripts>
         <NormalFont style="GameFontNormalSmall"/>
@@ -726,7 +726,7 @@
         </Anchors>
         <Scripts>
           <OnShow>
-            if ( Tinom_Switch_MsgFilter_BlackList ) then
+            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackList ) then
             self:SetText("黑名单:开");
             else
             self:SetText("黑名单:关");
@@ -734,12 +734,12 @@
           </OnShow>
           <OnClick>
             PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
-            if ( Tinom_Switch_MsgFilter_BlackList ) then
+            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackList ) then
             self:SetText("黑名单:关");
-            Tinom_Switch_MsgFilter_BlackList = false;
+            TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackList = false;
             else
             self:SetText("黑名单:开");
-            Tinom_Switch_MsgFilter_BlackList = true;
+            TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackList = true;
             end
           </OnClick>
         </Scripts>
@@ -760,7 +760,7 @@
         </Anchors>
         <Scripts>
           <OnShow>
-            if ( Tinom_Switch_MsgFilter_WhiteListKeyWord ) then
+            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWord ) then
             self:SetText("关键字白名单:开");
             else
             self:SetText("关键字白名单:关");
@@ -768,12 +768,12 @@
           </OnShow>
           <OnClick>
             PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
-            if ( Tinom_Switch_MsgFilter_WhiteListKeyWord ) then
+            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWord ) then
             self:SetText("关键字白名单:关");
-            Tinom_Switch_MsgFilter_WhiteListKeyWord = false;
+            TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWord = false;
             else
             self:SetText("关键字白名单:开");
-            Tinom_Switch_MsgFilter_WhiteListKeyWord = true;
+            TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWord = true;
             end
           </OnClick>
         </Scripts>
@@ -794,7 +794,7 @@
         </Anchors>
         <Scripts>
           <OnShow>
-            if ( Tinom_Switch_MsgFilter_BlackListKeyWord ) then
+            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackListKeyWord ) then
             self:SetText("关键字黑名单:开");
             else
             self:SetText("关键字黑名单:关");
@@ -802,12 +802,12 @@
           </OnShow>
           <OnClick>
             PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
-            if ( Tinom_Switch_MsgFilter_BlackListKeyWord ) then
+            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackListKeyWord ) then
             self:SetText("关键字黑名单:关");
-            Tinom_Switch_MsgFilter_BlackListKeyWord = false;
+            TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackListKeyWord = false;
             else
             self:SetText("关键字黑名单:开");
-            Tinom_Switch_MsgFilter_BlackListKeyWord = true;
+            TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackListKeyWord = true;
             end
           </OnClick>
         </Scripts>
@@ -828,7 +828,7 @@
         </Anchors>
         <Scripts>
           <OnShow>
-            if ( Tinom_Switch_MsgFilter_ReplaceName ) then
+            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName ) then
             self:SetText("替换角色名:开");
             else
             self:SetText("替换角色名:关");
@@ -836,12 +836,12 @@
           </OnShow>
           <OnClick>
             PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
-            if ( Tinom_Switch_MsgFilter_ReplaceName ) then
+            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName ) then
             self:SetText("替换角色名:关");
-            Tinom_Switch_MsgFilter_ReplaceName = false;
+            TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName = false;
             else
             self:SetText("替换角色名:开");
-            Tinom_Switch_MsgFilter_ReplaceName = true;
+            TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName = true;
             end
           </OnClick>
         </Scripts>
@@ -862,7 +862,7 @@
         </Anchors>
         <Scripts>
           <OnShow>
-            if ( Tinom_Switch_MsgFilter_ReplaceKeyWord ) then
+            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord ) then
             self:SetText("替换关键字:开");
             else
             self:SetText("替换关键字:关");
@@ -870,12 +870,12 @@
           </OnShow>
           <OnClick>
             PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
-            if ( Tinom_Switch_MsgFilter_ReplaceKeyWord ) then
+            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord ) then
             self:SetText("替换关键字:关");
-            Tinom_Switch_MsgFilter_ReplaceKeyWord = false;
+            TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord = false;
             else
             self:SetText("替换关键字:开");
-            Tinom_Switch_MsgFilter_ReplaceKeyWord = true;
+            TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord = true;
             end
           </OnClick>
         </Scripts>
@@ -896,7 +896,7 @@
         </Anchors>
         <Scripts>
           <OnShow>
-            if ( Tinom_Switch_MsgFilter_ReplaceNameMsg ) then
+            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg ) then
             self:SetText("替换名与消息:开");
             else
             self:SetText("替换名与消息:关");
@@ -904,12 +904,12 @@
           </OnShow>
           <OnClick>
             PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
-            if ( Tinom_Switch_MsgFilter_ReplaceNameMsg ) then
+            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg ) then
             self:SetText("替换名与消息:关");
-            Tinom_Switch_MsgFilter_ReplaceNameMsg = false;
+            TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg = false;
             else
             self:SetText("替换名与消息:开");
-            Tinom_Switch_MsgFilter_ReplaceNameMsg = true;
+            TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg = true;
             end
           </OnClick>
         </Scripts>
@@ -930,7 +930,7 @@
         </Anchors>
         <Scripts>
           <OnShow>
-            if ( Tinom_Switch_MsgFilter_ReplaceKeyWordMsg ) then
+            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg ) then
             self:SetText("替换字与消息:开");
             else
             self:SetText("替换字与消息:关");
@@ -938,12 +938,12 @@
           </OnShow>
           <OnClick>
             PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
-            if ( Tinom_Switch_MsgFilter_ReplaceKeyWordMsg ) then
+            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg ) then
             self:SetText("替换字与消息:关");
-            Tinom_Switch_MsgFilter_ReplaceKeyWordMsg = false;
+            TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg = false;
             else
             self:SetText("替换字与消息:开");
-            Tinom_Switch_MsgFilter_ReplaceKeyWordMsg = true;
+            TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg = true;
             end
           </OnClick>
         </Scripts>
@@ -972,11 +972,10 @@
           </OnShow>
           <OnClick>
             PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
-            self:SetText("现在你不能按了");
             InterfaceOptionsFrame_OpenToCategory(TinomInterfaceOptionsMainPanel)
             InterfaceOptionsFrame_OpenToCategory(TinomInterfaceOptionsMainPanel)
-            self:Disable();
-            WhoIsTinomss:Hide();
+            <!-- self:Disable(); -->
+            <!-- WhoIsTinomss:Hide(); -->
             MainMenuBarArtFrame.RightEndCap:Hide();
             MainMenuBarArtFrame.LeftEndCap:Hide();
             CharacterBag0Slot:Hide();
@@ -1023,7 +1022,7 @@
   </Frame>
 
   <!-- 测试框架:带滚动条的编辑框 -->
-  <ScrollFrame name="ScrollFrame" parent="UIParent" inherits="UIPanelScrollFrameTemplate">
+  <ScrollFrame name="ScrollFrame" hidden="true" parent="UIParent" inherits="UIPanelScrollFrameTemplate">
     <Size x="300" y="200"/>
     <Anchors>
       <Anchor point="CENTER">
@@ -1055,10 +1054,14 @@
           <OnLoad>
             self:SetText("Hello Azelaz!");
             self:SetWidth(300);
+            Test.ScrollFrame_EditBox_OnLoad(self)
           </OnLoad>
           <OnEscapePressed>
             ScrollFrame:Hide();
           </OnEscapePressed>
+          <OnCursorChanged>
+            <!-- Test.ScrollFrame_EditBox_OnCursorChanged(self); -->
+          </OnCursorChanged>
         </Scripts>
       </EditBox>
     </Frames>
