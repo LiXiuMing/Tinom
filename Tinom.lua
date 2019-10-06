@@ -42,15 +42,13 @@ end
 --  插件加载完成:
 -------------------------------------------------------------------------]]--
 function Tinom.OnLoaded(self,event,addonName)
-	--##--and TinomDB.Options.Default.Tinom_Switch_MsgFilter_MainEnable 
     if (event == "ADDON_LOADED") and (addonName == "Tinom") and (Tinom.checkTinomDB()) then
         Tdebug(self,"log","Tinom.OnLoaded.插件加载完成.");
         Tinom.LoginLog(self,event,addonName);
         Tinom.OptionsMainPanel_checkOptions();
+        Tinom.MsgFilterOn();
+        Tinom.ChatStat_OnLoad();
 
-        --Tinom.MsgFilterOn();
-        --Tinom.ChatStat_OnLoad(self,event,addon);
-        --
         --Tinom.OptionsMainPanel_OnLoad(self,...);
     end
 end

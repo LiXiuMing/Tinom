@@ -1,5 +1,3 @@
-Tdebug(self,"log","Filter.lua加载开始");
-
 --  临时表
 TinomDB_filterDB_cacheMsgTemp = {};
 TinomDB_filterDB_whiteListTemp = {};
@@ -29,19 +27,24 @@ end
 --  角色名替换函数:替换角色消息开关,替换名单
 -------------------------------------------------------------------------]]--
 function Tinom.ReplaceName( name )
+    --Tdebug(self,"log","Tinom.ReplaceName.触发");
     local authorName, authorServer = name:match( "(.-)(%-.*)" );
     local newName,newMsg = nil, nil;
 
     for k,v in pairs(TinomDB.filterDB.replaceName) do
         if ( name == k ) then
-            newName = v.newName;
-            if ( ( Tinom_Switch_MsgFilter_ReplaceNameMsg == true ) and v.newMsg ) then
+            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName == true ) then
+                newName = v.newName;
+            end
+            if ( ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg == true ) and v.newMsg ) then
                 newMsg = v.newMsg;
             end
             return newMsg, newName;
         elseif ( authorName == k ) then
-            newName = v.newName..authorServer;
-            if ( ( Tinom_Switch_MsgFilter_ReplaceNameMsg == true ) and v.newMsg ) then
+            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName == true ) then
+                newName = v.newName..authorServer;
+            end
+            if ( ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg == true ) and v.newMsg ) then
                 newMsg = v.newMsg;
             end
             return newMsg, newName;
@@ -54,10 +57,11 @@ end
 --  消息替换函数:替换关键字消息开关,替换关键字名单
 -------------------------------------------------------------------------]]--
 function Tinom.ReplaceMsg( msg )
+    --Tdebug(self,"log","Tinom.ReplaceMsg.触发");
     local newMsg = nil;
     for k,v in pairs(TinomDB.filterDB.replaceKeyWord) do
         if ( msg:find(k) ) then
-            if ( ( Tinom_Switch_MsgFilter_ReplaceKeyWordMsg == true ) and v.newMsg ) then
+            if ( ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg == true ) and v.newMsg ) then
                 newMsg = v.newMsg;
             else
                 newMsg = msg:gsub(k,v.newWord);
@@ -73,31 +77,34 @@ end
 --                  缓存20条消息进行对比,若重复则丢弃
 -------------------------------------------------------------------------]]--
 function Tinom.CacheMsgRepeat( self,event,msg )
-    if self ~= _G["ChatFrame1"] then
-        return false;
+    local frameName = self:GetName()
+    if TinomDB_filterDB_cacheMsgTemp[frameName] == nil then
+        TinomDB_filterDB_cacheMsgTemp[frameName] = {};
     end
-    for i=1,20 do
-        if ( msg == TinomDB_filterDB_cacheMsgTemp[i] ) then
+    
+    for k,v in pairs(TinomDB_filterDB_cacheMsgTemp[frameName]) do
+        if ( msg == v ) then
             return true;
         end
     end
-    table.insert( TinomDB_filterDB_cacheMsgTemp, 1, msg )
-    if ( #TinomDB_filterDB_cacheMsgTemp == 21 ) then
-        table.remove( TinomDB_filterDB_cacheMsgTemp, 21)
+    table.insert( TinomDB_filterDB_cacheMsgTemp[frameName], 1, msg )
+    if ( #TinomDB_filterDB_cacheMsgTemp[frameName] == 21 ) then
+        table.remove( TinomDB_filterDB_cacheMsgTemp[frameName], 21)
     end
     return false;
 end
 
 --[[-------------------------------------------------------------------------
 --  消息过滤函数:白名单开关,黑名单开关,白名单,临时白名单,黑名单,临时黑名单,
---              替换角色名开关,替换关键字开关
+--              替换角色名开关,替换关键字开关 or (authorName == playerName)
 -------------------------------------------------------------------------]]--
 function Tinom.MsgFilter( self,event,... )
-    if ( event ~= "CHAT_MSG_CHANNEL" ) then return end
+    --if ( event ~= "CHAT_MSG_CHANNEL" ) then return end
     local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = ...;
     local authorName, authorServer = arg2:match( "(.-)%-(.*)" )
     
-    if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_MainEnable == false) or (authorName == playerName)) then
+    if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_MainEnable == false) )then
+        --Tdebug(self,"log","Tinom.MsgFilter.Tinom_Switch_MsgFilter_MainEnable.触发");
         return false;
     end
     
@@ -106,9 +113,14 @@ function Tinom.MsgFilter( self,event,... )
     
     --  白名单过滤  --
     if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteList ) then
-        if ( TinomDB.filterDB.whiteList[authorName] or TinomDB_filterDB_whiteListTemp[authorName] ) then
-            return false;
+        for k,v in pairs(TinomDB.filterDB.whiteList) do
+            if ( authorName == v ) then
+                return false;
+            end
         end
+        -- if ( TinomDB.filterDB.whiteList[authorName] or TinomDB_filterDB_whiteListTemp[authorName] ) then
+        --     return false;
+        -- end
     end
 
     --  关键字白名单  --
@@ -127,9 +139,14 @@ function Tinom.MsgFilter( self,event,... )
 
     --  黑名单过滤  --
     if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackList ) then
-        if ( TinomDB.filterDB.blackList[authorName] or TinomDB_filterDB_blackListTemp[authorName]) then
-            return true;
+        for k,v in pairs(TinomDB.filterDB.blackList) do
+            if ( authorName == v ) then
+                return true;
+            end
         end
+        -- if ( TinomDB.filterDB.blackList[authorName] or TinomDB_filterDB_blackListTemp[authorName]) then
+        --     return true;
+        -- end
     end
     
     --  关键字黑名单过滤  --
@@ -149,14 +166,23 @@ function Tinom.MsgFilter( self,event,... )
     end
 
     --  替换功能  --也可以使用元表方法setmetatable(table1,table2)
-    if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName) or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord)) then
-        local newArg1, newArg2 = nil, nil;
+    if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName) 
+        or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord)
+        or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg)
+        or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg)
+        ) then
 
-        if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName) then
+        local newArg1, newArg2 = nil, nil;
+        --Tdebug(self,"log","Tinom.MsgFilter.替换.触发");
+        if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName)
+            or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg)
+            ) then
             newArg1, newArg2 = Tinom.ReplaceName( arg2 );
         end
 
-        if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord) and (newArg1 == nil)) then
+        if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord
+            or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg)
+            ) and (newArg1 == nil)) then
             newArg1 = Tinom.ReplaceMsg( arg1 );
         end
 
@@ -176,9 +202,9 @@ end
 function Tinom.MsgFilterOn()
     filterDB_Temp = TinomDB.filterDB;
     ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", Tinom.MsgFilter)
-    --ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", Tinom.MsgFilter)
-    --ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", Tinom.MsgFilter)
-    --ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", Tinom.MsgFilter)
+    ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", Tinom.MsgFilter)
+    ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", Tinom.MsgFilter)
+    ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", Tinom.MsgFilter)
     print("过滤已开启")
 end
 
@@ -188,9 +214,9 @@ end
 function Tinom.MsgFilterOff()
     filterDB_Temp = {};
     ChatFrame_RemoveMessageEventFilter("CHAT_MSG_CHANNEL", Tinom.MsgFilter)
-    --ChatFrame_RemoveMessageEventFilter("CHAT_MSG_SAY", Tinom.MsgFilter)
-    --ChatFrame_RemoveMessageEventFilter("CHAT_MSG_YELL", Tinom.MsgFilter)
-    --ChatFrame_RemoveMessageEventFilter("CHAT_MSG_WHISPER", Tinom.MsgFilter)
+    ChatFrame_RemoveMessageEventFilter("CHAT_MSG_SAY", Tinom.MsgFilter)
+    ChatFrame_RemoveMessageEventFilter("CHAT_MSG_YELL", Tinom.MsgFilter)
+    ChatFrame_RemoveMessageEventFilter("CHAT_MSG_WHISPER", Tinom.MsgFilter)
     print("过滤已关闭")
 end
 

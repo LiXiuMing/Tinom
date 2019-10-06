@@ -17,6 +17,7 @@ local Locale = {
 -------------------------------------------------------------------------]]--
 Tinom.L = setmetatable(Locale, {
     __index = function(_, key)
+        --Tdebug(self,"log",key)
         return key;
     end
 })

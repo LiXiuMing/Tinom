@@ -428,6 +428,26 @@ end
 -- end)
 
 --[[-------------------------------------------------------------------------
+--  隐藏UI所有当前可见元素
+-------------------------------------------------------------------------]]--
+function TinomhideAll()
+	if PlayerFrame:IsShown() then
+		MinimapCluster:Hide();
+		MainMenuBarArtFrame:Hide();
+		PlayerFrame:Hide();
+        MicroButtonAndBagsBar:Hide();
+        StatusTrackingBarManager:Hide();
+	else
+		MinimapCluster:Show();
+		MainMenuBarArtFrame:Show();
+		PlayerFrame:Show();
+        MicroButtonAndBagsBar:Show();
+        StatusTrackingBarManager:Show();
+	end
+end
+SLASH_TINOMSHOW = "/tinomhide"
+SlashCmdList["TINOMSHOW"] = TinomhideAll;
+--[[-------------------------------------------------------------------------
 --  重置的消息事件处理函数
 -------------------------------------------------------------------------]]--
 --[[ chatFilters = {};

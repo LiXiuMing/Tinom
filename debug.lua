@@ -20,9 +20,9 @@ function Tdebug( ... )
 	--print(self);
     if ( callType == "log" ) then
         table.insert( debugDB_Temp.log, logStr );
-        print(logStr);
+        --print(logStr);
     elseif ( callType == "error" ) then
         table.insert( debugDB_Temp.error, logStr );
-        print(logStr);
+        --print(logStr);
     end
 end

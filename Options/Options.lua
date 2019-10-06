@@ -1,10 +1,8 @@
-Tdebug(self,"log","Options.lua加载开始");
 local L = Tinom.L
 
 --[[-------------------------------------------------------------------------
 --  字符串:
 -------------------------------------------------------------------------]]--
-TINOM_OPTION_MAINPANEL_LABEL = L["Tinom聊天过滤"];
 TINOM_OPTION_MAINPANEL_TITLE = L["Tinom聊天过滤"];
 TINOM_OPTION_MAINPANEL_SUBTEXT = L["去年高三帮好朋友给实验班的男孩子写一封信,只有“山有木兮木有枝”七个字,想让他领会后半句心悦君兮君不知的含义.第二天男孩子主动来班里送信,还是昨天那封,他在后面补充到“心悦君兮君已知,奈何十二寒窗苦,待到金榜题名时.”   后来这段故事无疾而终 愿你们遇到的每段感情都能有处安放"];
 TINOM_OPTION_MAINPANEL_CHACKBUTTON_MAINENABLE_TEXT = L["开启过滤"];
@@ -47,7 +45,7 @@ Tinom.optionsTabButtons = {
 	TinomOptionsMainPanelBaseSettingTabButton = "TinomOptionsMainPanelBaseSetting",
 	TinomOptionsMainPanelWhiteListTabButton = "TinomOptionsMainPanelWhiteListSetting",
 	TinomOptionsMainPanelBlackListTabButton = "TinomOptionsMainPanelBlackListSetting",
-	TinomOptionsMainPanelReplaceListTabButton = "TinomOptionsMainPanelReplaceListSetting",
+	TinomOptionsMainPanelReplaceListTabButton = "TinomOptionsMainPanelReplace",
 };
 
 --[[-------------------------------------------------------------------------
@@ -69,16 +67,16 @@ end
 -------------------------------------------------------------------------]]--
 function Tinom.OptionsMainPanel_checkOptions()
 	if not TinomDB.Options.Default then
-		Tdebug(self,"log","Options.未发现配置数据库");
+		--Tdebug(self,"log","Options.未发现配置数据库");
 		TinomDB.Options.Default = Tinom.defaultOptionsCheckButtons;
 		if ( TinomDB.Options.Default ) then
-			Tdebug(self,"log","Options.数据库已初始化");
+			--Tdebug(self,"log","Options.数据库已初始化");
 			Tinom.OptionsMainPanel_LoadOptions();
 		else
 			Tdebug(self,"error","Options.数据库初始化失败");
 		end
 	end
-	Tdebug(self,"log","Options.数据库检查完成");
+	--Tdebug(self,"log","Options.数据库检查完成");
 	Tinom.OptionsMainPanel_LoadOptions();
 end
 
@@ -101,17 +99,13 @@ function Tinom.OptionsMainPanel_LoadOptions()
 	TinomOptionsMainPanelCheckButton_MainEnableText:SetText(L["开启过滤"]);
 	TinomOptionsMainPanelCheckButton_MainEnable.tooltipText = L["开启过滤系统的主开关"];
 	Tinom.OptionsTabButton_OnLoad();
-	Tdebug(self,"log","OptionsMainPanel_OnLoad.配置加载完成");
+	Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_LoadData();
+	--Tdebug(self,"log","OptionsMainPanel_OnLoad.配置加载完成");
 end
 
 --[[-------------------------------------------------------------------------
 --  初始化:设置界面名单文本框加载配置
 -------------------------------------------------------------------------]]--
--- ReplaceName:SetChecked(TinomDB.filterDB.ReplaceName);
--- ReplaceNameMsg:SetChecked(TinomDB.filterDB.ReplaceNameMsg);
--- ReplaceKeyWord:SetChecked(TinomDB.filterDB.ReplaceKeyWord);
--- ReplaceKeyWordMsg:SetChecked(TinomDB.filterDB.ReplaceKeyWordMsg);
-
 function Tinom.OptionsPanel_EditBox_LoadOptions()
 	TinomOptionsMainPanelWhiteListSettingEditList_WhiteListScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.whiteList,"\n"))
 	TinomOptionsMainPanelWhiteListSettingEditList_WhiteListKeyWordScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.whiteListKeyWord,"\n"))
@@ -147,7 +141,7 @@ function Tinom.OptionsMainPanel_Updata(self)
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord = TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWord:GetChecked();
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg = TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWordMsg:GetChecked();
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_CacheMsgRepeat = TinomOptionsMainPanelBaseSettingCheckButton_CacheMsgRepeat:GetChecked();
-	Tdebug(self,"log","Options.Tinom配置已保存");
+	--Tdebug(self,"log","Options.Tinom配置已保存");
 	Tinom.OptionsPanel_EditBox_Updata()
 	
 end
@@ -161,7 +155,7 @@ function Tinom.OptionsPanel_EditBox_Updata()
 	TinomDB.filterDB.blackList = Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelBlackListSettingEditList_BlackListScrollFrameEditBox:GetText());
 	TinomDB.filterDB.blackListKeyWord = Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelBlackListSettingEditList_BlackListKeyWordScrollFrameEditBox:GetText());
 
-	Tdebug(self,"log","Options.名单已保存");
+	--Tdebug(self,"log","Options.名单已保存");
 end
 
 --[[-------------------------------------------------------------------------
@@ -201,7 +195,6 @@ function Tinom.OptionsMainEnableCheckButton_OnClick(self)
 		Tinom.MsgFilterOn();
 	else
 		Tinom.MsgFilterOff();
-		TinomOptionsMainPanelBaseSettingTabButton:Hide();
 	end
 end
 
@@ -239,7 +232,7 @@ end
 --  文本转表函数:
 -------------------------------------------------------------------------]]--
 function Tinom.OptionsPanel_TextToTable( textIn )
-	Tdebug(self,"log","OptionsPanel_TextToTable.Go");
+	--Tdebug(self,"log","OptionsPanel_TextToTable.Go");
 	local tableOut = {};
 	local index = 1;
 	while(true)
@@ -251,17 +244,17 @@ function Tinom.OptionsPanel_TextToTable( textIn )
 				table.insert(tableOut,1,str)
 			end
 			index = last+1;
-			Tdebug(self,"log","OptionsPanel_TextToTable.table.insert");
+			--Tdebug(self,"log","OptionsPanel_TextToTable.table.insert");
 		else
-			local str = string.sub(textIn,index)
+			local str = string.sub(textIn,index);
 			if (#str>4) then
-				table.insert(tableOut,1,str)
+				table.insert(tableOut,1,str);
 			end
+			--Tdebug(self,"log","OptionsPanel_TextToTable.break");
 			break;
-			Tdebug(self,"log","OptionsPanel_TextToTable.break");
 		end
 	end
-	Tdebug(self,"log","OptionsPanel_TextToTable.End"..#tableOut);
+	--Tdebug(self,"log","OptionsPanel_TextToTable.End"..#tableOut);
 	return tableOut;
 end
 
@@ -286,6 +279,148 @@ function Tinom.OptionsPanel_EditBox_OnCursorChanged(self)
 end
 
 --[[-------------------------------------------------------------------------
+--  #######################################################################
+--	替换名单界面
+--	#######################################################################
+-------------------------------------------------------------------------]]--
+--[[-------------------------------------------------------------------------
+--  初始化:设置界面替换名单列表加载配置
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_LoadData( ... )
+	local index = 1;
+	Tinom.tableReplaceNameTemp = {};
+	for k,v in pairs(TinomDB.filterDB.replaceName) do
+		Tinom.tableReplaceNameTemp[index] = {k,v.newName,v.newMsg};
+		index = index + 1;
+	end
+	Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_Updata(1);
+end
+--[[-------------------------------------------------------------------------
+--  初始化:设置界面替换名单列表翻页更新
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_Updata( index )
+	Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_Clear();
+	Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_ClearHighlight();
+	----Tdebug(self,"log","Options.replaceName.ListBrowseButton_Updata."..index);
+	for k=1,math.min( (#Tinom.tableReplaceNameTemp - index+1), 10 ) do
+		if k == 11 then break; end
+		_G["TinomOptionsMainPanelReplaceNameListButton"..k]:Show();
+		_G["TinomOptionsMainPanelReplaceNameListButton"..k.."_Name"]:SetText(Tinom.tableReplaceNameTemp[index][1]);
+		_G["TinomOptionsMainPanelReplaceNameListButton"..k.."_NewName"]:SetText(Tinom.tableReplaceNameTemp[index][2]);
+		_G["TinomOptionsMainPanelReplaceNameListButton"..k.."_NewMsg"]:SetText(Tinom.tableReplaceNameTemp[index][3]);
+		index = index + 1;
+	end
+	Tinom.OptionsMainPanel_ReplaceName_Scroll_Update();
+end
+--[[-------------------------------------------------------------------------
+--  初始化:设置界面替换名单列表清空
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_Clear()
+	for i=1,10 do
+		_G["TinomOptionsMainPanelReplaceNameListButton"..i.."_Name"]:SetText();
+		_G["TinomOptionsMainPanelReplaceNameListButton"..i.."_NewName"]:SetText();
+		_G["TinomOptionsMainPanelReplaceNameListButton"..i.."_NewMsg"]:SetText();
+		_G["TinomOptionsMainPanelReplaceNameListButton"..i]:Hide();
+	end
+end
+
+--[[-------------------------------------------------------------------------
+--  替换名单界面名单列表按钮点击事件函数:清理高亮
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_ClearHighlight()
+	for i=1,10 do
+		_G["TinomOptionsMainPanelReplaceNameListButton"..i]:UnlockHighlight();
+	end
+end
+
+--[[-------------------------------------------------------------------------
+--  替换名单界面文本框改变事件函数:角色名检查与替换新增按钮文本
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsMainPanel_ReplaceName_EditBoxName_OnTextChanged(self)
+	if ( TinomDB.filterDB.replaceName[self:GetText()] ) then
+		_G[self:GetParent():GetName().."ButtonAdd"]:SetText("修改");
+	  else
+		_G[self:GetParent():GetName().."ButtonAdd"]:SetText("新增");
+	  end
+end
+
+--[[-------------------------------------------------------------------------
+--  替换名单界面名单列表按钮点击事件函数:清理文本框
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsMainPanel_ReplaceName_ClearEditBox()
+	_G["TinomOptionsMainPanelReplaceNameListName"]:SetText("");
+    _G["TinomOptionsMainPanelReplaceNameListNewName"]:SetText("");
+    _G["TinomOptionsMainPanelReplaceNameListNewMsg"]:SetText("");
+end
+
+--[[-------------------------------------------------------------------------
+--  替换名单界面名单列表按钮点击事件函数:显示于文本框
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_OnClick(self)
+	Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_ClearHighlight();
+	self:LockHighlight();
+	_G[self:GetParent():GetName().."Name"]:SetText(_G[self:GetName().."_Name"]:GetText() or "");
+	_G[self:GetParent():GetName().."NewName"]:SetText(_G[self:GetName().."_NewName"]:GetText() or "");
+	_G[self:GetParent():GetName().."NewMsg"]:SetText(_G[self:GetName().."_NewMsg"]:GetText() or "");
+end
+
+--[[-------------------------------------------------------------------------
+--  新增条目按钮:点击事件
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsMainPanel_ReplaceName_ButtonAdd_OnClick()
+	local name = TinomOptionsMainPanelReplaceNameListName:GetText();
+    local newNameStr = _G["TinomOptionsMainPanelReplaceNameListNewName"]:GetText();
+	local newMsgStr = _G["TinomOptionsMainPanelReplaceNameListNewMsg"]:GetText();
+	if (#name < 1) then
+		_G["TinomOptionsMainPanelReplaceNameListName"]:SetText(Tinom.L["你太短啦!"]);
+		--Tdebug(self,"log","Options.replaceName.新增条目.你太短啦!");
+	elseif ((#newNameStr<1) and (#newMsgStr<1)) then
+		_G["TinomOptionsMainPanelReplaceNameListName"]:SetText(Tinom.L["你太短了!"]);
+		--Tdebug(self,"log","Options.replaceName.新增条目.你太短啦!");
+	else
+		TinomDB.filterDB.replaceName[name] = {newName=newNameStr,newMsg=newMsgStr}
+		----Tdebug(self,"log","Options.replaceName.新增条目");
+		Tinom.OptionsMainPanel_ReplaceName_ClearEditBox()
+		Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_LoadData();
+	end
+end
+
+--[[-------------------------------------------------------------------------
+--  删除条目按钮:点击事件
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsMainPanel_ReplaceName_ButtonDel_OnClick()
+	local name = TinomOptionsMainPanelReplaceNameListName:GetText();
+	TinomDB.filterDB.replaceName[name] = nil;
+	--Tdebug(self,"log","Options.replaceName.删除条目");
+	Tinom.OptionsMainPanel_ReplaceName_ClearEditBox()
+	Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_LoadData();
+end
+
+--[[-------------------------------------------------------------------------
+--  滚轮事件函数:更新滚动条高度
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsMainPanel_ReplaceName_Scroll_Update()
+	local scrollHeight = TinomOptionsMainPanelReplaceNameListScrollFrame:GetHeight();
+	if (#Tinom.tableReplaceNameTemp>10) then
+		Tinom_ScrollFrame_HightFrame:SetHeight(scrollHeight + #Tinom.tableReplaceNameTemp - 9)
+	end
+end
+
+--[[-------------------------------------------------------------------------
+--  滚轮事件函数:
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsMainPanel_ReplaceName_Scroll_OnMouseWheel(self, value)
+	local scrollBar = self.ScrollBar;
+	if ( value > 0 ) then
+		scrollBar:SetValue(scrollBar:GetValue() - 1);
+	else
+		scrollBar:SetValue(scrollBar:GetValue() + 1);
+	end
+	Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_Updata( math.floor(scrollBar:GetValue() + 1.5) )
+	----Tdebug(self,"log","Options.replaceName.ScroolFrame."..value..scrollBar:GetValue());
+end
+
+--[[-------------------------------------------------------------------------
 --  配置界面入口函数:
 -------------------------------------------------------------------------]]--
 
@@ -301,4 +436,5 @@ SLASH_TINOMOPTIONS1 = "/tinom"
 SLASH_TINOMOPTIONS2 = "/ti"
 SlashCmdList["TINOMOPTIONS"] = Tinom.OptionsMainPanel_Show;
 
-Tdebug(self,"log","Options.lua加载完成");
+--Tdebug(self,"log","Options.lua加载完成");
+

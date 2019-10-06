@@ -73,12 +73,16 @@ local function chat_send( ... )
     local attribute, write_msg, _, _, channel = ...
     --SendChatMessage(write_msg,"CHANNEL",nil,channel);
     --SendChatMessage(write_msg,"PARTY",nil);
+    if true then
+        return;
+    end
     if ( (Chat_Switch["Normal"] == true) and (attribute == "Normal") ) then
         DEFAULT_CHAT_FRAME:AddMessage(write_msg, 0.5, 0.5, 0.5)
         PlaySound(7994)
     elseif ( (Chat_Switch["Normal_A"] == true) and (attribute == "Normal_A") ) then
         DEFAULT_CHAT_FRAME:AddMessage(write_msg, 1.0, 1.0, 0.0)
     elseif ( (Chat_Switch["Spammer"] == true) and (attribute == "Spammer") ) then
+        PlaySound(10590)
         DEFAULT_CHAT_FRAME:AddMessage(write_msg, 1.0, 0.0, 0.0)
     elseif ( (Chat_Switch["Spammer_A"] == true) and (attribute == "Spammer_A") ) then
         DEFAULT_CHAT_FRAME:AddMessage(write_msg, 1.0, 0.5, 0.0)
@@ -101,7 +105,7 @@ local function chat_normal( channel, authorName, msg_count )
 end
 
 --[[-------------------------------------------------------------------------
---  重复发言处理函数,spammer(垃圾邮件制造者)
+--  重复发言处理函数,spammer(垃圾邮件制造者)and (not TinomDB.filterDB.blackList[authorName] )
 -------------------------------------------------------------------------]]--
 local function chat_spammer( channel, authorName, msg_repeat_times, elapsed )
     elapsed = elapsed:gsub("|4.-%:","")
@@ -111,7 +115,12 @@ local function chat_spammer( channel, authorName, msg_repeat_times, elapsed )
     if ( chat_level > 0) and ((msg_repeat_times % 10) == 0 ) then
         write_msg = write_msg..chat_Achievement("Spammer",chat_level);
         chat_send("Spammer_A",write_msg,"CHANNEL",nil,channel);
-        return true
+        for k,v in pairs(TinomDB.filterDB.blackList) do
+            if authorName == v then
+                return false;
+            end
+        end
+        return true;
     else
         chat_send("Spammer",write_msg,"CHANNEL",nil,channel);
     end
@@ -128,12 +137,10 @@ local function chat_stat_handler(self, event, msg, author,_,_,_,_,_,channelIndex
         return;
     end
 
-
-
     -- 初始化服务器信息
     if TinomDB.chatStatDB[authorServer] == nil then
         TinomDB.chatStatDB[format(authorServer)] = {}
-        print("==初始化服务器信息==")
+        --print("==初始化服务器信息==")
     end
 
     -- 初始化角色信息
@@ -143,43 +150,39 @@ local function chat_stat_handler(self, event, msg, author,_,_,_,_,_,channelIndex
     if authorNameDB_read == nil then
         --初始化角色信息
         TinomDB.chatStatDB[authorServer][authorName] = {
-            msg_count = 1;          --发言次数
-            msg_last_text = msg;    --上次发言内容
-            msg_last_time = time(); --上次发言时间
-            msg_repeat_times = 0;   --发言重复次数
+            msg_count = 1;
+            msg_last_text = msg;
+            msg_last_time = time();
+            msg_repeat_times = 0;
         }
 
         TinomDB.playerDB[guid] = {
-            name = authorName;  --角色姓名
-            class = Class;      --角色职业
-            race = Race;        --角色种族
-            sex = Sex;          --角色性别
+            name = authorName;
+            class = Class;
+            race = Race;
+            sex = Sex;
         };
 
-        print(format("==初始化角色%s信息==",authorName))
-        PlaySound(120)
+        --print(format("==初始化角色%s信息==",authorName))
+        --PlaySound(120)
     elseif authorNameDB_read.msg_last_text == msg then
         --重复发言判断
-        --计算与上次发言的时间差
         local elapsed = time() - authorNameDB_read.msg_last_time
         authorNameDB_write.msg_repeat_times = authorNameDB_write.msg_repeat_times + 1;
         authorNameDB_write.msg_count = authorNameDB_read.msg_count + 1;
         authorNameDB_write.msg_last_time = time();
-        --广告发言函数:如果返回值为true则将角色加入过滤列表.
-        PlaySound(10590)
+
         spammer = chat_spammer( channelIndex, authorName, authorNameDB_read.msg_repeat_times, SecondsToTime(elapsed) );
         if spammer then
-            TinomDB.filterDB.blackList:insert(authorName);
+            tinsert(TinomDB.filterDB.blackList,authorName);
         end
     else
         --正常发言
         authorNameDB_write.msg_last_text = msg;
         authorNameDB_write.msg_count = authorNameDB_read.msg_count + 1;
         authorNameDB_write.msg_last_time = time();
-        --嘴炮发言函数
         chat_normal( channelIndex, authorName, authorNameDB_read.msg_count );
     end
-    --return ignore,msg, author,_,_,_,_,_,channelIndex,_,_,lineID, guid,...
 end
 
 --[[-------------------------------------------------------------------------
@@ -188,10 +191,9 @@ end
 local function initializer_DB(...)
     --##--
     if ( TinomDB.chatStatDB ~= nil ) and (TinomDB.filterDB ~= nil ) then
-            --注册聊天统计函数触发事件
-            local chat_stat_frame = CreateFrame("Frame")
-            chat_stat_frame:RegisterEvent("CHAT_MSG_CHANNEL")
-            chat_stat_frame:SetScript("OnEvent", chat_stat_handler)
+        local chat_stat_frame = CreateFrame("Frame")
+        chat_stat_frame:RegisterEvent("CHAT_MSG_CHANNEL")
+        chat_stat_frame:SetScript("OnEvent", chat_stat_handler)
         return true
     else
         print("!!!!数据库初始化失败!!!!!")
