@@ -1,3 +1,11 @@
+--[[-------------------------------------------------------------------------
+--
+--  Options Setting
+--  设置界面
+--
+--  功能:面向对象,我的对象在哪呢...
+--
+-------------------------------------------------------------------------]]--
 local L = Tinom.L
 
 --[[-------------------------------------------------------------------------
@@ -11,17 +19,21 @@ TINOM_OPTION_MAINPANEL_CHACKBUTTON_MAINENABLE_TEXT = L["开启过滤"];
 --  默认配置:开关
 -------------------------------------------------------------------------]]--
 Tinom.defaultOptionsCheckButtons = {
-	Tinom_Switch_MsgFilter_MainEnable = true;
-	Tinom_Switch_MsgFilter_WhiteList = false;
-	Tinom_Switch_MsgFilter_WhiteListKeyWord = false;
-	Tinom_Switch_MsgFilter_WhiteListOnly = false;
-	Tinom_Switch_MsgFilter_BlackList = true;
-	Tinom_Switch_MsgFilter_BlackListKeyWord = false;
-	Tinom_Switch_MsgFilter_ReplaceName = false;
-	Tinom_Switch_MsgFilter_ReplaceNameMsg = false;
-	Tinom_Switch_MsgFilter_ReplaceKeyWord = false;
-	Tinom_Switch_MsgFilter_ReplaceKeyWordMsg = false;
-	Tinom_Switch_MsgFilter_CacheMsgRepeat = false;
+	Tinom_Switch_MsgFilter_MainEnable = true,
+	Tinom_Switch_MsgFilter_WhiteList = false,
+	Tinom_Switch_MsgFilter_WhiteListKeyWord = false,
+	Tinom_Switch_MsgFilter_WhiteListOnly = false,
+	Tinom_Switch_MsgFilter_BlackList = true,
+	Tinom_Switch_MsgFilter_BlackListKeyWord = false,
+	Tinom_Switch_MsgFilter_ReplaceName = false,
+	Tinom_Switch_MsgFilter_ReplaceNameMsg = false,
+	Tinom_Switch_MsgFilter_ReplaceKeyWord = false,
+	Tinom_Switch_MsgFilter_ReplaceKeyWordMsg = false,
+	Tinom_Switch_MsgFilter_CacheMsgRepeat = false,
+	Tinom_Switch_MsgFilter_AbbrChannelName = false,
+	Tinom_Switch_MsgFilter_AbbrAuthorName = false,
+	Tinom_Switch_MsgFilter_WhiteListSound = false,
+	Tinom_Switch_MsgFilter_WhiteListKeyWordSound = false,
 };
 --[[-------------------------------------------------------------------------
 --  默认配置:复选按钮文本
@@ -37,6 +49,8 @@ Tinom.defaultOptionsCheckButtonsName = {
 	ReplaceKeyWordMsg = "替换关键字的消息",
 	CacheMsgRepeat = "重复消息",
 	WhiteListOnly = "只有白名单",
+	AbbrChannelName = "缩写频道名",
+	AbbrAuthorName = "缩写玩家名(|cffffff00注意!被缩写的角色将导致其右键内交互功能失效!|r)"
 };
 --[[-------------------------------------------------------------------------
 --  地址索引:标签按钮 = 子设置界面
@@ -95,6 +109,13 @@ function Tinom.OptionsMainPanel_LoadOptions()
 	TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWord:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord);
 	TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWordMsg:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg);
 	TinomOptionsMainPanelBaseSettingCheckButton_CacheMsgRepeat:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_CacheMsgRepeat);
+	TinomOptionsMainPanelBaseSettingCheckButton_AbbrChannelName:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrChannelName);
+	TinomOptionsMainPanelBaseSettingCheckButton_AbbrAuthorName:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrAuthorName);
+	TinomOptionsMainPanelWhiteListSettingSound_Name:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSound);
+	TinomOptionsMainPanelWhiteListSettingSound_KeyWord:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWordSound);
+	TinomOptionsMainPanelBlackListSettingAutoBlackList:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_AutoBlackList);
+
+	--TinomOptionsMainPanelWhiteListSettingDropDown:SetValue(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID);
 	Tinom.OptionsPanel_EditBox_LoadOptions();
 	TinomOptionsMainPanelCheckButton_MainEnableText:SetText(L["开启过滤"]);
 	TinomOptionsMainPanelCheckButton_MainEnable.tooltipText = L["开启过滤系统的主开关"];
@@ -141,6 +162,13 @@ function Tinom.OptionsMainPanel_Updata(self)
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord = TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWord:GetChecked();
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg = TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWordMsg:GetChecked();
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_CacheMsgRepeat = TinomOptionsMainPanelBaseSettingCheckButton_CacheMsgRepeat:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrChannelName = TinomOptionsMainPanelBaseSettingCheckButton_AbbrChannelName:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrAuthorName = TinomOptionsMainPanelBaseSettingCheckButton_AbbrAuthorName:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSound = TinomOptionsMainPanelWhiteListSettingSound_Name:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWordSound = TinomOptionsMainPanelWhiteListSettingSound_KeyWord:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_AutoBlackList = TinomOptionsMainPanelBlackListSettingAutoBlackList:GetChecked();
+
+	--TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID = TinomOptionsMainPanelWhiteListSettingDropDown:GetValue();
 	--Tdebug(self,"log","Options.Tinom配置已保存");
 	Tinom.OptionsPanel_EditBox_Updata()
 	
@@ -276,6 +304,63 @@ end
 -------------------------------------------------------------------------]]--
 function Tinom.OptionsPanel_EditBox_OnCursorChanged(self)
 
+end
+
+--[[-------------------------------------------------------------------------
+--  白名单声音选择下拉框:
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsWhiteListSoundDropDown_Initialize(self)
+	local selectedValue = UIDropDownMenu_GetSelectedValue(self);
+	local info = UIDropDownMenu_CreateInfo();
+	local table_sounds = {
+		[1] = {12867,"铃声1"},
+		[2] = {12889,"铃声2"},
+	};
+
+	for k,v in pairs(table_sounds) do
+		info.value = v[1];
+		info.text = v[2];
+		info.func = Tinom.OptionsWhiteListSoundDropDown_OnClick;
+		if ( info.value == selectedValue ) then
+			info.checked = 1;
+		else
+			info.checked = nil;
+		end
+		UIDropDownMenu_AddButton(info);
+	end
+    
+
+end
+function Tinom.OptionsWhiteListSoundDropDown_OnShow(self,event)
+	self.defaultValue = 12867;
+	self.value = TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID or self.defaultValue;
+	self.tooltip = L["选一个你喜欢的提示音"];
+
+	UIDropDownMenu_SetWidth(self, 150);
+	UIDropDownMenu_Initialize(self, Tinom.OptionsWhiteListSoundDropDown_Initialize);
+	UIDropDownMenu_SetSelectedValue(self, self.value);
+
+	self.SetValue =
+		function (self, value)
+			self.value = value;
+			UIDropDownMenu_SetSelectedValue(self, value);
+		end
+	self.GetValue =
+		function (self)
+			return UIDropDownMenu_GetSelectedValue(self);
+		end
+	self.RefreshValue =
+		function (self)
+			UIDropDownMenu_Initialize(self, Tinom.OptionsWhiteListSoundDropDown_Initialize);
+			UIDropDownMenu_SetSelectedValue(self, self.value);
+		end
+end
+
+function Tinom.OptionsWhiteListSoundDropDown_OnClick(self)
+	TinomOptionsMainPanelWhiteListSettingDropDown:SetValue(self.value);
+	PlaySound(self.value);
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID = self.value
+	Tdebug(self,"log","OptionsWhiteListSoundDropDown_OnClick");
 end
 
 --[[-------------------------------------------------------------------------

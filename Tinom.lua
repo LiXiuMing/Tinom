@@ -1,3 +1,11 @@
+--[[-------------------------------------------------------------------------
+--
+--  Tinom Main Frame
+--  主框架
+--
+--  功能:初始化与索引
+--
+-------------------------------------------------------------------------]]--
 Tdebug(self,"log","Tinom.lua加载开始");
 --  获取插件的插件名和插件表
 --local addonName, addon = ...
@@ -48,6 +56,7 @@ function Tinom.OnLoaded(self,event,addonName)
         Tinom.OptionsMainPanel_checkOptions();
         Tinom.MsgFilterOn();
         Tinom.ChatStat_OnLoad();
+        Tinom.ReplaceChannelName();
 
         --Tinom.OptionsMainPanel_OnLoad(self,...);
     end

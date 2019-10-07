@@ -148,7 +148,7 @@ local function chat_stat_handler(self, event, msg, author,_,_,_,_,_,channelIndex
     local authorNameDB_read = TinomDB.chatStatDB[authorServer][authorName]
     local authorNameDB_write = TinomDB.chatStatDB[format(authorServer)][format(authorName)]
     if authorNameDB_read == nil then
-        --初始化角色信息
+
         TinomDB.chatStatDB[authorServer][authorName] = {
             msg_count = 1;
             msg_last_text = msg;
@@ -163,8 +163,6 @@ local function chat_stat_handler(self, event, msg, author,_,_,_,_,_,channelIndex
             sex = Sex;
         };
 
-        --print(format("==初始化角色%s信息==",authorName))
-        --PlaySound(120)
     elseif authorNameDB_read.msg_last_text == msg then
         --重复发言判断
         local elapsed = time() - authorNameDB_read.msg_last_time
@@ -173,7 +171,8 @@ local function chat_stat_handler(self, event, msg, author,_,_,_,_,_,channelIndex
         authorNameDB_write.msg_last_time = time();
 
         spammer = chat_spammer( channelIndex, authorName, authorNameDB_read.msg_repeat_times, SecondsToTime(elapsed) );
-        if spammer then
+        if spammer and TinomDB.Options.Default.Tinom_Switch_MsgFilter_AutoBlackList then
+            Tdebug(self,"log","AutoBlackList");
             tinsert(TinomDB.filterDB.blackList,authorName);
         end
     else
@@ -204,7 +203,6 @@ end
 --  入口,注册初始化触发事件
 -------------------------------------------------------------------------]]--
 function Tinom.ChatStat_OnLoad()
-
     initializer_DB();
 end
 

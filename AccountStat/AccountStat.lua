@@ -29,6 +29,10 @@ function Tinom.LoginLog(self, event, addonName)
         -- 保存角色退出游戏的时间
         accountDB_Temp[playerName].lastTime = time();
         TinomDB.accountDB = accountDB_Temp;
+
+        Tdebug(self,"log","清空数据库:TinomDB.chatStatDB");
+        TinomDB.playerDB = {};--##--统计功能完善前发布版先别保存用户数据,防止无休止增长.
+        TinomDB.chatStatDB = {};--##--统计功能完善前发布版先别保存用户数据,防止无休止增长.
         Tdebug(self,"log","9LoginLog保存角色:"..playerName);
     end
 end

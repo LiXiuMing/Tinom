@@ -1,3 +1,11 @@
+--[[-------------------------------------------------------------------------
+--
+--  Filter Model
+--  聊天过滤模块
+--
+--  功能:过滤啊!哈哈哈
+--
+-------------------------------------------------------------------------]]--
 --  临时表
 TinomDB_filterDB_cacheMsgTemp = {};
 TinomDB_filterDB_whiteListTemp = {};
@@ -16,7 +24,13 @@ function Tinom.ReplaceChannelName()
             local chatFrame = _G["ChatFrame"..i]
             local addmsg = chatFrame.AddMessage
             chatFrame.AddMessage = function(frame, text,...)
-                text = text:gsub( "%[(%d)%..-%]", "%[%1%]" )
+                if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrChannelName) then
+                    --Tdebug(self,"log","Tinom.AbbrChannelName."..text);
+                    text = text:gsub( "%[(%d)%..-%]", "%[%1%]" )
+                end
+                if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrAuthorName) then
+                    text = text:gsub( "(%|%w-%S-)%-%S-%|", "%1%#%|" );
+                end
                 return addmsg(frame,text,...)
             end
         end
@@ -33,18 +47,18 @@ function Tinom.ReplaceName( name )
 
     for k,v in pairs(TinomDB.filterDB.replaceName) do
         if ( name == k ) then
-            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName == true ) then
+            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName == true ) and (#v.newName > 0) then
                 newName = v.newName;
             end
-            if ( ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg == true ) and v.newMsg ) then
+            if ( ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg == true ) and (#v.newMsg > 0)  ) then
                 newMsg = v.newMsg;
             end
             return newMsg, newName;
         elseif ( authorName == k ) then
-            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName == true ) then
+            if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName == true ) and (#v.newName > 0) then
                 newName = v.newName..authorServer;
             end
-            if ( ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg == true ) and v.newMsg ) then
+            if ( ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg == true ) and (#v.newMsg > 0) ) then
                 newMsg = v.newMsg;
             end
             return newMsg, newName;
@@ -115,6 +129,9 @@ function Tinom.MsgFilter( self,event,... )
     if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteList ) then
         for k,v in pairs(TinomDB.filterDB.whiteList) do
             if ( authorName == v ) then
+                if TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSound then
+                    PlaySound(TinomOptionsMainPanelWhiteListSettingDropDown:GetValue());
+                end
                 return false;
             end
         end
@@ -127,6 +144,9 @@ function Tinom.MsgFilter( self,event,... )
     if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWord ) then
         for _,v in pairs(TinomDB.filterDB.whiteListKeyWord) do
             if arg1:find(v) then
+                if TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWordSound then
+                    PlaySound(TinomOptionsMainPanelWhiteListSettingDropDown:GetValue());
+                end
                 return false;
             end
         end
@@ -204,7 +224,7 @@ function Tinom.MsgFilterOn()
     ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", Tinom.MsgFilter)
     ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", Tinom.MsgFilter)
     ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", Tinom.MsgFilter)
-    ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", Tinom.MsgFilter)
+    --ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", Tinom.MsgFilter)
     print("过滤已开启")
 end
 
@@ -216,7 +236,7 @@ function Tinom.MsgFilterOff()
     ChatFrame_RemoveMessageEventFilter("CHAT_MSG_CHANNEL", Tinom.MsgFilter)
     ChatFrame_RemoveMessageEventFilter("CHAT_MSG_SAY", Tinom.MsgFilter)
     ChatFrame_RemoveMessageEventFilter("CHAT_MSG_YELL", Tinom.MsgFilter)
-    ChatFrame_RemoveMessageEventFilter("CHAT_MSG_WHISPER", Tinom.MsgFilter)
+    --ChatFrame_RemoveMessageEventFilter("CHAT_MSG_WHISPER", Tinom.MsgFilter)
     print("过滤已关闭")
 end
 

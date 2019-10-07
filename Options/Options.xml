@@ -316,7 +316,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
   </Button>
 
   <!-- 主设置界面 -->
-  <Frame name="TinomOptionsMainPanel" text="TINOM_OPTION_MAINPANEL_LABEL" hidden="true" parent="InterfaceOptionsFramePanelContainer">
+  <Frame name="TinomOptionsMainPanel" text="" hidden="true" parent="InterfaceOptionsFramePanelContainer">
     <Layers>
       <Layer level="ARTWORK">
 
@@ -498,6 +498,23 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
               </Anchor>
             </Anchors>
           </CheckButton>
+          <!-- 频道与姓名缩写 -->
+          <CheckButton name="$parentCheckButton_AbbrChannelName" inherits="TinomOptionsMainPanelCheckButton_Template">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_CacheMsgRepeat" relativePoint="BOTTOMLEFT">
+                <Offset x="0" y="-5"/>
+              </Anchor>
+            </Anchors>
+          </CheckButton>
+          <!-- 姓名缩写隐藏服务器:NOTE!被缩写的角色将导致邀请组队失效,因为服务器被隐藏了. -->
+          <CheckButton name="$parentCheckButton_AbbrAuthorName" inherits="TinomOptionsMainPanelCheckButton_Template">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_AbbrChannelName" relativePoint="BOTTOMLEFT">
+                <Offset x="0" y="-5"/>
+              </Anchor>
+            </Anchors>
+          </CheckButton>
+          
           
         </Frames>
         
@@ -519,7 +536,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
             </Anchors>
             <Scripts>
               <OnLoad>
-                _G[self:GetName().."Title"]:SetText(Tinom.L["白名单列表"]);
+                _G[self:GetName().."Title"]:SetText(Tinom.L["白名单:玩家"]);
               </OnLoad>
             </Scripts>
           </Frame>
@@ -527,15 +544,89 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
           <!-- 白名单关键字编辑框 -->
           <Frame name="$parentEditList_WhiteListKeyWord" inherits="TinomOptionsMainPanelEditListTemplate">
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentEditList_WhiteList" relativePoint="TOPRIGHT" x="20" />
-              <Anchor point="BOTTOMLEFT" relativeTo="$parentEditList_WhiteList" relativePoint="BOTTOMRIGHT"/>
+              <Anchor point="TOPRIGHT" x="-5" y="-60"/>
+              <Anchor point="BOTTOMRIGHT" y="5"/>
             </Anchors>
             <Scripts>
               <OnLoad>
-                _G[self:GetName().."Title"]:SetText(Tinom.L["白名单关键字列表"]);
+                _G[self:GetName().."Title"]:SetText(Tinom.L["白名单:关键字"]);
               </OnLoad>
             </Scripts>
           </Frame>
+
+          <!-- 下拉菜单 -->
+          <Frame name="$parentDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true">
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="$parentEditList_WhiteList" relativePoint="RIGHT"/>
+              <Anchor point="RIGHT" relativeTo="$parentEditList_WhiteListKeyWord" relativePoint="LEFT"/>
+            </Anchors>
+            <Layers>
+              <Layer level="ARTWORK">
+                <FontString name="$parentText2" text="" inherits="GameFontHighlightLeft">
+                  <Anchors>
+                    <Anchor point="BOTTOM" relativeTo="$parent" relativePoint="TOP">
+                      <Offset>
+                        <AbsDimension x="0" y="0"/>
+                      </Offset>
+                    </Anchor>
+                  </Anchors>
+                </FontString>
+              </Layer>
+            </Layers>
+            <Scripts>
+              <OnLoad>
+                _G[self:GetName().."Text2"]:SetText(Tinom.L["声音提醒"]);
+                self.type = CONTROLTYPE_DROPDOWN;
+                BlizzardOptionsPanel_RegisterControl(self, self:GetParent());
+              </OnLoad>
+              <OnEnter>
+                if ( not self.isDisabled ) then
+                GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT");
+                GameTooltip:SetText(self.tooltip, nil, nil, nil, nil, true);
+                end
+              </OnEnter>
+              <OnEvent>
+              
+              </OnEvent>
+              <OnLeave function="GameTooltip_Hide"/>
+              <OnShow>
+                Tinom.OptionsWhiteListSoundDropDown_OnShow(self,event);
+              </OnShow>
+            </Scripts>
+          </Frame>
+
+          <!-- 白名单名字声音提醒复选框 -->
+          <CheckButton name="$parentSound_Name" inherits="InterfaceOptionsCheckButtonTemplate">
+            <Anchors>
+              <Anchor point="BOTTOMLEFT" relativeTo="$parentDropDown" relativePoint="TOPLEFT" x="0" y="0"/>
+              <!-- <Anchor point="CENTER" y="5"/> -->
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+
+              </OnLoad>
+              <OnClick>
+
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+
+           <!-- 白名单关键字声音提醒复选框 -->
+          <CheckButton name="$parentSound_KeyWord" inherits="InterfaceOptionsCheckButtonTemplate">
+            <Anchors>
+              <Anchor point="BOTTOMRIGHT" relativeTo="$parentDropDown" relativePoint="TOPRIGHT" x="0" y="0"/>
+              <!-- <Anchor point="CENTER" y="5"/> -->
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+
+              </OnLoad>
+              <OnClick>
+
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+
         </Frames>
 
         <Scripts>
@@ -556,7 +647,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
             </Anchors>
             <Scripts>
               <OnLoad>
-                _G[self:GetName().."Title"]:SetText(Tinom.L["黑名单列表"]);
+                _G[self:GetName().."Title"]:SetText(Tinom.L["黑名单:玩家"]);
               </OnLoad>
             </Scripts>
           </Frame>
@@ -564,15 +655,44 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
           <!-- 黑名单关键字编辑框 -->
           <Frame name="$parentEditList_BlackListKeyWord" inherits="TinomOptionsMainPanelEditListTemplate">
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentEditList_BlackList" relativePoint="TOPRIGHT" x="20" />
-              <Anchor point="BOTTOMLEFT" relativeTo="$parentEditList_BlackList" relativePoint="BOTTOMRIGHT"/>
+              <Anchor point="TOPRIGHT" x="-5" y="-60"/>
+              <Anchor point="BOTTOMRIGHT" y="5"/>
             </Anchors>
             <Scripts>
               <OnLoad>
-              _G[self:GetName().."Title"]:SetText(Tinom.L["黑名单关键字列表"]);
+              _G[self:GetName().."Title"]:SetText(Tinom.L["黑名单:关键字"]);
               </OnLoad>
             </Scripts>
           </Frame>
+
+          <!-- 自动统计并添加黑名单 -->
+          <CheckButton name="$parentAutoBlackList" inherits="InterfaceOptionsCheckButtonTemplate">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="$parentEditList_BlackList" relativePoint="TOPRIGHT" x="10" y="0"/>
+              <!-- <Anchor point="CENTER" y="5"/> -->
+            </Anchors>
+            <Layers>
+              <Layer level="ARTWORK">
+                <FontString name="$parentText2" inherits="GameFontHighlightLeft"  parentKey="Text">
+                  <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="BOTTOMLEFT">
+                      <Offset>
+                        <AbsDimension x="0" y="0"/>
+                      </Offset>
+                    </Anchor>
+                  </Anchors>
+                </FontString>
+              </Layer>
+            </Layers>
+            <Scripts>
+              <OnLoad>
+                _G[self:GetName().."Text2"]:SetText(Tinom.L["自动添加黑名单"]);
+              </OnLoad>
+              <OnClick>
+
+              </OnClick>
+            </Scripts>
+          </CheckButton>
         </Frames>
 
         <Scripts>
@@ -891,7 +1011,24 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
           </OnClick>
         </Scripts>
       </Button>
-
+      <!-- 应用按钮模块 -->
+      <Button name="$parentButton_Apply" inherits="UIPanelButtonTemplate">
+        <Size x="100" y="26"/>
+        <Anchors>
+          <Anchor point="BOTTOM" y="-35"/>
+        </Anchors>
+        <Scripts>
+          <OnShow>
+            self:SetText(Tinom.L["应用"]);
+          </OnShow>
+          <OnClick>
+            PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
+            Tinom.OptionsMainPanel_Updata();
+          </OnClick>
+        </Scripts>
+        <NormalFont style="GameFontNormalSmall"/>
+        <HighlightFont style="GameFontHighlightSmall"/>
+      </Button>
     </Frames>
 
     <Scripts>
