@@ -10,9 +10,26 @@
 TinomDB_filterDB_cacheMsgTemp = {};
 TinomDB_filterDB_whiteListTemp = {};
 TinomDB_filterDB_blackListTemp = {};
+TinomDB_playerDB_classTemp = {};
 
 --  当前玩家名
 local playerName = UnitName("player");
+
+--  颜色表
+Tinom.classes = {
+    ["HUNTER"] = "ffa9d271",
+    ["WARLOCK"] = "ff8686ec",
+    ["PRIEST"] = "fffefefe",
+    ["PALADIN"] = "fff38bb9",
+    ["MAGE"] = "ff3ec5e9",
+    ["ROGUE"] = "fffef367",
+    ["DRUID"] = "fffe7b09",
+    ["SHAMAN"] = "ff006fdc",
+    ["WARRIOR"] = "ffc59a6c",
+    ["DEATHKNIGHT"] = "ffc31d39",
+    ["MONK"] = "ff00fe95",
+    ["DEMONHUNTER"] = "ffa22fc8"
+};
 
 --[[-------------------------------------------------------------------------
 --  聊天频道名替换函数:因上级函数使用频道名字符串长度作为逻辑条件不便更改,
@@ -24,8 +41,18 @@ function Tinom.ReplaceChannelName()
             local chatFrame = _G["ChatFrame"..i]
             local addmsg = chatFrame.AddMessage
             chatFrame.AddMessage = function(frame, text,...)
+                if ( Tinom.Tinom_Switch_MsgFilter_Classic ) then
+                    regex = "%[(%S-)%]%|h%："
+                    a,b = string.find(text,regex)
+                    if ( a and b ) then
+                        name = string.sub(text,a+1,b-6)
+                        playerClass = TinomDB_playerDB_classTemp[name] or "PRIEST";
+                        colorname = "|c"..Tinom.classes[playerClass]..name.."|r"
+                        text = string.gsub(text,"%["..name.."%]","%["..colorname.."%]")
+                        --Tdebug(self,"log","Tinom.colorName."..strOut);
+                    end
+                end
                 if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrChannelName) then
-                    --Tdebug(self,"log","Tinom.AbbrChannelName."..text);
                     text = text:gsub( "%[(%d)%..-%]", "%[%1%]" )
                 end
                 if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrAuthorName) then
@@ -117,7 +144,11 @@ function Tinom.MsgFilter( self,event,... )
     --if ( event ~= "CHAT_MSG_CHANNEL" ) then return end
     local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = ...;
     local authorName, authorServer = arg2:match( "(.-)%-(.*)" )
-    
+    --  针对怀旧服--##--
+    if not authorServer then
+        authorName = arg2;
+        authorServer = "server";
+    end
     if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_MainEnable == false) )then
         --Tdebug(self,"log","Tinom.MsgFilter.Tinom_Switch_MsgFilter_MainEnable.触发");
         return false;
@@ -125,6 +156,10 @@ function Tinom.MsgFilter( self,event,... )
     
     --  统计函数  --
     --统计函数
+
+    --  缓存职业
+    local _, Class, _, Race, Sex  = GetPlayerInfoByGUID(arg12);
+    TinomDB_playerDB_classTemp[authorName] = Class;
     
     --  白名单过滤  --
     if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteList ) then

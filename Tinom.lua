@@ -16,6 +16,14 @@ Tinom = {};
 --  当前玩家名
 local playerName = UnitName("player");
 
+--  游戏版本
+local _,_,_,gameVersion = GetBuildInfo();
+--  角色名染色开关
+Tinom.Tinom_Switch_MsgFilter_ColorName = false;
+if ( gameVersion < 80205 ) then
+    Tinom.Tinom_Switch_MsgFilter_Classic = true;
+end
+
 --[[-------------------------------------------------------------------------
 --  初始化数据库:
 -------------------------------------------------------------------------]]--

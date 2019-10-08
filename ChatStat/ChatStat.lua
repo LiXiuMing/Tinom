@@ -131,6 +131,10 @@ end
 -------------------------------------------------------------------------]]--
 local function chat_stat_handler(self, event, msg, author,_,_,_,_,_,channelIndex,_,_,lineID, guid,...)
     local authorName, authorServer = author:match( "(.-)%-(.*)" )
+    if not authorServer then
+        authorName = author;
+        authorServer = "server";
+    end
     local ignore = false
     --判断是否是本人,是否非测试模式,如果全部满足则跳出.
     if authorName == UnitName("player") and IsTest == false then
