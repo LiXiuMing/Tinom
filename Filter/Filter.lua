@@ -75,12 +75,13 @@ function Tinom.ReplaceMsg( msg )
     local newMsg = nil;
     for k,v in pairs(TinomDB.filterDB.replaceKeyWord) do
         if ( msg:find(k) ) then
-            if ( ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg == true ) and v.newMsg ) then
+            if ( ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg == true ) and #v.newMsg > 0 ) then
                 newMsg = v.newMsg;
-            else
+            end
+            if ( ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord == true ) and #v.newWord > 0 ) then
                 newMsg = msg:gsub(k,v.newWord);
             end
-            return newMsg;
+            msg = newMsg;
         end
     end
     return newMsg;

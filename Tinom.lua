@@ -33,7 +33,40 @@ function Tinom.checkTinomDB()
                 blackList = {},
                 blackListKeyWord = {},
                 replaceName = {},
-                replaceKeyWord = {},
+                replaceKeyWord = {
+                    ["?+"] = {
+                        newWord = "?",
+                        newMsg = "",
+                    },
+                    ["++"] = {
+                        newWord = "+",
+                        newMsg = "",
+                    },
+                    ["M+"] = {
+                        newWord = "M",
+                        newMsg = "",
+                    },
+                    ["~+"] = {
+                        newWord = "~",
+                        newMsg = "",
+                    },
+                    ["？+"] = {
+                        newWord = "_",
+                        newMsg = "",
+                    },
+                    ["，+"] = {
+                        newWord = "_",
+                        newMsg = "",
+                    },
+                    ["。+"] = {
+                        newWord = "_",
+                        newMsg = "",
+                    },
+                    ["%b{}"] = {
+                        newWord = "_",
+                        newMsg = "这是大饼星星之类的图标,用不上可以删除.",
+                    },
+                },
             },
         };
         if ( TinomDB.filterDB ) then

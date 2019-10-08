@@ -38,7 +38,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
             <Anchor point="LEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
             <Anchor point="RIGHT" relativeTo="$parentTitle" x="0" y="0"/>
           </Anchors>
-          <Color r="1" g="1" b="0" a="1"/>
+          <Color r="1" g="1" b="0"/>
         </Texture>
       </Layer>
     </Layers>
@@ -125,7 +125,9 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
                 <!-- local listType = string.sub(grandParentName,string.find(grandParentName,"_")+1) -->
                 <!-- Tinom.OptionsPanel_EditBox_OnShow(self,listType); -->
               </OnShow>
-
+              <OnEscapePressed>
+                self:ClearFocus();
+              </OnEscapePressed>
               <OnCursorChanged>
                 <!-- Tinom.OptionsPanel_EditBox_OnCursorChanged(self); -->
               </OnCursorChanged>
@@ -182,6 +184,11 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
         </Texture>
       </Layer>
     </Layers>
+    <Scripts>
+      <OnEscapePressed>
+        self:ClearFocus();
+      </OnEscapePressed>
+    </Scripts>
   </EditBox>
   <!-- 名单按钮模板 -->
   <Button name="TinomOptionsMainPanelNameListButton" virtual="true">
@@ -283,6 +290,137 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
       </OnMouseUp>
       <OnClick>
         Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_OnClick( self );
+      </OnClick>
+    </Scripts>
+    <!-- 高亮纹理 -->
+    <HighlightTexture file="Interface\Buttons\ListButtons" alphaMode="ADD">
+      <Anchors>
+        <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="2"/>
+        <Anchor point="BOTTOMRIGHT" relativeTo="$parentRight" relativePoint="BOTTOMRIGHT" x="-2"/>
+      </Anchors>
+      <TexCoords left="0.078125" right="0.75" top="0.18" bottom="0.37"/>
+      <Color r="1" g="1" b="1" a="1"/>
+    </HighlightTexture>
+    <!-- 按下纹理 -->
+    <PushedTexture file="Interface\Buttons\ListButtons" alphaMode="ADD">
+      <Anchors>
+        <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="2"/>
+        <Anchor point="BOTTOMRIGHT" relativeTo="$parentRight" relativePoint="BOTTOMRIGHT" x="-2"/>
+      </Anchors>
+      <TexCoords left="0.078125" right="0.75" top="0.37" bottom="0.53"/>
+      <Color r="1" g="1" b="1" a="1"/>
+    </PushedTexture>
+    <!-- 禁用纹理 -->
+    <PushedTexture file="Interface\Buttons\ListButtons" alphaMode="ADD">
+      <Anchors>
+        <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="2"/>
+        <Anchor point="BOTTOMRIGHT" relativeTo="$parentRight" relativePoint="BOTTOMRIGHT" x="-2"/>
+      </Anchors>
+      <TexCoords left="0.078125" right="0.75" top="0.37" bottom="0.53"/>
+      <Color r="1" g="1" b="1" a="1"/>
+    </PushedTexture>
+
+  </Button>
+  <!-- 关键字按钮模板 -->
+  <Button name="TinomOptionsMainPanelKeyWordListButton" virtual="true">
+    <Size>
+      <AbsDimension y="32"/>
+    </Size>
+    <Anchors>
+      <Anchor point="TOPLEFT" x="5" y="-5"/>
+      <Anchor point="RIGHT" x="-26"/>
+    </Anchors>
+    <Layers>
+      <Layer level="ARTWORK">
+        <!-- 关键字 -->
+        <FontString name="$parent_KeyWord" inherits="GameFontHighlightLeft" parentKey="Text">
+          <Size>
+            <AbsDimension x="120"/>
+          </Size>
+          <Anchors>
+            <Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT">
+              <Offset>
+                <AbsDimension x="10" y="0"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </FontString>
+        <!-- 替换关键字 -->
+        <FontString name="$parent_NewWord" inherits="ChatFontNormal" maxLines="2">
+          <Size>
+            <AbsDimension x="120"/>
+          </Size>
+          <Anchors>
+            <Anchor point="LEFT" relativeTo="$parent_KeyWord" relativePoint="RIGHT">
+              <Offset>
+                <AbsDimension x="10" y="0"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </FontString>
+        <!-- 替换消息 -->
+        <FontString name="$parent_NewMsg" inherits="ChatFontNormal" maxLines="2" justifyH="LEFT" justifyV="TOP">
+          <Anchors>
+            <Anchor point="LEFT" relativeTo="$parent_NewWord" relativePoint="RIGHT">
+              <Offset>
+                <AbsDimension x="10" y="0"/>
+              </Offset>
+            </Anchor>
+            <Anchor point="RIGHT" relativeTo="$parent" relativePoint="RIGHT"/>
+          </Anchors>
+        </FontString>
+        <!-- 左边材质 -->
+        <Texture name="$parentLeft" file="Interface\Buttons\ListButtons" parentKey="texture">
+          <Size>
+            <AbsDimension x="10" y="32"/>
+          </Size>
+          <Anchors>
+            <Anchor point="TOPLEFT"/>
+            <!-- <Anchor point="BOTTOMRIGHT"/> -->
+          </Anchors>
+          <TexCoords left="0" right="0.078125" top="0" bottom="0.18"/>
+        </Texture>
+        <!-- 中间材质 -->
+        <Texture name="$parentCenter" file="Interface\Buttons\ListButtons">
+          <Size>
+            <AbsDimension y="32"/>
+          </Size>
+          <Anchors>
+            <Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT">
+              <Offset>
+                <AbsDimension x="0" y="0"/>
+              </Offset>
+            </Anchor>
+            <Anchor point="RIGHT" relativeTo="$parent" relativePoint="RIGHT">
+              <Offset>
+                <AbsDimension x="-10" y="0"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+          <TexCoords left="0.078125" right="0.75" top="0" bottom="0.18"/>
+        </Texture>
+        <!-- 右边材质 -->
+        <Texture name="$parentRight" file="Interface\Buttons\ListButtons">
+          <Size>
+            <AbsDimension x="10" y="32"/>
+          </Size>
+          <Anchors>
+            <Anchor point="LEFT" relativeTo="$parentCenter" relativePoint="RIGHT" >
+            </Anchor>
+          </Anchors>
+          <TexCoords left="0.75" right="0.828125" top="0" bottom="0.18"/>
+        </Texture>
+      </Layer>
+    </Layers>
+    <Scripts>
+      <OnMouseDown>
+        self.texture:SetPoint("TOPLEFT", 1, -1);
+      </OnMouseDown>
+      <OnMouseUp>
+        self.texture:SetPoint("TOPLEFT", 0, 0);
+      </OnMouseUp>
+      <OnClick>
+        Tinom.OptionsMainPanel_ReplaceKeyWord_ListBrowseButton_OnClick( self );
       </OnClick>
     </Scripts>
     <!-- 高亮纹理 -->
@@ -575,7 +713,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
             </Layers>
             <Scripts>
               <OnLoad>
-                _G[self:GetName().."Text2"]:SetText(Tinom.L["声音提醒"]);
+                _G[self:GetName().."Text2"]:SetText(Tinom.L["声音提醒需要开启\n相应的白名单过滤"]);
                 self.type = CONTROLTYPE_DROPDOWN;
                 BlizzardOptionsPanel_RegisterControl(self, self:GetParent());
               </OnLoad>
@@ -705,6 +843,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
       <!-- 替换单设置框架 -->
       <Frame name="$parentReplace" parent="TinomOptionsMainPanel" inherits="TinomOptionsMainPanelTabTemplate">
         <Frames>
+          <!-- 按角色名替换 -->
           <Frame name="$parentNameList">
             <Anchors>
               <Anchor point="TOPLEFT" x="5" y="-110"/>
@@ -927,6 +1066,256 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
             </Scripts>
 
           </Frame>
+
+          <!-- 按关键字替换 -->
+          <Frame name="$parentKeyWordList" hidden="true">
+            <Anchors>
+              <Anchor point="TOPLEFT" x="5" y="-110"/>
+              <Anchor point="BOTTOMRIGHT" x="-5" y="5"/>
+            </Anchors>
+            
+            <Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+              <EdgeSize>
+                <AbsValue val="16"/>
+              </EdgeSize>
+
+              <BorderColor r="1" g="1" b="0" a="1"/>
+              <Color r="0.2" g="0.2" b="0.2" a="0.4"/>
+
+              <BackgroundInsets>
+                <AbsInset left="5" right="5" top="5" bottom="5"/>
+              </BackgroundInsets>
+            </Backdrop>
+
+            <Frames>
+              <EditBox name="$parentKeyWord" inherits="TinomOptionsMainPanelEditBoxTemplate">
+                <Size x="120" y="20"/>
+                <Anchors>
+                  <Anchor point="BOTTOMLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="12" y="4"/>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>
+                    self:SetText(Tinom.L["关键字"])
+                  </OnLoad>
+                  <OnEditFocusGained>
+                    if (self:GetText() == Tinom.L["关键字"]) then
+                      self:SetText("");
+                    end
+                  </OnEditFocusGained>
+                  <OnEditFocusLost>
+                    self:HighlightText(0,0);
+                  </OnEditFocusLost>
+                  <OnTextChanged>
+                    Tinom.OptionsMainPanel_ReplaceName_EditBoxName_OnTextChanged(self);
+                  </OnTextChanged>
+                  <OnTabPressed>
+                    _G[self:GetParent():GetName().."NewWord"]:SetFocus();
+                  </OnTabPressed>
+                </Scripts>
+              </EditBox>
+              <EditBox name="$parentNewWord" inherits="TinomOptionsMainPanelEditBoxTemplate">
+                <Size x="120" y="20"/>
+                <Anchors>
+                  <Anchor point="LEFT" relativeTo="$parentKeyWord" relativePoint="RIGHT" x="10"/>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>
+                    self:SetText(Tinom.L["新关键字-可选"])
+                  </OnLoad>
+                  <OnEditFocusGained>
+                    if (self:GetText() == Tinom.L["新关键字-可选"]) then
+                      self:SetText("");
+                    end
+                  </OnEditFocusGained>
+                  <OnEditFocusLost>
+                    self:HighlightText(0,0);
+                  </OnEditFocusLost>
+                  <OnTabPressed>
+                    _G[self:GetParent():GetName().."NewMsg"]:SetFocus();
+                  </OnTabPressed>
+                </Scripts>
+              </EditBox>
+              <EditBox name="$parentNewMsg" inherits="TinomOptionsMainPanelEditBoxTemplate">
+                <Size x="220" y="20"/>
+                <Anchors>
+                  <Anchor point="LEFT" relativeTo="$parentNewWord" relativePoint="RIGHT" x="10"/>
+                </Anchors>
+                <Layers>
+                <Layer>
+                <Texture file="Interface\ChatFrame\UI-ChatInputBorder-Left">
+                  <Size>
+                    <AbsDimension x="100" y="32"></AbsDimension>
+                  </Size>
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parent">
+                      <Offset>
+                        <AbsDimension x="60" y="0"></AbsDimension>
+                      </Offset>
+                    </Anchor>
+                  </Anchors>
+                  <TexCoords left="0.2" right="0.7" top="0" bottom="1.0"></TexCoords>
+                </Texture>
+                </Layer>
+                </Layers>
+                <Scripts>
+                  <OnLoad>
+                    self:SetText(Tinom.L["新消息-可选"])
+                  </OnLoad>
+                  <OnEditFocusGained>
+                    if (self:GetText() == Tinom.L["新消息-可选"]) then
+                      self:SetText("");
+                    end
+                  </OnEditFocusGained>
+                  <OnEditFocusLost>
+                    self:HighlightText(0,0);
+                  </OnEditFocusLost>
+                  <OnTabPressed>
+                    self:ClearFocus();
+                  </OnTabPressed>
+                </Scripts>
+              </EditBox>
+              <!-- 新增条目按钮模块 -->
+              <Button name="$parentButtonAdd" inherits="UIPanelButtonTemplate" text="新增">
+                <Size>
+                  <AbsDimension x="45" y="26"/>
+                </Size>
+                <Anchors>
+                  <Anchor point="LEFT" relativeTo="$parentNewMsg" relativePoint="RIGHT" x="10">
+                  </Anchor>
+                </Anchors>
+                <Scripts>
+                  <OnClick>
+                    Tinom.OptionsMainPanel_ReplaceKeyWord_ButtonAdd_OnClick();
+                  </OnClick>
+                </Scripts>
+                <NormalFont style="GameFontNormalSmall"/>
+                <HighlightFont style="GameFontHighlightSmall"/>
+              </Button>
+              <!-- 删除条目按钮模块 -->
+              <Button name="$parentButtonDel" inherits="UIPanelButtonTemplate" text="删除">
+                <Size>
+                  <AbsDimension x="45" y="26"/>
+                </Size>
+                <Anchors>
+                  <Anchor point="LEFT" relativeTo="$parentButtonAdd" relativePoint="RIGHT">
+                  </Anchor>
+                </Anchors>
+                <Scripts>
+                  <OnClick>
+                    Tinom.OptionsMainPanel_ReplaceKeyWord_ButtonDel_OnClick();
+                  </OnClick>
+                </Scripts>
+                <NormalFont style="GameFontNormalSmall"/>
+                <HighlightFont style="GameFontHighlightSmall"/>
+              </Button>
+
+              <Button name="$parentButton1" inherits="TinomOptionsMainPanelKeyWordListButton" id="1">
+                <Anchors>
+                  <Anchor point="TOPLEFT" x="5" y="-5"/>
+                  <Anchor point="RIGHT" x="-26"/>
+                </Anchors>
+              </Button>
+              <Button name="$parentButton2" inherits="TinomOptionsMainPanelKeyWordListButton" id="2">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentButton1" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+              </Button>
+              <Button name="$parentButton3" inherits="TinomOptionsMainPanelKeyWordListButton" id="3">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentButton2" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+              </Button>
+              <Button name="$parentButton4" inherits="TinomOptionsMainPanelKeyWordListButton" id="4">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentButton3" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+              </Button>
+              <Button name="$parentButton5" inherits="TinomOptionsMainPanelKeyWordListButton" id="5">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentButton4" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+              </Button>
+              <Button name="$parentButton6" inherits="TinomOptionsMainPanelKeyWordListButton" id="6">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentButton5" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+              </Button>
+              <Button name="$parentButton7" inherits="TinomOptionsMainPanelKeyWordListButton" id="7">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentButton6" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+              </Button>
+              <Button name="$parentButton8" inherits="TinomOptionsMainPanelKeyWordListButton" id="8">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentButton7" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+              </Button>
+              <Button name="$parentButton9" inherits="TinomOptionsMainPanelKeyWordListButton" id="9">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentButton8" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+              </Button>
+              <Button name="$parentButton10" inherits="TinomOptionsMainPanelKeyWordListButton" id="10">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentButton9" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+              </Button>
+              <!-- 滚动条 -->
+              <!-- inherits="UIPanelScrollFrameTemplate -->
+              <ScrollFrame name="$parentScrollFrame" inherits="UIPanelScrollFrameTemplate">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="6" y="-6"/>
+                  <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-28" y="6"/>
+                </Anchors>
+                
+                <Frames>
+                  <Frame name="Tinom_ScrollFrame_HightFrame2">
+                    <Size x="100" y="1"/>
+                  </Frame>
+                </Frames>
+                <Scripts>
+                  <OnLoad>
+                    self:SetScrollChild(Tinom_ScrollFrame_HightFrame2);
+                  </OnLoad>
+                  <OnMouseWheel>
+                    Tinom.OptionsMainPanel_ReplaceKeyWord_Scroll_OnMouseWheel(self, delta);
+                  </OnMouseWheel>
+                </Scripts>
+              </ScrollFrame>
+            </Frames>
+
+            <Scripts>
+              <OnLoad>
+              </OnLoad>
+            </Scripts>
+
+          </Frame>
+
+          <!-- 框架选择下拉菜单 -->
+          <Frame name="$parentDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT" x="-20" y="-20"/>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                self.type = CONTROLTYPE_DROPDOWN;
+                BlizzardOptionsPanel_RegisterControl(self, self:GetParent());
+              </OnLoad>
+              <OnEnter>
+                if ( not self.isDisabled ) then
+                GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT");
+                GameTooltip:SetText(self.tooltip, nil, nil, nil, nil, true);
+                end
+              </OnEnter>
+              <OnEvent>
+              
+              </OnEvent>
+              <OnLeave function="GameTooltip_Hide"/>
+              <OnShow>
+                Tinom.OptionsReplaceDropDown_OnShow(self,event);
+              </OnShow>
+            </Scripts>
+          </Frame>
         </Frames>
         
         <Scripts>
@@ -1011,7 +1400,8 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
           </OnClick>
         </Scripts>
       </Button>
-      <!-- 应用按钮模块 -->
+
+      <!-- 应用按钮 -->
       <Button name="$parentButton_Apply" inherits="UIPanelButtonTemplate">
         <Size x="100" y="26"/>
         <Anchors>

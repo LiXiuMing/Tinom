@@ -5,6 +5,9 @@ local addonName, addon = ...
 -- 设置插件的全局名称
 Test = {};
 
+--	界面隐藏/显示
+-- /run MinimapCluster:Hide();MainMenuBarArtFrame:Hide();PlayerFrame:Hide();MicroButtonAndBagsBar:Hide();StatusTrackingBarManager:Hide();MainMenuBarOverlayFrame:Hide();
+-- /run MinimapCluster:Show();MainMenuBarArtFrame:Show();PlayerFrame:Show();MicroButtonAndBagsBar:Show();StatusTrackingBarManager:Show();
 
 --[[-------------------------------------------------------------------------
 --  从TOC文件中提取版本信息

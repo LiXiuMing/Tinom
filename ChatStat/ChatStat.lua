@@ -139,7 +139,7 @@ local function chat_stat_handler(self, event, msg, author,_,_,_,_,_,channelIndex
 
     -- 初始化服务器信息
     if TinomDB.chatStatDB[authorServer] == nil then
-        TinomDB.chatStatDB[format(authorServer)] = {}
+        TinomDB.chatStatDB[authorServer] = {}
         --print("==初始化服务器信息==")
     end
 
