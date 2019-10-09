@@ -11,6 +11,7 @@ local debugDB_Temp = {
     log = {};
     error = {};
 };
+local Tinom_Switch_Debug = false;
 --[[-------------------------------------------------------------------------
 --  排错函数:
 --  Tdebug(self,"error,log","__");
@@ -22,7 +23,7 @@ TinomDebugFrame:SetScript("OnEvent", function(self, event, ...)
 end)
 
 function Tdebug( ... )
-    if true then
+    if not Tinom_Switch_Debug then
         return;
     end
     local callFrame, callType, callMsg = ...;
@@ -36,3 +37,14 @@ function Tdebug( ... )
         --print(logStr);
     end
 end
+
+function TdebugSwitch()
+    if Tinom_Switch_Debug == false then
+        Tinom_Switch_Debug = true;
+    else
+        Tinom_Switch_Debug = false;
+    end
+end
+SLASH_TINOMDEBUG1 = "/tdebug"
+SLASH_TINOMDEBUG2 = "/td"
+SlashCmdList["TINOMDEBUG"] = TdebugSwitch;

@@ -97,21 +97,23 @@ end
 --[[-------------------------------------------------------------------------
 --  消息替换函数:替换关键字消息开关,替换关键字名单
 -------------------------------------------------------------------------]]--
-function Tinom.ReplaceMsg( msg )
+function Tinom.ReplaceMsg( ... )
     --Tdebug(self,"log","Tinom.ReplaceMsg.触发");
+    local msg = ...;
     local newMsg = nil;
     for k,v in pairs(TinomDB.filterDB.replaceKeyWord) do
         if ( msg:find(k) ) then
             if ( ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg == true ) and #v.newMsg > 0 ) then
                 newMsg = v.newMsg;
+                return newMsg;
             end
             if ( ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord == true ) and #v.newWord > 0 ) then
                 newMsg = msg:gsub(k,v.newWord);
             end
-            msg = newMsg;
+            msg = newMsg or msg;
         end
     end
-    return newMsg;
+    return msg;
 end
 
 --[[-------------------------------------------------------------------------
