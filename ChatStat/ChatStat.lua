@@ -176,7 +176,7 @@ local function chat_stat_handler(self, event, msg, author,_,_,_,_,_,channelIndex
 
         spammer = chat_spammer( channelIndex, authorName, authorNameDB_read.msg_repeat_times, SecondsToTime(elapsed) );
         if spammer and TinomDB.Options.Default.Tinom_Switch_MsgFilter_AutoBlackList then
-            Tdebug(self,"log","AutoBlackList");
+            Tdebug(self,"log","AutoBlackList"..authorName..":"..msg);
             tinsert(TinomDB.filterDB.blackList,authorName);
         end
     else

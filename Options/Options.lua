@@ -11,7 +11,7 @@ local L = Tinom.L
 --[[-------------------------------------------------------------------------
 --  字符串:
 -------------------------------------------------------------------------]]--
-TINOM_OPTION_MAINPANEL_TITLE = L["Tinom聊天过滤v0.1-beta.4"];
+TINOM_OPTION_MAINPANEL_TITLE = L["Tinom聊天过滤v0.1-beta.5"];
 --TINOM_OPTION_MAINPANEL_SUBTEXT = L["去年高三帮好朋友给实验班的男孩子写一封信,只有“山有木兮木有枝”七个字,想让他领会后半句心悦君兮君不知的含义.第二天男孩子主动来班里送信,还是昨天那封,他在后面补充到“心悦君兮君已知,奈何十二寒窗苦,待到金榜题名时.”   后来这段故事无疾而终 愿你们遇到的每段感情都能有处安放"];
 TINOM_OPTION_MAINPANEL_SUBTEXT = L["目前插件处于Beta测试阶段,更新会比较频繁.您可以经常浏览我的更新贴以获取最新版本.NGA:搜索\"Tinom\"进行反馈."];
 TINOM_OPTION_MAINPANEL_CHACKBUTTON_MAINENABLE_TEXT = L["开启过滤"];
@@ -40,7 +40,7 @@ Tinom.defaultOptionsCheckButtons = {
 --[[-------------------------------------------------------------------------
 --  默认配置:复选按钮文本
 -------------------------------------------------------------------------]]--
-Tinom.defaultOptionsCheckButtonsName = {
+Tinom.defaultCheckButtonsName = {
 	WhiteList = "白名单",
 	WhiteListKeyWord = "白名单关键字",
 	BlackList = "黑名单",
@@ -65,12 +65,41 @@ Tinom.optionsTabButtons = {
 };
 
 --[[-------------------------------------------------------------------------
+--  初始化:主设置面板加载
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsMainPanel_OnLoad( self )
+	TinomOptionsMainPanelCheckButton_MainEnableText:SetText(L["开启过滤"]);
+	TinomOptionsMainPanelCheckButton_MainEnable.tooltipText = L["开启过滤系统的主开关"];
+	--<!-- 设置面板的Okay响应函数,用于保存设置. -->
+	function self.okay(self)
+		Tinom.OptionsMainPanel_Updata();
+		Tdebug(self,"log","TinomOptionsMainPanel.okay")
+	end
+
+	--<!-- 设置面板的cancel响应函数,用于撤销修改. -->
+	function self.cancel(self)
+		Tinom.OptionsMainPanel_LoadOptions();
+		Tdebug(self,"log","TinomOptionsMainPanel.cancel")
+	end
+
+	--<!-- 先为框架设置一个名字才能添加到设置面板的列表里 -->
+	self.name = Tinom.L["Tinom聊天过滤"];
+	InterfaceOptions_AddCategory(self);
+
+	--<!-- 可移动设置面板 -->
+	Tinom.OptionsPanel_EnableMovale();
+
+	--<!-- 标签按钮加载 -->
+	Tinom.OptionsTabButton_OnLoad();
+end
+
+--[[-------------------------------------------------------------------------
 --  初始化:各过滤开关复选框加载其字符串文本
 -------------------------------------------------------------------------]]--
 function Tinom.OptionsBaseSettingCheckButton_OnLoad(self)
 	--TinomOptionsMainPanelBaseSettingCheckButton_
 	local buttonName = strsub(self:GetName(), 45);
-	for k,v in pairs(Tinom.defaultOptionsCheckButtonsName) do
+	for k,v in pairs(Tinom.defaultCheckButtonsName) do
 		if (buttonName == k) then
 			_G[self:GetName().."Text"]:SetText(L[v])
 			self.tooltipText = L["开启"]..v..L["过滤"];
@@ -82,17 +111,17 @@ end
 --  初始化:设置界面数据库检查
 -------------------------------------------------------------------------]]--
 function Tinom.OptionsMainPanel_checkOptions()
-	if not TinomDB.Options.Default then
-		--Tdebug(self,"log","Options.未发现配置数据库");
+	if (not TinomDB.Options.Default) then
+		Tdebug(self,"log","Options.未发现配置数据库");
 		TinomDB.Options.Default = Tinom.defaultOptionsCheckButtons;
 		if ( TinomDB.Options.Default ) then
-			--Tdebug(self,"log","Options.数据库已初始化");
+			Tdebug(self,"log","Options.配置数据库已初始化");
 			Tinom.OptionsMainPanel_LoadOptions();
 		else
-			Tdebug(self,"error","Options.数据库初始化失败");
+			Tdebug(self,"error","Options.配置数据库初始化失败");
 		end
 	end
-	--Tdebug(self,"log","Options.数据库检查完成");
+	Tdebug(self,"log","Options.数据库检查完成");
 	Tinom.OptionsMainPanel_LoadOptions();
 end
 
@@ -119,8 +148,6 @@ function Tinom.OptionsMainPanel_LoadOptions()
 
 	--TinomOptionsMainPanelWhiteListSettingDropDown:SetValue(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID);
 	Tinom.OptionsPanel_EditBox_LoadOptions();
-	TinomOptionsMainPanelCheckButton_MainEnableText:SetText(L["开启过滤"]);
-	TinomOptionsMainPanelCheckButton_MainEnable.tooltipText = L["开启过滤系统的主开关"];
 	Tinom.OptionsTabButton_OnLoad();
 	Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_LoadData();
 	Tinom.OptionsMainPanel_ReplaceKeyWord_ListBrowseButton_LoadData();
@@ -130,13 +157,13 @@ end
 --[[-------------------------------------------------------------------------
 --  初始化:设置界面名单文本框加载配置
 -------------------------------------------------------------------------]]--
-function Tinom.OptionsPanel_EditBox_LoadOptions()
+function Tinom.OptionsPanel_EditBox_LoadOptions(self)
 	TinomOptionsMainPanelWhiteListSettingEditList_WhiteListScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.whiteList,"\n"))
 	TinomOptionsMainPanelWhiteListSettingEditList_WhiteListKeyWordScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.whiteListKeyWord,"\n"))
 	TinomOptionsMainPanelBlackListSettingEditList_BlackListScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.blackList,"\n"))
 	TinomOptionsMainPanelBlackListSettingEditList_BlackListKeyWordScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.blackListKeyWord,"\n"))
 
-	Tdebug(self,"log","Options.名单已加载");
+	Tdebug(self,"log","Options.名单已加载:");
 end
 
 --[[-------------------------------------------------------------------------
@@ -185,8 +212,8 @@ function Tinom.OptionsPanel_EditBox_Updata()
 	TinomDB.filterDB.whiteListKeyWord = Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelWhiteListSettingEditList_WhiteListKeyWordScrollFrameEditBox:GetText());
 	TinomDB.filterDB.blackList = Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelBlackListSettingEditList_BlackListScrollFrameEditBox:GetText());
 	TinomDB.filterDB.blackListKeyWord = Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelBlackListSettingEditList_BlackListKeyWordScrollFrameEditBox:GetText());
-
-	--Tdebug(self,"log","Options.名单已保存");
+	Tinom.OptionsPanel_EditBox_LoadOptions()
+	Tdebug(self,"log","Options.名单已保存");
 end
 
 --[[-------------------------------------------------------------------------
@@ -247,15 +274,15 @@ end
 function Tinom.OptionsPanel_EnableMovale()
 	local InterfaceOptionsFrame = _G["InterfaceOptionsFrame"];
 	InterfaceOptionsFrame:SetMovable(true);
-	InterfaceOptionsFrame:EnableMouse(true)
-	InterfaceOptionsFrame:RegisterForDrag("LeftButton")
+	InterfaceOptionsFrame:EnableMouse(true);
+	InterfaceOptionsFrame:RegisterForDrag("LeftButton");
 	InterfaceOptionsFrame:SetScript("OnDragStart",function( self,event,... )
 		if not self.isLocked then
-			self:StartMoving()
+			self:StartMoving();
 		end
 	end)
 	InterfaceOptionsFrame:SetScript("OnDragStop",function( self,event,... )
-		self:StopMovingOrSizing()
+		self:StopMovingOrSizing();
 	end)
 end
 
@@ -271,14 +298,14 @@ function Tinom.OptionsPanel_TextToTable( textIn )
 		local first,last = string.find(textIn,"\n",index)
 		if (first and last) then
 			local str = string.sub(textIn,index,first-1)
-			if (#str>4) then
+			if (#str>1) then
 				table.insert(tableOut,1,str)
 			end
 			index = last+1;
 			--Tdebug(self,"log","OptionsPanel_TextToTable.table.insert");
 		else
 			local str = string.sub(textIn,index);
-			if (#str>4) then
+			if (#str>1) then
 				table.insert(tableOut,1,str);
 			end
 			--Tdebug(self,"log","OptionsPanel_TextToTable.break");

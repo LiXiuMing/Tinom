@@ -3,11 +3,11 @@
 	<Frame name="TinomAccountStat">
 		<Scripts>
 			<OnLoad>
-				Tdebug(self,"log","AccountStat.xml加载,注册角色退出事件");
+				Tdebug(self,"log","AccountStat.xml.OnLoad");
 				self:RegisterEvent("PLAYER_LEAVING_WORLD");
 			</OnLoad>
 			<OnEvent>
-				Tdebug(self,"log","AccountStat.xml PLAYER_LEAVING_WORLD事件");
+				Tdebug(self,"log","AccountStat.xml.OnEvent\"PLAYER_LEAVING_WORLD\"");
 				Tinom.LoginLog(self,event,...);
 			</OnEvent>
 		</Scripts>

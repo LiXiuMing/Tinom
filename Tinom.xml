@@ -3,8 +3,8 @@
 	<Frame name="TinomFrame">
 		<Scripts>
 			<OnLoad>
-				Tdebug(self,"log","Tinom.xml加载");
 				self:RegisterEvent("ADDON_LOADED");
+				Tdebug(self,"log","Tinom.xml.OnLoad");
 			</OnLoad>
 			<OnEvent>
 				Tinom.OnLoaded(self,event,...);

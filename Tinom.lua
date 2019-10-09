@@ -6,7 +6,6 @@
 --  功能:初始化与索引
 --
 -------------------------------------------------------------------------]]--
-Tdebug(self,"log","Tinom.lua加载开始");
 --  获取插件的插件名和插件表
 --local addonName, addon = ...
 
@@ -14,7 +13,7 @@ Tdebug(self,"log","Tinom.lua加载开始");
 Tinom = {};
 
 --  当前玩家名
-local playerName = UnitName("player");
+--local playerName = UnitName("player");
 
 --  游戏版本
 local _,_,_,gameVersion = GetBuildInfo();
@@ -22,6 +21,7 @@ local _,_,_,gameVersion = GetBuildInfo();
 Tinom.Tinom_Switch_MsgFilter_ColorName = false;
 if ( gameVersion < 80205 ) then
     Tinom.Tinom_Switch_MsgFilter_Classic = true;
+    Tdebug(self,"log","检测到怀旧版");
 end
 
 --[[-------------------------------------------------------------------------
@@ -87,20 +87,19 @@ function Tinom.checkTinomDB()
     Tdebug(self,"log","checkTinomDB.数据库检查完成");
     return true;
 end
+
 --[[-------------------------------------------------------------------------
 --  插件加载完成:
 -------------------------------------------------------------------------]]--
 function Tinom.OnLoaded(self,event,addonName)
     if (event == "ADDON_LOADED") and (addonName == "Tinom") and (Tinom.checkTinomDB()) then
-        Tdebug(self,"log","Tinom.OnLoaded.插件加载完成.");
+        Tdebug(self,"log","Tinom.OnLoaded");
         Tinom.LoginLog(self,event,addonName);
         Tinom.OptionsMainPanel_checkOptions();
         Tinom.MsgFilterOn();
         Tinom.ChatStat_OnLoad();
         Tinom.ReplaceChannelName();
-
-        --Tinom.OptionsMainPanel_OnLoad(self,...);
     end
 end
 
-Tdebug(self,"log","Tinom.lua加载完成");
+Tdebug(self,"log","Tinom.lua.OnLoaded");

@@ -9,7 +9,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
       <Anchor point="BOTTOMRIGHT" x="-5" y="5"/>
     </Anchors>
     
-    <Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+    <Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="false">
       <EdgeSize>
         <AbsValue val="16"/>
       </EdgeSize>
@@ -42,16 +42,6 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
         </Texture>
       </Layer>
     </Layers>
-
-    <Frames>
-
-    </Frames>
-
-    <Scripts>
-      <OnLoad>
-      </OnLoad>
-    </Scripts>
-
   </Frame>
   <!-- 复选按钮模板 -->
   <CheckButton name="TinomOptionsMainPanelCheckButton_Template" inherits="InterfaceOptionsCheckButtonTemplate" virtual="true">
@@ -77,6 +67,20 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
       </OnClick>
     </Scripts>
   </CheckButton>
+  <!-- 标签按钮模板 -->
+  <Button name="TinomOptionsMainPanelTabButtonTemplate" inherits="TabButtonTemplate" virtual="true">
+    <Size x="150" y="25"/>
+    <Scripts>
+      <OnShow>
+        <!-- 设置标签的尺寸以适应文字 -->
+          PanelTemplates_TabResize(self, 0);
+          _G[self:GetName().."HighlightTexture"]:SetWidth(self:GetTextWidth() + 31);
+      </OnShow>
+      <OnClick>
+        Tinom.OptionsTabButton_OnClick( self );
+      </OnClick>
+    </Scripts>
+  </Button>
   <!-- 名单编辑框模板 -->
   <Frame name="TinomOptionsMainPanelEditListTemplate" virtual="true">
     <Size x="200"/>
@@ -121,9 +125,6 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
               </OnLoad>
               <OnShow>
                 self:SetWidth(self:GetParent():GetWidth());
-                <!-- local grandParentName = self:GetParent():GetParent():GetName(); -->
-                <!-- local listType = string.sub(grandParentName,string.find(grandParentName,"_")+1) -->
-                <!-- Tinom.OptionsPanel_EditBox_OnShow(self,listType); -->
               </OnShow>
               <OnEscapePressed>
                 self:ClearFocus();
@@ -140,15 +141,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
           </OnLoad>
         </Scripts>
       </ScrollFrame>
-
     </Frames>
-
-    <Scripts>
-      <OnLoad>
-      
-      </OnLoad>
-    </Scripts>
-
   </Frame>
   <!-- 编辑框模板 -->
   <EditBox name="TinomOptionsMainPanelEditBoxTemplate" autoFocus="false" virtual="true">
@@ -702,11 +695,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
               <Layer level="ARTWORK">
                 <FontString name="$parentText2" text="" inherits="GameFontHighlightLeft">
                   <Anchors>
-                    <Anchor point="BOTTOM" relativeTo="$parent" relativePoint="TOP">
-                      <Offset>
-                        <AbsDimension x="0" y="0"/>
-                      </Offset>
-                    </Anchor>
+                    <Anchor point="BOTTOM" relativeTo="$parent" relativePoint="TOP" x="0" y="0"/>
                   </Anchors>
                 </FontString>
               </Layer>
@@ -723,9 +712,6 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
                 GameTooltip:SetText(self.tooltip, nil, nil, nil, nil, true);
                 end
               </OnEnter>
-              <OnEvent>
-              
-              </OnEvent>
               <OnLeave function="GameTooltip_Hide"/>
               <OnShow>
                 Tinom.OptionsWhiteListSoundDropDown_OnShow(self,event);
@@ -734,35 +720,17 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
           </Frame>
 
           <!-- 白名单名字声音提醒复选框 -->
-          <CheckButton name="$parentSound_Name" inherits="InterfaceOptionsCheckButtonTemplate">
+          <CheckButton name="$parentSound_Name" inherits="TinomOptionsMainPanelCheckButton_Template">
             <Anchors>
               <Anchor point="BOTTOMLEFT" relativeTo="$parentDropDown" relativePoint="TOPLEFT" x="0" y="0"/>
-              <!-- <Anchor point="CENTER" y="5"/> -->
             </Anchors>
-            <Scripts>
-              <OnLoad>
-
-              </OnLoad>
-              <OnClick>
-
-              </OnClick>
-            </Scripts>
           </CheckButton>
 
            <!-- 白名单关键字声音提醒复选框 -->
-          <CheckButton name="$parentSound_KeyWord" inherits="InterfaceOptionsCheckButtonTemplate">
+          <CheckButton name="$parentSound_KeyWord" inherits="TinomOptionsMainPanelCheckButton_Template">
             <Anchors>
               <Anchor point="BOTTOMRIGHT" relativeTo="$parentDropDown" relativePoint="TOPRIGHT" x="0" y="0"/>
-              <!-- <Anchor point="CENTER" y="5"/> -->
             </Anchors>
-            <Scripts>
-              <OnLoad>
-
-              </OnLoad>
-              <OnClick>
-
-              </OnClick>
-            </Scripts>
           </CheckButton>
 
         </Frames>
@@ -1326,78 +1294,50 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
       </Frame>
 
       <!-- 基本设置标签按钮 -->
-      <Button name="$parentBaseSettingTabButton" inherits="TabButtonTemplate">
-        <Size x="150" y="25"/>
+      <Button name="$parentBaseSettingTabButton" inherits="TinomOptionsMainPanelTabButtonTemplate" text="">
         <Anchors>
           <Anchor point="BOTTOMLEFT" relativeTo="$parentBaseSetting" relativePoint="TOPLEFT" x="120" y="0"/>
         </Anchors>
         <Scripts>
           <OnLoad>
             self:SetText(Tinom.L["基本设置"]);
-            <!-- 设置标签的尺寸以适应文字 -->
-              PanelTemplates_TabResize(self, 0);
-              _G[self:GetName().."HighlightTexture"]:SetWidth(self:GetTextWidth() + 31);
           </OnLoad>
-          <OnClick>
-            Tinom.OptionsTabButton_OnClick( self );
-          </OnClick>
         </Scripts>
       </Button>
 
       <!-- 白名单标签按钮 -->
-      <Button name="$parentWhiteListTabButton" inherits="TabButtonTemplate" text="">
-        <Size x="150" y="25"/>
+      <Button name="$parentWhiteListTabButton" inherits="TinomOptionsMainPanelTabButtonTemplate" text="">
         <Anchors>
           <Anchor point="LEFT" relativeTo="$parentBaseSettingTabButton" relativePoint="RIGHT" x="5" y="0"/>
         </Anchors>
         <Scripts>
           <OnLoad>
             self:SetText(Tinom.L["白名单设置"]);
-            <!-- 设置标签的尺寸以适应文字 -->
-              PanelTemplates_TabResize(self, 0);
-              _G[self:GetName().."HighlightTexture"]:SetWidth(self:GetTextWidth() + 31);
           </OnLoad>
-          <OnClick>
-              Tinom.OptionsTabButton_OnClick( self );
-          </OnClick>
         </Scripts>
       </Button>
 
       <!-- 黑名单标签按钮 -->
-      <Button name="$parentBlackListTabButton" inherits="TabButtonTemplate" text="">
-        <Size x="150" y="25"/>
+      <Button name="$parentBlackListTabButton" inherits="TinomOptionsMainPanelTabButtonTemplate" text="">
         <Anchors>
           <Anchor point="LEFT" relativeTo="$parentWhiteListTabButton" relativePoint="RIGHT" x="5" y="0"/>
         </Anchors>
         <Scripts>
           <OnLoad>
             self:SetText(Tinom.L["黑名单设置"]);
-            <!-- 设置标签的尺寸以适应文字 -->
-              PanelTemplates_TabResize(self, 0);
-              _G[self:GetName().."HighlightTexture"]:SetWidth(self:GetTextWidth() + 31);
           </OnLoad>
-          <OnClick>
-              Tinom.OptionsTabButton_OnClick( self );
-          </OnClick>
         </Scripts>
       </Button>
 
       <!-- 替换标签按钮 -->
-      <Button name="$parentReplaceListTabButton" inherits="TabButtonTemplate" text="">
-        <Size x="150" y="25"/>
+      <Button name="$parentReplaceListTabButton" inherits="TinomOptionsMainPanelTabButtonTemplate" text="">
         <Anchors>
           <Anchor point="LEFT" relativeTo="$parentBlackListTabButton" relativePoint="RIGHT" x="5" y="0"/>
         </Anchors>
         <Scripts>
           <OnLoad>
             self:SetText(Tinom.L["替换单设置"]);
-            <!-- 设置标签的尺寸以适应文字 -->
-              PanelTemplates_TabResize(self, 0);
-              _G[self:GetName().."HighlightTexture"]:SetWidth(self:GetTextWidth() + 31);
           </OnLoad>
-          <OnClick>
-              Tinom.OptionsTabButton_OnClick( self );
-          </OnClick>
         </Scripts>
       </Button>
 
@@ -1408,9 +1348,9 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
           <Anchor point="BOTTOM" y="-35"/>
         </Anchors>
         <Scripts>
-          <OnShow>
+          <OnLoad>
             self:SetText(Tinom.L["应用"]);
-          </OnShow>
+          </OnLoad>
           <OnClick>
             PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
             Tinom.OptionsMainPanel_Updata();
@@ -1423,37 +1363,11 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
 
     <Scripts>
       <OnLoad>
-        <!-- 设置面板的Okay响应函数,用于保存设置. -->
-        function TinomOptionsMainPanel.okay(self)
-          Tinom.OptionsMainPanel_Updata();
-        end
-
-        <!-- 设置面板的cancel响应函数,用于撤销修改. -->
-        function TinomOptionsMainPanel.cancel(self)
-          Tinom.OptionsMainPanel_LoadOptions();
-        end
-
-        <!-- 先为框架设置一个名字才能添加到设置面板的列表里 -->
-        self.name = Tinom.L["Tinom聊天过滤"];
-        InterfaceOptions_AddCategory(self);
-
-        <!-- 可移动设置面板 -->
-        Tinom.OptionsPanel_EnableMovale();
-
-        <!-- 标签按钮加载 -->
-        Tinom.OptionsTabButton_OnLoad();
-        
+        Tinom.OptionsMainPanel_OnLoad( self )
       </OnLoad>
       <OnShow>
-        Tinom.OptionsPanel_EditBox_LoadOptions();
+        Tinom.OptionsPanel_EditBox_LoadOptions(self);
       </OnShow>
-    </Scripts>
-  </Frame>
-
-  <Frame>
-    <Scripts>
-      <OnLoad></OnLoad>
-      <OnEvent></OnEvent>
     </Scripts>
   </Frame>
 </Ui>

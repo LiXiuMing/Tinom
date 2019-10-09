@@ -28,7 +28,6 @@ function Tdebug( ... )
     local callFrame, callType, callMsg = ...;
 	local timeNow = date("%H:%M:%S");
 	local logStr = timeNow.."-["..callType.."]: "..callMsg
-	--print(self);
     if ( callType == "log" ) then
         table.insert( debugDB_Temp.log, logStr );
         print(logStr);
