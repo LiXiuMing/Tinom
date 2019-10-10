@@ -8,12 +8,11 @@
 -------------------------------------------------------------------------]]--
 
 --[[-------------------------------------------------------------------------
---  取反函数
+--  从消息获取物品ID和链接:如CHAT_MSG_LOOT:Util.lua
 -------------------------------------------------------------------------]]--
---[[ function Tinom.invert( argument )
-	if argument then
-		argument = false;
-	else
-		argument = true;
+function Tinom.GetItemInfoFromHyperlink(link)
+	local strippedItemLink, itemID = link:match("|Hitem:((%d+).-)|h");
+	if itemID then
+		return tonumber(itemID), strippedItemLink;
 	end
-end ]]
+end

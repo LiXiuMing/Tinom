@@ -144,7 +144,7 @@ local function chat_stat_handler(self, event, msg, author,_,_,_,_,_,channelIndex
     -- 初始化服务器信息
     if TinomDB.chatStatDB[authorServer] == nil then
         TinomDB.chatStatDB[authorServer] = {}
-        --print("==初始化服务器信息==")
+        Tdebug(self,"log","==初始化服务器信息==")
     end
 
     -- 初始化角色信息
@@ -199,7 +199,7 @@ local function initializer_DB(...)
         chat_stat_frame:SetScript("OnEvent", chat_stat_handler)
         return true
     else
-        print("!!!!数据库初始化失败!!!!!")
+        Tdebug(self,"error","!!!!数据库初始化失败!!!!!")
     end
 end
 

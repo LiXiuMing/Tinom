@@ -2,7 +2,7 @@
 ## Title: Tinom 聊天增强
 ## Notes: 这个插件用于优化聊天体验,包括过滤,统计,游戏等功能.
 ## Author: Tinom
-## Version: 0.1-beta.6
+## Version: 0.1-beta.7
 ## SavedVariables: TinomDB, debugDB
 
 # 角色变量,存储于角色下.","分隔多个变量

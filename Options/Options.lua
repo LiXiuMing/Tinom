@@ -11,7 +11,7 @@ local L = Tinom.L
 --[[-------------------------------------------------------------------------
 --  字符串:
 -------------------------------------------------------------------------]]--
-TINOM_OPTION_MAINPANEL_TITLE = L["Tinom聊天过滤v0.1-beta.6"];
+TINOM_OPTION_MAINPANEL_TITLE = L["Tinom聊天过滤v0.1-beta.7"];
 --TINOM_OPTION_MAINPANEL_SUBTEXT = L["去年高三帮好朋友给实验班的男孩子写一封信,只有“山有木兮木有枝”七个字,想让他领会后半句心悦君兮君不知的含义.第二天男孩子主动来班里送信,还是昨天那封,他在后面补充到“心悦君兮君已知,奈何十二寒窗苦,待到金榜题名时.”   后来这段故事无疾而终 愿你们遇到的每段感情都能有处安放"];
 TINOM_OPTION_MAINPANEL_SUBTEXT = L["目前插件处于Beta测试阶段,更新会比较频繁.您可以经常浏览我的更新贴以获取最新版本.NGA:搜索\"Tinom\"进行反馈."];
 TINOM_OPTION_MAINPANEL_CHACKBUTTON_MAINENABLE_TEXT = L["开启过滤"];
@@ -36,6 +36,10 @@ Tinom.defaultOptionsCheckButtons = {
 	Tinom_Switch_MsgFilter_WhiteListSound = false,
 	Tinom_Switch_MsgFilter_WhiteListKeyWordSound = false,
 	Tinom_Switch_MsgFilter_AutoBlackList = true,
+	Tinom_Switch_MsgFilter_IgnoreGrayItems = false,
+	Tinom_Switch_MsgFilter_FoldMsg = false,
+	Tinom_Switch_MsgFilter_WhiteListHighlight = false,
+	Tinom_Switch_MsgFilter_WhiteListKeyWordHighlight = false,
 };
 --[[-------------------------------------------------------------------------
 --  默认配置:复选按钮文本
@@ -49,9 +53,11 @@ Tinom.defaultCheckButtonsName = {
 	ReplaceNameMsg = "替换角色的消息",
 	ReplaceKeyWord = "替换关键字",
 	ReplaceKeyWordMsg = "替换关键字的消息",
-	CacheMsgRepeat = "重复消息",
+	CacheMsgRepeat = "屏蔽重复消息",
 	WhiteListOnly = "只有白名单",
 	AbbrChannelName = "缩写频道名",
+	FoldMsg = "折叠复读消息",
+	IgnoreGrayItems = "屏蔽灰色物品拾取消息",
 	AbbrAuthorName = "缩写玩家名(|cffffff00注意!被缩写的角色将导致其右键内交互功能失效!|r)"
 };
 --[[-------------------------------------------------------------------------
@@ -108,143 +114,6 @@ function Tinom.OptionsBaseSettingCheckButton_OnLoad(self)
 end
 
 --[[-------------------------------------------------------------------------
---  初始化:设置界面数据库检查
--------------------------------------------------------------------------]]--
-function Tinom.OptionsMainPanel_checkOptions()
-	if (not TinomDB.Options.Default) then
-		Tdebug(self,"log","Options.未发现配置数据库");
-		TinomDB.Options.Default = Tinom.defaultOptionsCheckButtons;
-		if ( TinomDB.Options.Default ) then
-			Tdebug(self,"log","Options.配置数据库已初始化");
-			Tinom.OptionsMainPanel_LoadOptions();
-		else
-			Tdebug(self,"error","Options.配置数据库初始化失败");
-		end
-	end
-	Tdebug(self,"log","Options.数据库检查完成");
-	Tinom.OptionsMainPanel_LoadOptions();
-end
-
---[[-------------------------------------------------------------------------
---  初始化:设置界面加载配置
--------------------------------------------------------------------------]]--
-function Tinom.OptionsMainPanel_LoadOptions()
-	TinomOptionsMainPanelCheckButton_MainEnable:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_MainEnable);
-	TinomOptionsMainPanelBaseSettingCheckButton_WhiteList:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteList);
-	TinomOptionsMainPanelBaseSettingCheckButton_WhiteListKeyWord:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWord);
-	TinomOptionsMainPanelBaseSettingCheckButton_WhiteListOnly:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListOnly);
-	TinomOptionsMainPanelBaseSettingCheckButton_BlackList:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackList);
-	TinomOptionsMainPanelBaseSettingCheckButton_BlackListKeyWord:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackListKeyWord);
-	TinomOptionsMainPanelBaseSettingCheckButton_ReplaceName:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName);
-	TinomOptionsMainPanelBaseSettingCheckButton_ReplaceNameMsg:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg);
-	TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWord:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord);
-	TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWordMsg:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg);
-	TinomOptionsMainPanelBaseSettingCheckButton_CacheMsgRepeat:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_CacheMsgRepeat);
-	TinomOptionsMainPanelBaseSettingCheckButton_AbbrChannelName:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrChannelName);
-	TinomOptionsMainPanelBaseSettingCheckButton_AbbrAuthorName:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrAuthorName);
-	TinomOptionsMainPanelWhiteListSettingSound_Name:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSound);
-	TinomOptionsMainPanelWhiteListSettingSound_KeyWord:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWordSound);
-	TinomOptionsMainPanelBlackListSettingAutoBlackList:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_AutoBlackList);
-
-	--TinomOptionsMainPanelWhiteListSettingDropDown:SetValue(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID);
-	Tinom.OptionsPanel_EditBox_LoadOptions();
-	Tinom.OptionsTabButton_OnLoad();
-	Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_LoadData();
-	Tinom.OptionsMainPanel_ReplaceKeyWord_ListBrowseButton_LoadData();
-	--Tdebug(self,"log","OptionsMainPanel_OnLoad.配置加载完成");
-end
-
---[[-------------------------------------------------------------------------
---  初始化:设置界面名单文本框加载配置
--------------------------------------------------------------------------]]--
-function Tinom.OptionsPanel_EditBox_LoadOptions(self)
-	TinomOptionsMainPanelWhiteListSettingEditList_WhiteListScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.whiteList,"\n"))
-	TinomOptionsMainPanelWhiteListSettingEditList_WhiteListKeyWordScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.whiteListKeyWord,"\n"))
-	TinomOptionsMainPanelBlackListSettingEditList_BlackListScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.blackList,"\n"))
-	TinomOptionsMainPanelBlackListSettingEditList_BlackListKeyWordScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.blackListKeyWord,"\n"))
-
-	Tdebug(self,"log","Options.名单已加载:");
-end
-
---[[-------------------------------------------------------------------------
---  初始化:标签初始函数:
--------------------------------------------------------------------------]]--
-function Tinom.OptionsTabButton_OnLoad()
-	Tinom.OptionsTabButton_Clear();
-	if ( TinomOptionsMainPanelCheckButton_MainEnable:GetChecked() ) then
-		PanelTemplates_SelectTab(TinomOptionsMainPanelBaseSettingTabButton);
-		TinomOptionsMainPanelBaseSetting:Show();
-	end
-end
-
---[[-------------------------------------------------------------------------
---  保存设置:设置界面更新设置数据库函数:
--------------------------------------------------------------------------]]--
-function Tinom.OptionsMainPanel_Updata(self)
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_MainEnable = TinomOptionsMainPanelCheckButton_MainEnable:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteList = TinomOptionsMainPanelBaseSettingCheckButton_WhiteList:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWord = TinomOptionsMainPanelBaseSettingCheckButton_WhiteListKeyWord:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListOnly = TinomOptionsMainPanelBaseSettingCheckButton_WhiteListOnly:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackList = TinomOptionsMainPanelBaseSettingCheckButton_BlackList:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackListKeyWord = TinomOptionsMainPanelBaseSettingCheckButton_BlackListKeyWord:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName = TinomOptionsMainPanelBaseSettingCheckButton_ReplaceName:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg = TinomOptionsMainPanelBaseSettingCheckButton_ReplaceNameMsg:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord = TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWord:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg = TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWordMsg:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_CacheMsgRepeat = TinomOptionsMainPanelBaseSettingCheckButton_CacheMsgRepeat:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrChannelName = TinomOptionsMainPanelBaseSettingCheckButton_AbbrChannelName:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrAuthorName = TinomOptionsMainPanelBaseSettingCheckButton_AbbrAuthorName:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSound = TinomOptionsMainPanelWhiteListSettingSound_Name:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWordSound = TinomOptionsMainPanelWhiteListSettingSound_KeyWord:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_AutoBlackList = TinomOptionsMainPanelBlackListSettingAutoBlackList:GetChecked();
-
-	--TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID = TinomOptionsMainPanelWhiteListSettingDropDown:GetValue();
-	--Tdebug(self,"log","Options.Tinom配置已保存");
-	Tinom.OptionsPanel_EditBox_Updata()
-	
-end
-
---[[-------------------------------------------------------------------------
---  保存设置:名单文本框保存函数:
--------------------------------------------------------------------------]]--
-function Tinom.OptionsPanel_EditBox_Updata()
-	TinomDB.filterDB.whiteList = Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelWhiteListSettingEditList_WhiteListScrollFrameEditBox:GetText());
-	TinomDB.filterDB.whiteListKeyWord = Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelWhiteListSettingEditList_WhiteListKeyWordScrollFrameEditBox:GetText());
-	TinomDB.filterDB.blackList = Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelBlackListSettingEditList_BlackListScrollFrameEditBox:GetText());
-	TinomDB.filterDB.blackListKeyWord = Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelBlackListSettingEditList_BlackListKeyWordScrollFrameEditBox:GetText());
-	Tinom.OptionsPanel_EditBox_LoadOptions()
-	Tdebug(self,"log","Options.名单已保存");
-end
-
---[[-------------------------------------------------------------------------
---  配置界面Okay函数:因需要框架载入支持,已转移至XML文件<OnLoad>事件内
--------------------------------------------------------------------------]]--
--- function TinomOptionsMainPanel.okay(self)
--- 	print("Tinom配置已保存")
--- 	Tinom.OptionsMainPanel_Updata();
--- end
-
---[[-------------------------------------------------------------------------
---  标签与子设置框架隐藏函数:
--------------------------------------------------------------------------]]--
-function Tinom.OptionsTabButton_Clear()
-	for k,v in pairs(Tinom.optionsTabButtons) do
-		PanelTemplates_DeselectTab(_G[k]);
-		_G[v]:Hide();
-	end
-end
-
---[[-------------------------------------------------------------------------
---  标签切换函数:
--------------------------------------------------------------------------]]--
-function Tinom.OptionsTabButton_OnClick( self )
-	Tinom.OptionsTabButton_Clear();
-	PanelTemplates_SelectTab(self);
-	_G[Tinom.optionsTabButtons[self:GetName()]]:Show();
-	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-end
-
---[[-------------------------------------------------------------------------
 --  总开关复选框函数:
 -------------------------------------------------------------------------]]--
 function Tinom.OptionsMainEnableCheckButton_OnClick(self)
@@ -287,10 +156,146 @@ function Tinom.OptionsPanel_EnableMovale()
 end
 
 --[[-------------------------------------------------------------------------
+--  入口:初始化:设置界面数据库检查
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsMainPanel_checkOptions()
+	if (not TinomDB.Options.Default) then
+		Tdebug(self,"log","Options.未发现配置数据库");
+		TinomDB.Options.Default = Tinom.defaultOptionsCheckButtons;
+		if ( TinomDB.Options.Default ) then
+			Tdebug(self,"log","Options.配置数据库已初始化");
+			Tinom.OptionsMainPanel_LoadOptions();
+			return;
+		else
+			Tdebug(self,"error","Options.配置数据库初始化失败");
+		end
+	end
+	Tdebug(self,"log","Options.数据库检查完成");
+	Tinom.OptionsMainPanel_LoadOptions();
+end
+
+--[[-------------------------------------------------------------------------
+--  初始化:设置界面加载配置
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsMainPanel_LoadOptions()
+	TinomOptionsMainPanelCheckButton_MainEnable:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_MainEnable);
+	TinomOptionsMainPanelBaseSettingCheckButton_WhiteList:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteList);
+	TinomOptionsMainPanelBaseSettingCheckButton_WhiteListKeyWord:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWord);
+	TinomOptionsMainPanelBaseSettingCheckButton_WhiteListOnly:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListOnly);
+	TinomOptionsMainPanelBaseSettingCheckButton_BlackList:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackList);
+	TinomOptionsMainPanelBaseSettingCheckButton_BlackListKeyWord:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackListKeyWord);
+	TinomOptionsMainPanelBaseSettingCheckButton_ReplaceName:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName);
+	TinomOptionsMainPanelBaseSettingCheckButton_ReplaceNameMsg:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg);
+	TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWord:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord);
+	TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWordMsg:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg);
+	TinomOptionsMainPanelBaseSettingCheckButton_CacheMsgRepeat:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_CacheMsgRepeat);
+	TinomOptionsMainPanelBaseSettingCheckButton_AbbrChannelName:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrChannelName);
+	TinomOptionsMainPanelBaseSettingCheckButton_FoldMsg:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_FoldMsg);
+	TinomOptionsMainPanelBaseSettingCheckButton_IgnoreGrayItems:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_IgnoreGrayItems);
+	TinomOptionsMainPanelBaseSettingCheckButton_AbbrAuthorName:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrAuthorName);
+	TinomOptionsMainPanelWhiteListSettingSound_Name:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSound);
+	TinomOptionsMainPanelWhiteListSettingSound_KeyWord:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWordSound);
+	TinomOptionsMainPanelBlackListSettingAutoBlackList:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_AutoBlackList);
+	TinomOptionsMainPanelWhiteListSettingWhiteList_Highlight:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListHighlight);
+	TinomOptionsMainPanelWhiteListSettingWhiteListKeyWord_Highlight:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWordHighlight);
+
+	--TinomOptionsMainPanelWhiteListSettingDropDown:SetValue(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID);
+	Tinom.OptionsPanel_EditBox_LoadOptions();
+	Tinom.OptionsTabButton_OnLoad();
+	Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_LoadData();
+	Tinom.OptionsMainPanel_ReplaceKeyWord_ListBrowseButton_LoadData();
+	Tdebug(self,"log","OptionsMainPanel_OnLoad.配置加载完成");
+end
+
+--[[-------------------------------------------------------------------------
+--  初始化:设置界面名单文本框加载配置
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsPanel_EditBox_LoadOptions(self)
+	TinomOptionsMainPanelWhiteListSettingEditList_WhiteListScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.whiteList,"\n"))
+	TinomOptionsMainPanelWhiteListSettingEditList_WhiteListKeyWordScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.whiteListKeyWord,"\n"))
+	TinomOptionsMainPanelBlackListSettingEditList_BlackListScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.blackList,"\n"))
+	TinomOptionsMainPanelBlackListSettingEditList_BlackListKeyWordScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.blackListKeyWord,"\n"))
+
+	Tdebug(self,"log","Options.名单已加载:");
+end
+
+--[[-------------------------------------------------------------------------
+--  初始化:标签初始函数:
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsTabButton_OnLoad()
+	Tinom.OptionsTabButton_Clear();
+	if ( TinomOptionsMainPanelCheckButton_MainEnable:GetChecked() ) then
+		PanelTemplates_SelectTab(TinomOptionsMainPanelBaseSettingTabButton);
+		TinomOptionsMainPanelBaseSetting:Show();
+	end
+end
+
+--[[-------------------------------------------------------------------------
+--  保存设置:设置界面更新设置数据库函数:
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsMainPanel_Updata(self)
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_MainEnable 					= TinomOptionsMainPanelCheckButton_MainEnable:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteList 					= TinomOptionsMainPanelBaseSettingCheckButton_WhiteList:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWord 			= TinomOptionsMainPanelBaseSettingCheckButton_WhiteListKeyWord:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListOnly 				= TinomOptionsMainPanelBaseSettingCheckButton_WhiteListOnly:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackList 					= TinomOptionsMainPanelBaseSettingCheckButton_BlackList:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackListKeyWord 			= TinomOptionsMainPanelBaseSettingCheckButton_BlackListKeyWord:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName 					= TinomOptionsMainPanelBaseSettingCheckButton_ReplaceName:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg 				= TinomOptionsMainPanelBaseSettingCheckButton_ReplaceNameMsg:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord 				= TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWord:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg 			= TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWordMsg:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_CacheMsgRepeat 				= TinomOptionsMainPanelBaseSettingCheckButton_CacheMsgRepeat:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrChannelName 				= TinomOptionsMainPanelBaseSettingCheckButton_AbbrChannelName:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_FoldMsg 						= TinomOptionsMainPanelBaseSettingCheckButton_FoldMsg:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_IgnoreGrayItems 				= TinomOptionsMainPanelBaseSettingCheckButton_IgnoreGrayItems:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrAuthorName 				= TinomOptionsMainPanelBaseSettingCheckButton_AbbrAuthorName:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSound 				= TinomOptionsMainPanelWhiteListSettingSound_Name:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWordSound 		= TinomOptionsMainPanelWhiteListSettingSound_KeyWord:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_AutoBlackList 				= TinomOptionsMainPanelBlackListSettingAutoBlackList:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListHighlight 			= TinomOptionsMainPanelWhiteListSettingWhiteList_Highlight:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWordHighlight 	= TinomOptionsMainPanelWhiteListSettingWhiteListKeyWord_Highlight:GetChecked();
+	--TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID = TinomOptionsMainPanelWhiteListSettingDropDown:GetValue();
+	Tdebug(self,"log","Options.Tinom配置已保存");
+	Tinom.OptionsPanel_EditBox_Updata()
+	
+end
+
+--[[-------------------------------------------------------------------------
+--  保存设置:名单文本框保存函数:
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsPanel_EditBox_Updata()
+	TinomDB.filterDB.whiteList = Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelWhiteListSettingEditList_WhiteListScrollFrameEditBox:GetText());
+	TinomDB.filterDB.whiteListKeyWord = Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelWhiteListSettingEditList_WhiteListKeyWordScrollFrameEditBox:GetText());
+	TinomDB.filterDB.blackList = Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelBlackListSettingEditList_BlackListScrollFrameEditBox:GetText());
+	TinomDB.filterDB.blackListKeyWord = Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelBlackListSettingEditList_BlackListKeyWordScrollFrameEditBox:GetText());
+	Tinom.OptionsPanel_EditBox_LoadOptions()
+	Tdebug(self,"log","Options.名单已保存");
+end
+
+--[[-------------------------------------------------------------------------
+--  标签与子设置框架隐藏函数:
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsTabButton_Clear()
+	for k,v in pairs(Tinom.optionsTabButtons) do
+		PanelTemplates_DeselectTab(_G[k]);
+		_G[v]:Hide();
+	end
+end
+
+--[[-------------------------------------------------------------------------
+--  标签切换函数:
+-------------------------------------------------------------------------]]--
+function Tinom.OptionsTabButton_OnClick( self )
+	Tinom.OptionsTabButton_Clear();
+	PanelTemplates_SelectTab(self);
+	_G[Tinom.optionsTabButtons[self:GetName()]]:Show();
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+end
+
+--[[-------------------------------------------------------------------------
 --  文本转表函数:
 -------------------------------------------------------------------------]]--
 function Tinom.OptionsPanel_TextToTable( textIn )
-	--Tdebug(self,"log","OptionsPanel_TextToTable.Go");
 	local tableOut = {};
 	local index = 1;
 	while(true)
@@ -302,17 +307,15 @@ function Tinom.OptionsPanel_TextToTable( textIn )
 				table.insert(tableOut,1,str)
 			end
 			index = last+1;
-			--Tdebug(self,"log","OptionsPanel_TextToTable.table.insert");
 		else
 			local str = string.sub(textIn,index);
 			if (#str>1) then
 				table.insert(tableOut,1,str);
 			end
-			--Tdebug(self,"log","OptionsPanel_TextToTable.break");
 			break;
 		end
 	end
-	--Tdebug(self,"log","OptionsPanel_TextToTable.End"..#tableOut);
+	Tdebug(self,"log","OptionsPanel_TextToTable.End"..#tableOut);
 	return tableOut;
 end
 
@@ -414,7 +417,6 @@ end
 function Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_Updata( index )
 	Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_Clear();
 	Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_ClearHighlight();
-	----Tdebug(self,"log","Options.replaceName.ListBrowseButton_Updata."..index);
 	for k=1,math.min( (#Tinom.tableReplaceNameTemp - index+1), 10 ) do
 		if k == 11 then break; end
 		_G["TinomOptionsMainPanelReplaceNameListButton"..k]:Show();
@@ -424,6 +426,7 @@ function Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_Updata( index )
 		index = index + 1;
 	end
 	Tinom.OptionsMainPanel_ReplaceName_Scroll_Update();
+	--Tdebug(self,"log","Options.replaceName.ListBrowseButton_Updata."..index);
 end
 --[[-------------------------------------------------------------------------
 --  初始化:设置界面替换名单列表清空
@@ -493,7 +496,7 @@ function Tinom.OptionsMainPanel_ReplaceName_ButtonAdd_OnClick()
 		--Tdebug(self,"log","Options.replaceName.新增条目.你太短啦!");
 	else
 		TinomDB.filterDB.replaceName[name] = {newName=newNameStr,newMsg=newMsgStr}
-		----Tdebug(self,"log","Options.replaceName.新增条目");
+		Tdebug(self,"log","Options.replaceName.新增条目");
 		Tinom.OptionsMainPanel_ReplaceName_ClearEditBox()
 		Tinom.OptionsMainPanel_ReplaceName_ListBrowseButton_LoadData();
 	end
@@ -750,4 +753,4 @@ SLASH_TINOMOPTIONS1 = "/tinom"
 SLASH_TINOMOPTIONS2 = "/ti"
 SlashCmdList["TINOMOPTIONS"] = Tinom.OptionsMainPanel_Show;
 
---Tdebug(self,"log","Options.lua加载完成");
+Tdebug(self,"log","Options.lua.OnLoaded");

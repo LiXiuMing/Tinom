@@ -629,11 +629,27 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
               </Anchor>
             </Anchors>
           </CheckButton>
+          <!-- 折叠长消息内重复句子 -->
+          <CheckButton name="$parentCheckButton_FoldMsg" inherits="TinomOptionsMainPanelCheckButton_Template">
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="$parentCheckButton_CacheMsgRepeatText" relativePoint="RIGHT">
+                <Offset x="30" y="0"/>
+              </Anchor>
+            </Anchors>
+          </CheckButton>
           <!-- 频道与姓名缩写 -->
           <CheckButton name="$parentCheckButton_AbbrChannelName" inherits="TinomOptionsMainPanelCheckButton_Template">
             <Anchors>
               <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_CacheMsgRepeat" relativePoint="BOTTOMLEFT">
                 <Offset x="0" y="-5"/>
+              </Anchor>
+            </Anchors>
+          </CheckButton>
+          <!-- 屏蔽灰色物品拾取消息 -->
+          <CheckButton name="$parentCheckButton_IgnoreGrayItems" inherits="TinomOptionsMainPanelCheckButton_Template">
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="$parentCheckButton_AbbrChannelName" relativePoint="RIGHT">
+                <Offset x="100" y="0"/>
               </Anchor>
             </Anchors>
           </CheckButton>
@@ -732,7 +748,38 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
               <Anchor point="BOTTOMRIGHT" relativeTo="$parentDropDown" relativePoint="TOPRIGHT" x="0" y="0"/>
             </Anchors>
           </CheckButton>
-
+          <!-- 白名单高亮显示复选框 -->
+          <CheckButton name="$parentWhiteList_Highlight" inherits="TinomOptionsMainPanelCheckButton_Template">
+            <Anchors>
+              <Anchor point="BOTTOMLEFT" relativeTo="$parentSound_Name" relativePoint="TOPLEFT" x="0" y="10"/>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                
+              </OnLoad>
+            </Scripts>
+          </CheckButton>
+          <!-- 白名单关键字高亮显示复选框 -->
+          <CheckButton name="$parentWhiteListKeyWord_Highlight" inherits="TinomOptionsMainPanelCheckButton_Template">
+            <Anchors>
+              <Anchor point="BOTTOMRIGHT" relativeTo="$parentSound_KeyWord" relativePoint="TOPRIGHT" x="0" y="10"/>
+            </Anchors>
+            <Layers>
+              <Layer level="ARTWORK">
+                <FontString name="$parentText2" inherits="GameFontHighlightLeft" justifyH="CENTER">
+                  <Anchors>
+                    <Anchor point="RIGHT" relativeTo="$parent" relativePoint="LEFT"/>
+                    <Anchor point="LEFT" relativeTo="TinomOptionsMainPanelWhiteListSettingWhiteList_Highlight" relativePoint="RIGHT"/>
+                  </Anchors>
+                </FontString>
+              </Layer>
+            </Layers>
+            <Scripts>
+              <OnLoad>
+                _G[self:GetName().."Text2"]:SetText(Tinom.L["高亮显示"]);
+              </OnLoad>
+            </Scripts>
+          </CheckButton>
         </Frames>
 
         <Scripts>

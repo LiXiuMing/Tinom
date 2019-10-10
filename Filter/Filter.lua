@@ -17,17 +17,17 @@ local playerName = UnitName("player");
 
 --  颜色表
 Tinom.classes = {
-    ["HUNTER"] = "ffa9d271",
-    ["WARLOCK"] = "ff8686ec",
-    ["PRIEST"] = "fffefefe",
-    ["PALADIN"] = "fff38bb9",
-    ["MAGE"] = "ff3ec5e9",
-    ["ROGUE"] = "fffef367",
-    ["DRUID"] = "fffe7b09",
-    ["SHAMAN"] = "ff006fdc",
-    ["WARRIOR"] = "ffc59a6c",
+    ["HUNTER"]      = "ffa9d271",
+    ["WARLOCK"]     = "ff8686ec",
+    ["PRIEST"]      = "fffefefe",
+    ["PALADIN"]     = "fff38bb9",
+    ["MAGE"]        = "ff3ec5e9",
+    ["ROGUE"]       = "fffef367",
+    ["DRUID"]       = "fffe7b09",
+    ["SHAMAN"]      = "ff006fdc",
+    ["WARRIOR"]     = "ffc59a6c",
     ["DEATHKNIGHT"] = "ffc31d39",
-    ["MONK"] = "ff00fe95",
+    ["MONK"]        = "ff00fe95",
     ["DEMONHUNTER"] = "ffa22fc8"
 };
 
@@ -42,14 +42,11 @@ function Tinom.ReplaceChannelName()
             local addmsg = chatFrame.AddMessage
             chatFrame.AddMessage = function(frame, text,...)
                 if ( Tinom.Tinom_Switch_MsgFilter_Classic ) then
-                    regex = "%[(%S-)%]%|h%："
-                    a,b = string.find(text,regex)
-                    if ( a and b ) then
-                        name = string.sub(text,a+1,b-6)
-                        playerClass = TinomDB_playerDB_classTemp[name] or "PRIEST";
-                        colorname = "|c"..Tinom.classes[playerClass]..name.."|r"
+                    local name = text:match("|Hplayer.-|h%[(%S-)%]|h")
+                    if ( name ) then
+                        local playerClass = TinomDB_playerDB_classTemp[name] or "PRIEST";
+                        local colorname = "|c"..Tinom.classes[playerClass]..name.."|r"
                         text = string.gsub(text,"%["..name.."%]","%["..colorname.."%]")
-                        --Tdebug(self,"log","Tinom.colorName."..strOut);
                     end
                 end
                 if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrChannelName) then
@@ -143,34 +140,40 @@ end
 --              替换角色名开关,替换关键字开关 or (authorName == playerName)
 -------------------------------------------------------------------------]]--
 function Tinom.MsgFilter( self,event,... )
+    if ( not TinomDB.Options.Default.Tinom_Switch_MsgFilter_MainEnable )then
+        return false;
+    end
     --if ( event ~= "CHAT_MSG_CHANNEL" ) then return end
     local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = ...;
     local authorName, authorServer = arg2:match( "(.-)%-(.*)" )
+    --local eventType = strsub(event, 10);
+
     --  针对怀旧服--##--
     if not authorServer then
         authorName = arg2;
         authorServer = "server";
     end
-    if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_MainEnable == false) )then
-        --Tdebug(self,"log","Tinom.MsgFilter.Tinom_Switch_MsgFilter_MainEnable.触发");
-        return false;
+    --  怀旧服缓存发言角色职业
+    if Tinom.Tinom_Switch_MsgFilter_Classic then
+        local _, Class  = GetPlayerInfoByGUID(arg12);
+        TinomDB_playerDB_classTemp[authorName] = Class;
     end
     
     --  统计函数  --
     --统计函数
 
-    --  缓存职业
-    local _, Class, _, Race, Sex  = GetPlayerInfoByGUID(arg12);
-    TinomDB_playerDB_classTemp[authorName] = Class;
     
     --  白名单过滤  --
     if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteList ) then
         for k,v in pairs(TinomDB.filterDB.whiteList) do
             if ( authorName == v ) then
-                if TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSound then
+                if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSound) then
                     PlaySound(TinomOptionsMainPanelWhiteListSettingDropDown:GetValue());
                 end
-                return false;
+                if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListHighlight) then
+                    newArg1 = "|cffffff00"..arg1.."|r"
+                end
+                return false, newArg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14; 
             end
         end
         -- if ( TinomDB.filterDB.whiteList[authorName] or TinomDB_filterDB_whiteListTemp[authorName] ) then
@@ -185,7 +188,10 @@ function Tinom.MsgFilter( self,event,... )
                 if TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWordSound then
                     PlaySound(TinomOptionsMainPanelWhiteListSettingDropDown:GetValue());
                 end
-                return false;
+                if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWordHighlight) then
+                    newArg1 = arg1:gsub(v,"|cffffff00"..v.."|r")
+                end
+                return false, newArg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14; 
             end
         end
     end
@@ -223,35 +229,59 @@ function Tinom.MsgFilter( self,event,... )
         end
     end
 
+    local newArg1, newArg2 = nil, nil;
     --  替换功能  --也可以使用元表方法setmetatable(table1,table2)
-    if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName) 
-        or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord)
+    if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName)
         or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg)
-        or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg)
         ) then
-
-        local newArg1, newArg2 = nil, nil;
-        --Tdebug(self,"log","Tinom.MsgFilter.替换.触发");
-        if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName)
-            or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg)
-            ) then
-            newArg1, newArg2 = Tinom.ReplaceName( arg2 );
-        end
-
-        if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord
-            or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg)
-            ) and (newArg1 == nil)) then
-            newArg1 = Tinom.ReplaceMsg( arg1 );
-        end
-
-        if ( newArg1 == nil ) then newArg1 = arg1; end
-        if ( newArg2 == nil ) then newArg2 = arg2; end
-
-        return false, newArg1, newArg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14; 
-    else
-        return false;
+        newArg1, newArg2 = Tinom.ReplaceName( arg2 );
     end
 
+    if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord
+        or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg)
+        ) and (newArg1 == nil)) then
+        newArg1 = Tinom.ReplaceMsg( arg1 );
+    end
+
+    if ( newArg1 == nil ) then newArg1 = arg1; end
+    if ( newArg2 == nil ) then newArg2 = arg2; end
+    
+    --  折叠复读消息
+    local strLength = string.len( newArg1 )
+    if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_FoldMsg) and (strLength > 20)) then
+        local theMsg = newArg1;
+        local heatSample = theMsg:match("^......")
+        if heatSample then
+            heatSample = heatSample:gsub("(%p)","%%%1")
+            local a = theMsg:find(heatSample,#heatSample);
+            if a then
+                local msg2 = strsub(theMsg,1,a-1)
+                msg2 = msg2:gsub("(%p)","%%%1")
+                if theMsg:find(msg2,a+1) then
+                    theMsg, num = theMsg:gsub(msg2,"")
+                    msg2 = msg2:gsub("%%","")
+                    --theMsg = theMsg:gsub("%%","")
+                    theMsg = msg2..theMsg.." x"..num
+                end
+            end
+            newArg1 = theMsg;
+        end
+    end
+    return false, newArg1, newArg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14;
+end
+
+--[[-------------------------------------------------------------------------
+--  消息过滤函数:过滤物品消息,屏蔽灰色物品
+-------------------------------------------------------------------------]]--
+function Tinom.MsgFilter_Item( self, event... )
+    if not TinomDB.Options.Default.Tinom_Switch_MsgFilter_IgnoreGrayItems then return; end
+    local arg1 = ...;
+    local itemID = GetItemInfoFromHyperlink(arg1);
+    local itemRarity = GetItemInfo(itemID);
+    if itemRarity == 0 then
+        return true;
+    end
+    return false;
 end
 
 --[[-------------------------------------------------------------------------
@@ -263,6 +293,7 @@ function Tinom.MsgFilterOn()
     ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", Tinom.MsgFilter)
     ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", Tinom.MsgFilter)
     --ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", Tinom.MsgFilter)
+    ChatFrame_AddMessageEventFilter("CHAT_MSG_LOOT", Tinom.MsgFilter_Item)
     print("过滤已开启")
 end
 
@@ -275,6 +306,7 @@ function Tinom.MsgFilterOff()
     ChatFrame_RemoveMessageEventFilter("CHAT_MSG_SAY", Tinom.MsgFilter)
     ChatFrame_RemoveMessageEventFilter("CHAT_MSG_YELL", Tinom.MsgFilter)
     --ChatFrame_RemoveMessageEventFilter("CHAT_MSG_WHISPER", Tinom.MsgFilter)
+    ChatFrame_RemoveMessageEventFilter("CHAT_MSG_LOOT", Tinom.MsgFilter_Item)
     print("过滤已关闭")
 end
 
