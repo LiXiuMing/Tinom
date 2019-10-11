@@ -17,12 +17,25 @@ Tinom = {};
 
 --  游戏版本
 local _,_,_,gameVersion = GetBuildInfo();
+
 --  角色名染色开关
 Tinom.Tinom_Switch_MsgFilter_ColorName = false;
 if ( gameVersion < 80205 ) then
     Tinom.Tinom_Switch_MsgFilter_Classic = true;
     Tdebug(self,"log","检测到怀旧版");
 end
+
+--[[-------------------------------------------------------------------------
+--  本地化函数
+-------------------------------------------------------------------------]]--
+Tinom.newTable = {}
+Tinom.L = setmetatable(TinomLocale, {
+    __index = function(_, key)
+        Tdebug(self,"log","zhCN.lua.未翻译字符串:"..key);
+        Tinom.newTable[key] = key;
+        return key;
+    end
+})
 
 --[[-------------------------------------------------------------------------
 --  初始化数据库:

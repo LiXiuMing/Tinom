@@ -632,8 +632,8 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
           <!-- 折叠长消息内重复句子 -->
           <CheckButton name="$parentCheckButton_FoldMsg" inherits="TinomOptionsMainPanelCheckButton_Template">
             <Anchors>
-              <Anchor point="LEFT" relativeTo="$parentCheckButton_CacheMsgRepeatText" relativePoint="RIGHT">
-                <Offset x="30" y="0"/>
+              <Anchor point="LEFT" relativeTo="$parentCheckButton_CacheMsgRepeat" relativePoint="RIGHT">
+                <Offset x="130" y="0"/>
               </Anchor>
             </Anchors>
           </CheckButton>
@@ -649,7 +649,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
           <CheckButton name="$parentCheckButton_IgnoreGrayItems" inherits="TinomOptionsMainPanelCheckButton_Template">
             <Anchors>
               <Anchor point="LEFT" relativeTo="$parentCheckButton_AbbrChannelName" relativePoint="RIGHT">
-                <Offset x="100" y="0"/>
+                <Offset x="130" y="0"/>
               </Anchor>
             </Anchors>
           </CheckButton>

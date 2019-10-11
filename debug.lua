@@ -20,6 +20,7 @@ local TinomDebugFrame = CreateFrame("Frame")
 TinomDebugFrame:RegisterEvent("PLAYER_LOGOUT")
 TinomDebugFrame:SetScript("OnEvent", function(self, event, ...)
     debugDB = debugDB_Temp;
+    debugDB.locale = Tinom.newTable;
 end)
 
 function Tdebug( ... )

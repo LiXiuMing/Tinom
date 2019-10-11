@@ -16,8 +16,8 @@
 # 索引需要载入的文件,将按照顺序加载.
 
 debug.lua
-Tinom.xml
 Locale\Locale.xml
+Tinom.xml
 ChatStat\ChatStat.xml
 Filter\Filter.xml
 Options\Options.xml
