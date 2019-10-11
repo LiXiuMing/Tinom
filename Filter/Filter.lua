@@ -273,11 +273,12 @@ end
 --[[-------------------------------------------------------------------------
 --  消息过滤函数:过滤物品消息,屏蔽灰色物品
 -------------------------------------------------------------------------]]--
-function Tinom.MsgFilter_Item( self, event... )
+function Tinom.MsgFilter_Item( self, event, ... )
     if not TinomDB.Options.Default.Tinom_Switch_MsgFilter_IgnoreGrayItems then return; end
     local arg1 = ...;
     local itemID = GetItemInfoFromHyperlink(arg1);
-    local itemRarity = GetItemInfo(itemID);
+    local itemName,_,itemRarity = GetItemInfo(itemID);
+    Tdebug(self,"log","MsgFilter_Item:"..itemName..itemID.."品质:"..itemRarity);
     if itemRarity == 0 then
         return true;
     end
