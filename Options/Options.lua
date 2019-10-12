@@ -12,7 +12,9 @@ Tinom.version = GetAddOnMetadata("Tinom", "Version")
 --  字符串:
 -------------------------------------------------------------------------]]--
 TINOM_OPTION_MAINPANEL_TITLE = L["Tinom聊天过滤v"]..Tinom.version;
---TINOM_OPTION_MAINPANEL_SUBTEXT = L["去年高三帮好朋友给实验班的男孩子写一封信,只有“山有木兮木有枝”七个字,想让他领会后半句心悦君兮君不知的含义.第二天男孩子主动来班里送信,还是昨天那封,他在后面补充到“心悦君兮君已知,奈何十二寒窗苦,待到金榜题名时.”   后来这段故事无疾而终 愿你们遇到的每段感情都能有处安放"];
+-- TINOM_OPTION_MAINPANEL_SUBTEXT = L["去年高三帮好朋友给实验班的男孩子写一封信,只有“山有木兮木有枝”七个字,
+-- 想让他领会后半句心悦君兮君不知的含义.第二天男孩子主动来班里送信,还是昨天那封,他在后面补充到“心悦君兮君已知,奈何十二寒窗苦,
+-- 待到金榜题名时.”   后来这段故事无疾而终 愿你们遇到的每段感情都能有处安放"];
 TINOM_OPTION_MAINPANEL_SUBTEXT = L["目前插件处于Beta测试阶段,更新会比较频繁.您可以经常浏览我的更新贴以获取最新版本.NGA:搜索\"Tinom\"进行反馈."];
 TINOM_OPTION_MAINPANEL_CHACKBUTTON_MAINENABLE_TEXT = L["开启过滤"];
 
@@ -40,6 +42,7 @@ Tinom.defaultOptionsCheckButtons = {
 	Tinom_Switch_MsgFilter_FoldMsg = false,
 	Tinom_Switch_MsgFilter_WhiteListHighlight = false,
 	Tinom_Switch_MsgFilter_WhiteListKeyWordHighlight = false,
+	Tinom_Switch_MsgFilter_WhiteListSoundID = 12867,
 };
 --[[-------------------------------------------------------------------------
 --  默认配置:复选按钮文本
@@ -212,9 +215,13 @@ end
 -------------------------------------------------------------------------]]--
 function Tinom.OptionsPanel_EditBox_LoadOptions(self)
 	TinomOptionsMainPanelWhiteListSettingEditList_WhiteListScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.whiteList,"\n"))
+	TinomOptionsMainPanelWhiteListSettingEditList_WhiteListTitle:SetText(Tinom.L["白名单:玩家"].."-"..#TinomDB.filterDB.whiteList)
 	TinomOptionsMainPanelWhiteListSettingEditList_WhiteListKeyWordScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.whiteListKeyWord,"\n"))
+	TinomOptionsMainPanelWhiteListSettingEditList_WhiteListKeyWordTitle:SetText(Tinom.L["白名单:关键字"].."-"..#TinomDB.filterDB.whiteListKeyWord)
 	TinomOptionsMainPanelBlackListSettingEditList_BlackListScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.blackList,"\n"))
+	TinomOptionsMainPanelBlackListSettingEditList_BlackListTitle:SetText(Tinom.L["黑名单:玩家"].."-"..#TinomDB.filterDB.blackList)
 	TinomOptionsMainPanelBlackListSettingEditList_BlackListKeyWordScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.blackListKeyWord,"\n"))
+	TinomOptionsMainPanelBlackListSettingEditList_BlackListKeyWordTitle:SetText(Tinom.L["黑名单:关键字"].."-"..#TinomDB.filterDB.blackListKeyWord)
 
 	Tdebug(self,"log","Options.名单已加载:");
 end
@@ -346,8 +353,8 @@ function Tinom.OptionsWhiteListSoundDropDown_Initialize(self)
 	local selectedValue = UIDropDownMenu_GetSelectedValue(self);
 	local info = UIDropDownMenu_CreateInfo();
 	local table_sounds = {
-		[1] = {12867,"铃声1"},
-		[2] = {12889,"铃声2"},
+		[1] = {12867,Tinom.L["铃声"].."1"},
+		[2] = {12889,Tinom.L["铃声"].."2"},
 	};
 
 	for k,v in pairs(table_sounds) do
@@ -454,9 +461,9 @@ end
 -------------------------------------------------------------------------]]--
 function Tinom.OptionsMainPanel_ReplaceName_EditBoxName_OnTextChanged(self)
 	if ( TinomDB.filterDB.replaceName[self:GetText()] or TinomDB.filterDB.replaceKeyWord[self:GetText()] ) then
-		_G[self:GetParent():GetName().."ButtonAdd"]:SetText("修改");
+		_G[self:GetParent():GetName().."ButtonAdd"]:SetText(Tinom.L["修改"]);
 	else
-		_G[self:GetParent():GetName().."ButtonAdd"]:SetText("新增");
+		_G[self:GetParent():GetName().."ButtonAdd"]:SetText(Tinom.L["新增"]);
 	end
 
 end
@@ -544,8 +551,8 @@ function Tinom.OptionsReplaceDropDown_Initialize(self)
 	local selectedValue = UIDropDownMenu_GetSelectedValue(self);
 	local info = UIDropDownMenu_CreateInfo();
 	local table_sounds = {
-		[1] = {"NameList","按角色名替换"},
-		[2] = {"KeyWordList","按关键字替换"},
+		[1] = {"NameList",Tinom.L["按角色名替换"]},
+		[2] = {"KeyWordList",Tinom.L["按关键字替换"]},
 	};
 
 	for k,v in pairs(table_sounds) do
@@ -656,9 +663,9 @@ end
 -------------------------------------------------------------------------]]--
 function Tinom.OptionsMainPanel_ReplaceKeyWord_EditBoxName_OnTextChanged(self)
 	if ( TinomDB.filterDB.replaceKeyWord[self:GetText()] or TinomDB.filterDB.replaceKeyWord[self:GetText()] ) then
-		_G[self:GetParent():GetName().."ButtonAdd"]:SetText("修改");
+		_G[self:GetParent():GetName().."ButtonAdd"]:SetText(Tinom.L["修改"]);
 	else
-		_G[self:GetParent():GetName().."ButtonAdd"]:SetText("新增");
+		_G[self:GetParent():GetName().."ButtonAdd"]:SetText(Tinom.L["新增"]);
 	end
 
 end

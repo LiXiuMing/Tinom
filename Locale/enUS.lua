@@ -22,7 +22,7 @@ TinomLocale = {
     ["黑名单设置"] = "blacklist setting",
     ["关键字"] = "keyword",
     ["替换角色的消息"] = "Replace role message",
-    ["缩写玩家名(|cffffff00注意!被缩写的角色将导致其右键内交互功能失效!|r)"] = "Abbreviation player name(|cffffff00Note! The abbreviated character will cause its right-click interaction function to be invalid!|r)",
+    ["缩写玩家名(|cffffff00注意!被缩写的角色将导致其右键内交互功能失效!|r)"] = "Abbreviation player name\n(|cffffff00Note! The abbreviated character will cause its right-click interaction function to be invalid!|r)",
     ["Tinom聊天过滤v"] = "Tinom chat filter v",
     ["开启过滤系统的主开关"] = "Turn on the main switch of the filter system",
     ["替换单设置"] = "Replacement Order Settings",
@@ -48,6 +48,14 @@ TinomLocale = {
     ["目前插件处于Beta测试阶段,更新会比较频繁.您可以经常浏览我的更新贴以获取最新版本.NGA:搜索\"Tinom\"进行反馈."] = "The plugin is currently in beta testing, update It will be more frequent. You can often browse my update post to get the latest version. NGA: Search \"Tinom\" for feedback.",
     ["选一个你喜欢的提示音"] = "Choose a tone you like",
     ["替换类型"] = "Replace Type",
+    ["按角色名替换"] = "Replace as Name",
+    ["按关键字替换"] = "Replace as Keyword",
+    ["过滤优先级从上至下递减"] = "The priority of the filter decreases from top to bottom",
+    ["铃声"] = "Tone",
+    ["新增"] = "Add",
+    ["删除"] = "Del",
+    ["修改"] = "Rec",
+    ["你太短了!"] = "You're so short!",
 }
 
 Tdebug(self,"log","zhCN.lua加载完成");

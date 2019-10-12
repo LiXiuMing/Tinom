@@ -145,6 +145,7 @@ function Tinom.MsgFilter( self,event,... )
     end
     --if ( event ~= "CHAT_MSG_CHANNEL" ) then return end
     local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = ...;
+    if not arg12:find("Player") then return; end
     local authorName, authorServer = arg2:match( "(.-)%-(.*)" )
     --local eventType = strsub(event, 10);
 
@@ -168,7 +169,7 @@ function Tinom.MsgFilter( self,event,... )
         for k,v in pairs(TinomDB.filterDB.whiteList) do
             if ( authorName == v ) then
                 if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSound) then
-                    PlaySound(TinomOptionsMainPanelWhiteListSettingDropDown:GetValue());
+                    PlaySound(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID);
                 end
                 if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListHighlight) then
                     newArg1 = "|cffffff00"..arg1.."|r"
@@ -186,7 +187,7 @@ function Tinom.MsgFilter( self,event,... )
         for _,v in pairs(TinomDB.filterDB.whiteListKeyWord) do
             if arg1:find(v) then
                 if TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWordSound then
-                    PlaySound(TinomOptionsMainPanelWhiteListSettingDropDown:GetValue());
+                    PlaySound(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID);
                 end
                 if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWordHighlight) then
                     newArg1 = arg1:gsub(v,"|cffffff00"..v.."|r")

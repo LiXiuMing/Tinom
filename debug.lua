@@ -20,7 +20,7 @@ local TinomDebugFrame = CreateFrame("Frame")
 TinomDebugFrame:RegisterEvent("PLAYER_LOGOUT")
 TinomDebugFrame:SetScript("OnEvent", function(self, event, ...)
     debugDB = debugDB_Temp;
-    debugDB.locale = Tinom.newTable;
+    debugDB.locale = Tinom.newLocale;
 end)
 
 function Tdebug( ... )
@@ -40,11 +40,12 @@ function Tdebug( ... )
 end
 
 function TdebugSwitch()
-    if Tinom_Switch_Debug == false then
-        Tinom_Switch_Debug = true;
-    else
-        Tinom_Switch_Debug = false;
+    Tinom_Switch_Debug = not Tinom_Switch_Debug;
+    if Tinom_Switch_Debug then
+        print("排错函数已:开")
+        return;
     end
+    print("排错函数已:关")
 end
 SLASH_TINOMDEBUG1 = "/tdebug"
 SLASH_TINOMDEBUG2 = "/td"

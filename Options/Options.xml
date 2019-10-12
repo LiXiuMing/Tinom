@@ -667,7 +667,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
         
         <Scripts>
           <OnLoad>
-            _G[self:GetName().."Title"]:SetText("过滤单的优先级从上至下递减")
+            _G[self:GetName().."Title"]:SetText(Tinom.L["过滤优先级从上至下递减"])
           </OnLoad>
         </Scripts>
       </Frame>
@@ -966,7 +966,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
                 </Scripts>
               </EditBox>
               <!-- 新增条目按钮模块 -->
-              <Button name="$parentButtonAdd" inherits="UIPanelButtonTemplate" text="新增">
+              <Button name="$parentButtonAdd" inherits="UIPanelButtonTemplate">
                 <Size>
                   <AbsDimension x="45" y="26"/>
                 </Size>
@@ -975,6 +975,9 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
                   </Anchor>
                 </Anchors>
                 <Scripts>
+                  <OnLoad>
+                    self:SetText(Tinom.L["新增"])
+                  </OnLoad>
                   <OnClick>
                     Tinom.OptionsMainPanel_ReplaceName_ButtonAdd_OnClick();
                   </OnClick>
@@ -983,7 +986,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
                 <HighlightFont style="GameFontHighlightSmall"/>
               </Button>
               <!-- 删除条目按钮模块 -->
-              <Button name="$parentButtonDel" inherits="UIPanelButtonTemplate" text="删除">
+              <Button name="$parentButtonDel" inherits="UIPanelButtonTemplate">
                 <Size>
                   <AbsDimension x="45" y="26"/>
                 </Size>
@@ -992,6 +995,9 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
                   </Anchor>
                 </Anchors>
                 <Scripts>
+                  <OnLoad>
+                    self:SetText(Tinom.L["删除"])
+                  </OnLoad>
                   <OnClick>
                     Tinom.OptionsMainPanel_ReplaceName_ButtonDel_OnClick();
                   </OnClick>
@@ -1190,7 +1196,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
                 </Scripts>
               </EditBox>
               <!-- 新增条目按钮模块 -->
-              <Button name="$parentButtonAdd" inherits="UIPanelButtonTemplate" text="新增">
+              <Button name="$parentButtonAdd" inherits="UIPanelButtonTemplate" text="">
                 <Size>
                   <AbsDimension x="45" y="26"/>
                 </Size>
@@ -1199,6 +1205,9 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
                   </Anchor>
                 </Anchors>
                 <Scripts>
+                  <OnLoad>
+                    self:SetText(Tinom.L["新增"])
+                  </OnLoad>
                   <OnClick>
                     Tinom.OptionsMainPanel_ReplaceKeyWord_ButtonAdd_OnClick();
                   </OnClick>
@@ -1207,7 +1216,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
                 <HighlightFont style="GameFontHighlightSmall"/>
               </Button>
               <!-- 删除条目按钮模块 -->
-              <Button name="$parentButtonDel" inherits="UIPanelButtonTemplate" text="删除">
+              <Button name="$parentButtonDel" inherits="UIPanelButtonTemplate" text="">
                 <Size>
                   <AbsDimension x="45" y="26"/>
                 </Size>
@@ -1216,6 +1225,9 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
                   </Anchor>
                 </Anchors>
                 <Scripts>
+                  <OnLoad>
+                    self:SetText(Tinom.L["删除"])
+                  </OnLoad>
                   <OnClick>
                     Tinom.OptionsMainPanel_ReplaceKeyWord_ButtonDel_OnClick();
                   </OnClick>

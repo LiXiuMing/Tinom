@@ -1,17 +1,16 @@
 import zipfile, os
-#TinomPath = r"F:/World of Warcraft/_retail_/Interface/AddOns/Tinom/"
+try:
+    import zlib
+    ziptype = zipfile.ZIP_DEFLATED
+except:
+    ziptype = zipfile.ZIP_STORED
+
 fileslist = {
-	"AccountStat/AccountStat.lua",
-	"AccountStat/AccountStat.xml",
-	"ChatStat/ChatStat.lua",
-	"ChatStat/ChatStat.xml",
-	"Filter/Filter.lua",
-	"Filter/Filter.xml",
-	"Locale/Locale.xml",
-	"Locale/zhCN.lua",
-	"Locale/enUS.lua",
-	"Options/Options.lua",
-	"Options/Options.xml",
+	"AccountStat",
+	"ChatStat",
+	"Filter",
+	"Locale",
+	"Options",
 	"Core.lua",
 	"debug.lua",
 	"README.md",
@@ -26,12 +25,15 @@ long = len(TinomList[4])
 version = TinomList[4][12:(long-1)]
 Tinomtoc.close()
 zipname = "Build/Tinom"+version+".zip"
-# print(zipname)
-with zipfile.ZipFile(zipname,mode='w') as target:
+
+with zipfile.ZipFile(zipname,'w',ziptype) as target:
 	for file in fileslist:
-		target.write(file,"Tinom/"+file)
+		if os.path.isdir(file):
+			for fileB in os.listdir(file):
+				target.write(file+os.sep+fileB,"Tinom/"+file+os.sep+fileB)
+		else:
+			target.write(file,"Tinom/"+file)
 target.close()
 
-# zfile = zipfile.ZipFile("Tinom.zip")
-# print("压缩完成")
-# print (zfile.namelist())
+Tinomzip = zipfile.ZipFile(zipname)
+print(zipname+"压缩完成,共压缩文件:"+str(len(Tinomzip.namelist()))+"个.")
