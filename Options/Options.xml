@@ -897,7 +897,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
                     self:HighlightText(0,0);
                   </OnEditFocusLost>
                   <OnTextChanged>
-                    Tinom.OptionsMainPanel_ReplaceName_EditBoxName_OnTextChanged(self);
+                    Tinom.OptionsMainPanel_Replace_EditBoxName_OnTextChanged(self,"Name");
                   </OnTextChanged>
                   <OnTabPressed>
                     _G[self:GetParent():GetName().."NewName"]:SetFocus();
@@ -1057,8 +1057,8 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
                   <Anchor point="TOPLEFT" relativeTo="$parentButton9" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
               </Button>
+
               <!-- 滚动条 -->
-              <!-- inherits="UIPanelScrollFrameTemplate -->
               <ScrollFrame name="$parentScrollFrame" inherits="UIPanelScrollFrameTemplate">
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="6" y="-6"/>
@@ -1127,7 +1127,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
                     self:HighlightText(0,0);
                   </OnEditFocusLost>
                   <OnTextChanged>
-                    Tinom.OptionsMainPanel_ReplaceName_EditBoxName_OnTextChanged(self);
+                    Tinom.OptionsMainPanel_Replace_EditBoxName_OnTextChanged(self,"KeyWord");
                   </OnTextChanged>
                   <OnTabPressed>
                     _G[self:GetParent():GetName().."NewWord"]:SetFocus();
@@ -1330,8 +1330,8 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
               </OnLoad>
               <OnEnter>
                 if ( not self.isDisabled ) then
-                GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT");
-                GameTooltip:SetText(self.tooltip, nil, nil, nil, nil, true);
+                  GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT");
+                  GameTooltip:SetText(self.tooltip, nil, nil, nil, nil, true);
                 end
               </OnEnter>
               <OnEvent>

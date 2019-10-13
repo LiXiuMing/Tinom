@@ -136,6 +136,29 @@ function Tinom.CacheMsgRepeat( self,event,msg )
 end
 
 --[[-------------------------------------------------------------------------
+--  折叠复读消息
+-------------------------------------------------------------------------]]--
+function Tinom.FoldMsg( newArg1 )
+    local theMsg = newArg1;
+    local heatSample = theMsg:match("^......")
+    if heatSample then
+        heatSample = heatSample:gsub("(%p)","%%%1")
+        local a = theMsg:find(heatSample,#heatSample);
+        if a then
+            local msg2 = strsub(theMsg,1,a-1)
+            msg2 = msg2:gsub("(%p)","%%%1")
+            if theMsg:find(msg2,a+1) then
+                theMsg, num = theMsg:gsub(msg2,"")
+                msg2 = msg2:gsub("%%","")
+                theMsg = msg2..theMsg.." x"..num
+            end
+        end
+        newArg1 = theMsg;
+        return newArg1;
+    end
+end
+    
+--[[-------------------------------------------------------------------------
 --  消息过滤函数:白名单开关,黑名单开关,白名单,临时白名单,黑名单,临时黑名单,
 --              替换角色名开关,替换关键字开关 or (authorName == playerName)
 -------------------------------------------------------------------------]]--
@@ -148,7 +171,7 @@ function Tinom.MsgFilter( self,event,... )
     if not arg12:find("Player") then return; end
     local authorName, authorServer = arg2:match( "(.-)%-(.*)" )
     --local eventType = strsub(event, 10);
-
+    
     --  针对怀旧服--##--
     if not authorServer then
         authorName = arg2;
@@ -162,7 +185,9 @@ function Tinom.MsgFilter( self,event,... )
     
     --  统计函数  --
     --统计函数
-
+    
+    local newArg1, newArg2 = nil, nil;
+    local ignoreKey = true;
     
     --  白名单过滤  --
     if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteList ) then
@@ -174,7 +199,8 @@ function Tinom.MsgFilter( self,event,... )
                 if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListHighlight) then
                     newArg1 = "|cffffff00"..arg1.."|r"
                 end
-                return false, newArg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14; 
+                ignoreKey = false;
+                --return false, newArg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14; 
             end
         end
         -- if ( TinomDB.filterDB.whiteList[authorName] or TinomDB_filterDB_whiteListTemp[authorName] ) then
@@ -187,18 +213,50 @@ function Tinom.MsgFilter( self,event,... )
         for _,v in pairs(TinomDB.filterDB.whiteListKeyWord) do
             if arg1:find(v) then
                 if TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWordSound then
-                    PlaySound(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID);
                 end
                 if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWordHighlight) then
                     newArg1 = arg1:gsub(v,"|cffffff00"..v.."|r")
                 end
-                return false, newArg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14; 
+                ignoreKey = false;
+                --return false, newArg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14; 
             end
         end
     end
 
+    if not ignoreKey then
+        --  历史20条信息内重复,不区分角色  --
+        if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_CacheMsgRepeat ) then
+            if ( Tinom.CacheMsgRepeat( self,event,newArg1 ) ) then
+                return true;
+            end
+        end
+        --  替换功能  --也可以使用元表方法setmetatable(table1,table2)
+        if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName)
+        or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg)
+        ) then
+            newArg1, newArg2 = Tinom.ReplaceName( arg2 );
+        end
+        
+        if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord
+        or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg)
+        )) then
+            newArg1 = Tinom.ReplaceMsg( newArg1 );
+        end
+
+        if ( newArg1 == nil ) then newArg1 = arg1; end
+        if ( newArg2 == nil ) then newArg2 = arg2; end
+
+        --  折叠复读消息
+        local strLength = string.len( newArg1 )
+        if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_FoldMsg) and (strLength > 20)) then
+            newArg1 = Tinom.FoldMsg( newArg1 ) or newArg1;
+        end
+        PlaySound(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID);
+        return false, newArg1, newArg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14;
+    end
+
     --  白名单模式
-    if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListOnly ) then
+    if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListOnly) then
         return true;
     end
 
@@ -230,44 +288,28 @@ function Tinom.MsgFilter( self,event,... )
         end
     end
 
-    local newArg1, newArg2 = nil, nil;
     --  替换功能  --也可以使用元表方法setmetatable(table1,table2)
     if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName)
-        or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg)
-        ) then
+    or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg)
+    ) then
         newArg1, newArg2 = Tinom.ReplaceName( arg2 );
     end
-
+    
     if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord
-        or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg)
-        ) and (newArg1 == nil)) then
+    or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg)
+    ) and (newArg1 == nil)) then
         newArg1 = Tinom.ReplaceMsg( arg1 );
     end
 
     if ( newArg1 == nil ) then newArg1 = arg1; end
     if ( newArg2 == nil ) then newArg2 = arg2; end
-    
+
     --  折叠复读消息
     local strLength = string.len( newArg1 )
     if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_FoldMsg) and (strLength > 20)) then
-        local theMsg = newArg1;
-        local heatSample = theMsg:match("^......")
-        if heatSample then
-            heatSample = heatSample:gsub("(%p)","%%%1")
-            local a = theMsg:find(heatSample,#heatSample);
-            if a then
-                local msg2 = strsub(theMsg,1,a-1)
-                msg2 = msg2:gsub("(%p)","%%%1")
-                if theMsg:find(msg2,a+1) then
-                    theMsg, num = theMsg:gsub(msg2,"")
-                    msg2 = msg2:gsub("%%","")
-                    --theMsg = theMsg:gsub("%%","")
-                    theMsg = msg2..theMsg.." x"..num
-                end
-            end
-            newArg1 = theMsg;
-        end
+        newArg1 = Tinom.FoldMsg( newArg1 ) or newArg1;
     end
+
     return false, newArg1, newArg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14;
 end
 

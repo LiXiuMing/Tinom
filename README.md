@@ -11,6 +11,7 @@
 - [Func]屏蔽社区邀请:|HplayerCommunity;Blizzard Groups
 - [Func]优先级调整
 - [Func]单独做一个提醒单出来
+- [Func]多名单支持,创建 选择 多选 复选 名单内的名单
 
 ## 插件功能:
 
