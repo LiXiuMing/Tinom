@@ -621,26 +621,18 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
             </Anchors>
           </CheckButton>
 
-          <!-- 缓存过滤消息复选按钮 -->
-          <CheckButton name="$parentCheckButton_CacheMsgRepeat" inherits="TinomOptionsMainPanelCheckButton_Template">
+          <!-- 折叠长消息内重复句子 -->
+          <CheckButton name="$parentCheckButton_FoldMsg" inherits="TinomOptionsMainPanelCheckButton_Template">
             <Anchors>
               <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_ReplaceKeyWordMsg" relativePoint="BOTTOMLEFT">
                 <Offset x="0" y="-20"/>
               </Anchor>
             </Anchors>
           </CheckButton>
-          <!-- 折叠长消息内重复句子 -->
-          <CheckButton name="$parentCheckButton_FoldMsg" inherits="TinomOptionsMainPanelCheckButton_Template">
-            <Anchors>
-              <Anchor point="LEFT" relativeTo="$parentCheckButton_CacheMsgRepeat" relativePoint="RIGHT">
-                <Offset x="130" y="0"/>
-              </Anchor>
-            </Anchors>
-          </CheckButton>
           <!-- 频道与姓名缩写 -->
           <CheckButton name="$parentCheckButton_AbbrChannelName" inherits="TinomOptionsMainPanelCheckButton_Template">
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_CacheMsgRepeat" relativePoint="BOTTOMLEFT">
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_FoldMsg" relativePoint="BOTTOMLEFT">
                 <Offset x="0" y="-5"/>
               </Anchor>
             </Anchors>
@@ -662,6 +654,100 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
             </Anchors>
           </CheckButton>
           
+          <!-- 屏蔽重复消息复选按钮 -->
+          <CheckButton name="$parentCheckButton_RepeatMsg" inherits="TinomOptionsMainPanelCheckButton_Template">
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="$parent" relativePoint="TOP"/>
+              <Anchor point="TOP" relativeTo="$parentCheckButton_WhiteList" relativePoint="TOP"/>
+            </Anchors>
+          </CheckButton>
+          <!-- 屏蔽重复消息水平滑条模块 -->
+          <Slider name="$parentSlider_RepeatMsg" inherits="OptionsSliderTemplate">
+            <Layers>
+              <Layer>
+                <!-- 滑条标题 -->
+                <FontString name="$parentText" parentKey="Text" inherits="GameFontHighlight" text="">
+                  <Anchors>
+                    <Anchor point="BOTTOM" relativePoint="TOP"/>
+                  </Anchors>
+                </FontString>
+              </Layer>
+            </Layers>
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="$parentCheckButton_RepeatMsgText" relativePoint="RIGHT" x="8"/>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                self.tooltipText = Tinom.L["屏蔽此时间内的重复消息\n0为不限时间."];
+                self:SetMinMaxValues(0,300);
+                self:SetValueStep(1);
+                self:SetValue(0);
+                self:SetOrientation("HORIZONTAL");
+                _G[self:GetName().."Low"]:SetText("")
+                _G[self:GetName().."High"]:SetText("")
+              </OnLoad>
+              <OnValueChanged>
+                value = math.floor(value * 100 + 0.5) / 100;
+                if (value ~= 0) then
+                  value = math.max(0.5, value);
+                end
+                self.value = value;
+                self:SetValue(value);
+                TinomOptionsMainPanelBaseSettingSlider_RepeatMsgText:SetText(self.value.."秒");
+                <!-- TinomDB.Options.Default.Tinom_Value_MsgFilter_RepeatMsgElapsed = self.value; -->
+              </OnValueChanged>
+              <OnEvent>
+
+              </OnEvent>
+            </Scripts>
+          </Slider>
+
+          <!-- 屏蔽间隔interval时间内消息复选按钮 -->
+          <CheckButton name="$parentCheckButton_IntervalMsg" inherits="TinomOptionsMainPanelCheckButton_Template">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_RepeatMsg" relativePoint="BOTTOMLEFT" y="-5"/>
+            </Anchors>
+          </CheckButton>
+          <!-- 屏蔽重复消息水平滑条模块 -->
+          <Slider name="$parentSlider_IntervalMsg" inherits="OptionsSliderTemplate">
+            <Layers>
+              <Layer>
+                <!-- 滑条标题 -->
+                <FontString name="$parentText" parentKey="Text" inherits="GameFontHighlight" text="">
+                  <Anchors>
+                    <Anchor point="BOTTOM" relativePoint="TOP"/>
+                  </Anchors>
+                </FontString>
+              </Layer>
+            </Layers>
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="$parentCheckButton_IntervalMsgText" relativePoint="RIGHT" x="8"/>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                self.tooltipText = Tinom.L["屏蔽此时间内的任何消息\n0为不限时间."];
+                self:SetMinMaxValues(0,300);
+                self:SetValueStep(1);
+                self:SetValue(0);
+                self:SetOrientation("HORIZONTAL");
+                _G[self:GetName().."Low"]:SetText("")
+                _G[self:GetName().."High"]:SetText("")
+              </OnLoad>
+              <OnValueChanged>
+                value = math.floor(value * 100 + 0.5) / 100;
+                if (value ~= 0) then
+                  value = math.max(0.5, value);
+                end
+                self.value = value;
+                self:SetValue(value);
+                TinomOptionsMainPanelBaseSettingSlider_IntervalMsgText:SetText(self.value.."秒");
+                <!-- TinomDB.Options.Default.Tinom_Value_MsgFilter_IntervalMsgTime = self.value; -->
+              </OnValueChanged>
+              <OnEvent>
+
+              </OnEvent>
+            </Scripts>
+          </Slider>
           
         </Frames>
         

@@ -7,7 +7,15 @@
 --
 -------------------------------------------------------------------------]]--
 --  临时表
-TinomDB_filterDB_cacheMsgTemp = {};
+TinomDB_ChatStatDB_cacheMsgTemp = {
+    TinomChatStatFrameText_ReplaceMsg_Num = 0,
+    TinomChatStatFrameText_FoldMsg_Num = 0,
+    TinomChatStatFrameText_BlackList_Num = 0,
+    TinomChatStatFrameText_BlackKeywordList_Num = 0,
+    TinomChatStatFrameText_RepeatMsg_Num = 0,
+    TinomChatStatFrameText_IntervalMsg_Num = 0,
+};
+
 TinomDB_filterDB_whiteListTemp = {};
 TinomDB_filterDB_blackListTemp = {};
 TinomDB_playerDB_classTemp = {};
@@ -102,7 +110,7 @@ function Tinom.ReplaceMsg( ... )
         if ( msg:find(k) ) then
             if ( ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg == true ) and #v.newMsg > 0 ) then
                 newMsg = v.newMsg;
-                --TinomChatStatFrameText_ReplaceMsg_Num:SetText(TinomChatStatFrameText_ReplaceMsg_Num:GetText()+0.1);
+                TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_ReplaceMsg_Num=TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_ReplaceMsg_Num+0.1;
                 return newMsg;
             end
             if ( ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord == true ) and #v.newWord > 0 ) then
@@ -112,32 +120,42 @@ function Tinom.ReplaceMsg( ... )
         end
     end
     -- if msg ~= ... then
-    --     TinomChatStatFrameText_ReplaceMsg_Num:SetText(TinomChatStatFrameText_ReplaceMsg_Num:GetText()+0.1);
+    --     TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_ReplaceMsg_Num=TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_ReplaceMsg_Num+0.1;
     -- end
     return msg;
 end
 
 --[[-------------------------------------------------------------------------
---  重复信息过滤函数:过滤频道内所有人的重复发言
---                  缓存20条消息进行对比,若重复则丢弃
+--  重复信息过滤函数:
 -------------------------------------------------------------------------]]--
-function Tinom.CacheMsgRepeat( self,event,msg )
-    local frameName = self:GetName()
-    if TinomDB_filterDB_cacheMsgTemp[frameName] == nil then
-        TinomDB_filterDB_cacheMsgTemp[frameName] = {};
-    end
-    
-    for k,v in pairs(TinomDB_filterDB_cacheMsgTemp[frameName]) do
-        if ( msg == v ) then
-            return true;
+function Tinom.RepeatMsg( self,event,msg,authorName,authorServer )
+    if TinomDB.chatStatDB[authorServer] then
+        if TinomDB.chatStatDB[authorServer][authorName] then
+            local elapsed = time() - TinomDB.chatStatDB[authorServer][authorName].msg_last_time;
+            --Tdebug(self,"log","Tinom.RepeatMsg."..elapsed);
+            if TinomDB.Options.Default.Tinom_Switch_MsgFilter_IntervalMsg then
+                if ((elapsed < TinomDB.Options.Default.Tinom_Value_MsgFilter_IntervalMsgTime)
+                    or (TinomDB.Options.Default.Tinom_Value_MsgFilter_IntervalMsgTime == 0)) then
+                        TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_IntervalMsg_Num=TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_IntervalMsg_Num+0.1;
+                    return true;
+                end
+            end
+            if TinomDB.Options.Default.Tinom_Switch_MsgFilter_RepeatMsg then
+                if ((elapsed < TinomDB.Options.Default.Tinom_Value_MsgFilter_RepeatMsgElapsed)
+                    or (TinomDB.Options.Default.Tinom_Value_MsgFilter_RepeatMsgElapsed == 0)) then
+                    if TinomDB.chatStatDB[authorServer][authorName].msg_last_text == msg then
+                        TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_RepeatMsg_Num=TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_RepeatMsg_Num+0.1;
+                        return true;
+                    end
+                end
+            end
         end
-    end
-    table.insert( TinomDB_filterDB_cacheMsgTemp[frameName], 1, msg )
-    if ( #TinomDB_filterDB_cacheMsgTemp[frameName] == 21 ) then
-        table.remove( TinomDB_filterDB_cacheMsgTemp[frameName], 21)
     end
     return false;
 end
+--[[-------------------------------------------------------------------------
+--  重复信息过滤函数:
+-------------------------------------------------------------------------]]--
 
 --[[-------------------------------------------------------------------------
 --  折叠复读消息
@@ -155,7 +173,7 @@ function Tinom.FoldMsg( newArg1 )
                 theMsg, num = theMsg:gsub(msg2,"")
                 msg2 = msg2:gsub("%%","")
                 theMsg = msg2..theMsg.." x"..num
-                --TinomChatStatFrameText_FoldMsg_Num:SetText(TinomChatStatFrameText_FoldMsg_Num:GetText()+0.1);
+                TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_FoldMsg_Num=TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_FoldMsg_Num+0.1;
             end
         end
         newArg1 = theMsg;
@@ -202,7 +220,7 @@ function Tinom.MsgFilter( self,event,... )
                     PlaySound(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID);
                 end
                 if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListHighlight) then
-                    newArg1 = "|cffffff00"..arg1.."|r"
+                    arg1 = "|cffffff00"..arg1.."|r"
                 end
                 ignoreKey = false;
                 --return false, newArg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14; 
@@ -212,41 +230,40 @@ function Tinom.MsgFilter( self,event,... )
         --     return false;
         -- end
     end
-
+    
     --  关键字白名单  --
     if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWord ) then
         for _,v in pairs(TinomDB.filterDB.whiteListKeyWord) do
             if arg1:find(v) then
                 if TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWordSound then
+                    PlaySound(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID);
                 end
                 if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWordHighlight) then
-                    newArg1 = arg1:gsub(v,"|cffffff00"..v.."|r")
+                    arg1 = arg1:gsub(v,"|cffffff00"..v.."|r")
                 end
                 ignoreKey = false;
                 --return false, newArg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14; 
             end
         end
     end
-
-    if not ignoreKey then
+    
+    if ignoreKey == false then
         --  历史20条信息内重复,不区分角色  --
-        if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_CacheMsgRepeat ) then
-            if ( Tinom.CacheMsgRepeat( self,event,newArg1 ) ) then
+        if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_RepeatMsg or TinomDB.Options.Default.Tinom_Switch_MsgFilter_IntervalMsg ) then
+            if ( Tinom.RepeatMsg( self,event,arg1,authorName,authorServer) ) then
                 return true;
             end
         end
         --  替换功能  --也可以使用元表方法setmetatable(table1,table2)
         if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName)
-        or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg)
-        ) then
+        or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg)) then
             newArg1, newArg2 = Tinom.ReplaceName( arg2 );
         end
         
-        if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord
-        or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg)
-        )) then
+        if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord)
+            or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg)) then
             newArg1 = Tinom.ReplaceMsg( newArg1 or arg1 );
-            --TinomChatStatFrameText_ReplaceMsg_Num:SetText(TinomChatStatFrameText_ReplaceMsg_Num:GetText()+0.1);
+            TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_ReplaceMsg_Num=TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_ReplaceMsg_Num+0.1;
         end
 
         if ( newArg1 == nil ) then newArg1 = arg1; end
@@ -257,8 +274,7 @@ function Tinom.MsgFilter( self,event,... )
         if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_FoldMsg) and (strLength > 20)) then
             newArg1 = Tinom.FoldMsg( newArg1 ) or newArg1;
         end
-        PlaySound(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID);
-        --TinomChatStatFrameText_FoldMsg_Num:SetText(TinomChatStatFrameText_FoldMsg_Num:GetText()+0.1);
+        TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_FoldMsg_Num=TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_FoldMsg_Num+0.1;
         return false, newArg1, newArg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14;
     end
 
@@ -271,7 +287,7 @@ function Tinom.MsgFilter( self,event,... )
     if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackList ) then
         for k,v in pairs(TinomDB.filterDB.blackList) do
             if ( authorName == v ) then
-                --TinomChatStatFrameText_BlackList_Num:SetText(TinomChatStatFrameText_BlackList_Num:GetText()+0.1);
+                TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_BlackList_Num=TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_BlackList_Num+0.1;
                 return true;
             end
         end
@@ -284,16 +300,15 @@ function Tinom.MsgFilter( self,event,... )
     if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackListKeyWord ) then
         for _,v in pairs(TinomDB.filterDB.blackListKeyWord) do
             if arg1:find(v) then
-                --TinomChatStatFrameText_BlackKeywordList_Num:SetText(TinomChatStatFrameText_BlackKeywordList_Num:GetText()+0.1);
+                TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_BlackKeywordList_Num=TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_BlackKeywordList_Num+0.1;
                 return true;
             end
         end
     end
 
     --  历史20条信息内重复,不区分角色  --
-    if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_CacheMsgRepeat ) then
-        if ( Tinom.CacheMsgRepeat( self,event,arg1 ) ) then
-            --TinomChatStatFrameText_RepeatMsg_Num:SetText(TinomChatStatFrameText_RepeatMsg_Num:GetText()+0.1);
+    if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_RepeatMsg or TinomDB.Options.Default.Tinom_Switch_MsgFilter_IntervalMsg ) then
+        if ( Tinom.RepeatMsg( self,event,arg1,authorName,authorServer ) ) then
             return true;
         end
     end

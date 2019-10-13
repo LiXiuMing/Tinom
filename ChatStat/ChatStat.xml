@@ -3,7 +3,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
 
 <Script file="ChatStat.lua" />
 
-<Frame name="TinomChatStatFrame" parent="UIParent" toplevel="true" hidden="true" movable="true" enableMouse="true">
+<Frame name="TinomChatStatFrame" parent="UIParent" toplevel="true" hidden="ture" movable="true" enableMouse="true">
   <Size x="200" y="300"/>
   <Anchors>
       <Anchor point="CENTER"/>
@@ -77,6 +77,16 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
           <Anchor point="TOPLEFT" relativeTo="$parentText_FoldMsg" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
         </Anchors>
       </FontString>
+      <FontString name="$parentText_IntervalMsg" text="间隔限制:" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentText_RepeatMsg" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+        </Anchors>
+      </FontString>
+      <FontString name="$parentText_Author" text="玩家名:" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentText_IntervalMsg" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+        </Anchors>
+      </FontString>
 
       <FontString name="$parentText_BlackList_Num" text="0" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
         <Anchors>
@@ -103,6 +113,11 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
           <Anchor point="TOPLEFT" relativeTo="$parentText_RepeatMsg" relativePoint="TOPRIGHT" x="4" y="0"/>
         </Anchors>
       </FontString>
+      <FontString name="$parentText_IntervalMsg_Num" text="0" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentText_IntervalMsg" relativePoint="TOPRIGHT" x="4" y="0"/>
+        </Anchors>
+      </FontString>
     </Layer>
   </Layers>
   <Backdrop bgFile="Interface\dialogframe\ui-dialogbox-gold-background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
@@ -119,6 +134,33 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
       <AbsInset left="5" right="5" top="5" bottom="5"/>
     </BackgroundInsets>
   </Backdrop>
+  <Frames>
+    <!-- 按钮模块 -->
+    <Button name="$parentExit" inherits="UIPanelButtonTemplate" text="关闭">
+      <Size>
+        <AbsDimension x="128" y="26"/>
+      </Size>
+      <Anchors>
+        <Anchor point="CENTER" relativeTo="$parent" relativePoint="BOTTOM">
+          <Offset>
+            <AbsDimension x="0" y="20"/>
+          </Offset>
+        </Anchor>
+      </Anchors>
+      <Scripts>
+        <OnShow>
+          self:Enable();
+          <!-- self:Disable(); -->
+        </OnShow>
+        <OnClick>
+          PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
+          TinomChatStatFrame:Hide();
+        </OnClick>
+      </Scripts>
+      <NormalFont style="GameFontNormalSmall"/>
+      <HighlightFont style="GameFontHighlightSmall"/>
+    </Button>
+  </Frames>
   <Scripts>
    <OnLoad>
     Tdebug(self,"log","ChatStat.xml加载");

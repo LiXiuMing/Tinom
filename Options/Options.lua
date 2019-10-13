@@ -32,7 +32,7 @@ Tinom.defaultOptionsCheckButtons = {
 	Tinom_Switch_MsgFilter_ReplaceNameMsg = false,
 	Tinom_Switch_MsgFilter_ReplaceKeyWord = true,
 	Tinom_Switch_MsgFilter_ReplaceKeyWordMsg = false,
-	Tinom_Switch_MsgFilter_CacheMsgRepeat = false,
+	Tinom_Switch_MsgFilter_RepeatMsg = false,
 	Tinom_Switch_MsgFilter_AbbrChannelName = false,
 	Tinom_Switch_MsgFilter_AbbrAuthorName = false,
 	Tinom_Switch_MsgFilter_WhiteListSound = false,
@@ -43,6 +43,9 @@ Tinom.defaultOptionsCheckButtons = {
 	Tinom_Switch_MsgFilter_WhiteListHighlight = false,
 	Tinom_Switch_MsgFilter_WhiteListKeyWordHighlight = false,
 	Tinom_Switch_MsgFilter_WhiteListSoundID = 12867,
+	Tinom_Value_MsgFilter_RepeatMsgElapsed = 0,
+	Tinom_Switch_MsgFilter_IntervalMsg = false,
+	Tinom_Value_MsgFilter_IntervalMsgTime = 0,
 };
 --[[-------------------------------------------------------------------------
 --  默认配置:复选按钮文本
@@ -56,11 +59,12 @@ Tinom.defaultCheckButtonsName = {
 	ReplaceNameMsg = "替换角色的消息",
 	ReplaceKeyWord = "替换关键字",
 	ReplaceKeyWordMsg = "替换关键字的消息",
-	CacheMsgRepeat = "屏蔽重复消息",
+	RepeatMsg = "屏蔽重复消息",
 	WhiteListOnly = "只有白名单",
 	AbbrChannelName = "缩写频道名",
 	FoldMsg = "折叠复读消息",
 	IgnoreGrayItems = "屏蔽灰色物品拾取消息",
+	IntervalMsg = "消息间隔限制",
 	AbbrAuthorName = "缩写玩家名(|cffffff00注意!被缩写的角色将导致其右键内交互功能失效!|r)"
 };
 --[[-------------------------------------------------------------------------
@@ -191,7 +195,7 @@ function Tinom.OptionsMainPanel_LoadOptions()
 	TinomOptionsMainPanelBaseSettingCheckButton_ReplaceNameMsg:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg);
 	TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWord:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord);
 	TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWordMsg:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg);
-	TinomOptionsMainPanelBaseSettingCheckButton_CacheMsgRepeat:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_CacheMsgRepeat);
+	TinomOptionsMainPanelBaseSettingCheckButton_RepeatMsg:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_RepeatMsg);
 	TinomOptionsMainPanelBaseSettingCheckButton_AbbrChannelName:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrChannelName);
 	TinomOptionsMainPanelBaseSettingCheckButton_FoldMsg:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_FoldMsg);
 	TinomOptionsMainPanelBaseSettingCheckButton_IgnoreGrayItems:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_IgnoreGrayItems);
@@ -201,7 +205,9 @@ function Tinom.OptionsMainPanel_LoadOptions()
 	TinomOptionsMainPanelBlackListSettingAutoBlackList:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_AutoBlackList);
 	TinomOptionsMainPanelWhiteListSettingWhiteList_Highlight:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListHighlight);
 	TinomOptionsMainPanelWhiteListSettingWhiteListKeyWord_Highlight:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWordHighlight);
-
+	TinomOptionsMainPanelBaseSettingSlider_RepeatMsg:SetValue(TinomDB.Options.Default.Tinom_Value_MsgFilter_RepeatMsgElapsed or 0);
+	TinomOptionsMainPanelBaseSettingCheckButton_IntervalMsg:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_IntervalMsg);
+	TinomOptionsMainPanelBaseSettingSlider_IntervalMsg:SetValue(TinomDB.Options.Default.Tinom_Value_MsgFilter_IntervalMsgTime or 0);
 	--TinomOptionsMainPanelWhiteListSettingDropDown:SetValue(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID);
 	Tinom.OptionsPanel_EditBox_LoadOptions();
 	Tinom.OptionsTabButton_OnLoad();
@@ -251,7 +257,7 @@ function Tinom.OptionsMainPanel_Updata(self)
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg 				= TinomOptionsMainPanelBaseSettingCheckButton_ReplaceNameMsg:GetChecked();
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord 				= TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWord:GetChecked();
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg 			= TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWordMsg:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_CacheMsgRepeat 				= TinomOptionsMainPanelBaseSettingCheckButton_CacheMsgRepeat:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_RepeatMsg 					= TinomOptionsMainPanelBaseSettingCheckButton_RepeatMsg:GetChecked();
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrChannelName 				= TinomOptionsMainPanelBaseSettingCheckButton_AbbrChannelName:GetChecked();
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_FoldMsg 						= TinomOptionsMainPanelBaseSettingCheckButton_FoldMsg:GetChecked();
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_IgnoreGrayItems 				= TinomOptionsMainPanelBaseSettingCheckButton_IgnoreGrayItems:GetChecked();
@@ -261,6 +267,9 @@ function Tinom.OptionsMainPanel_Updata(self)
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_AutoBlackList 				= TinomOptionsMainPanelBlackListSettingAutoBlackList:GetChecked();
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListHighlight 			= TinomOptionsMainPanelWhiteListSettingWhiteList_Highlight:GetChecked();
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWordHighlight 	= TinomOptionsMainPanelWhiteListSettingWhiteListKeyWord_Highlight:GetChecked();
+	TinomDB.Options.Default.Tinom_Value_MsgFilter_RepeatMsgElapsed				= TinomOptionsMainPanelBaseSettingSlider_RepeatMsg:GetValue();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_IntervalMsg					= TinomOptionsMainPanelBaseSettingCheckButton_IntervalMsg:GetChecked();
+	TinomDB.Options.Default.Tinom_Value_MsgFilter_IntervalMsgTime				= TinomOptionsMainPanelBaseSettingSlider_IntervalMsg:GetValue();
 	--TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID = TinomOptionsMainPanelWhiteListSettingDropDown:GetValue();
 	Tdebug(self,"log","Options.Tinom配置已保存");
 	Tinom.OptionsPanel_EditBox_Updata()
