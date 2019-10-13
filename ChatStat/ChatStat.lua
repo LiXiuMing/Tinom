@@ -144,6 +144,9 @@ local function chat_stat_handler(self, event, msg, author,_,_,_,_,_,channelIndex
         return;
     end
 
+    -- TinomChatStatFrameMsgNum:SetText(lineID);
+    -- PlaySoundFile("Interface/Addons/Tinom/Media/di.ogg","SFX")
+
     -- 初始化服务器信息
     if TinomDB.chatStatDB[authorServer] == nil then
         TinomDB.chatStatDB[authorServer] = {}

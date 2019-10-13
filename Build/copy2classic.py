@@ -6,6 +6,7 @@ fileslist = [
 	"Filter",
 	"Locale",
 	"Options",
+	"Media",
 	"Core.lua",
 	"debug.lua",
 	"README.md",

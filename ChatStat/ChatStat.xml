@@ -3,11 +3,135 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
 
 <Script file="ChatStat.lua" />
 
-<Frame name="TinomChatStatFrame">
- <Scripts>
+<Frame name="TinomChatStatFrame" parent="UIParent" toplevel="true" hidden="true" movable="true" enableMouse="true">
+  <Size x="200" y="300"/>
+  <Anchors>
+      <Anchor point="CENTER"/>
+  </Anchors>
+  <Layers>
+    <Layer level="ARTWORK">
+      <Texture name="TinomChatStatFrameHeader" file="Interface\DialogFrame\UI-DialogBox-Header">
+        <Size x="256" y="64"/>
+        <Anchors>
+          <Anchor point="CENTER" relativeTo="$parent" relativePoint="TOP">
+            <Offset x="0" y="-10"/>
+          </Anchor>
+        </Anchors>
+      </Texture>
+      <FontString name="$parentTitle" text="ChatStat" inherits="OptionsFontHighlight" justifyH="CENTER" justifyV="TOP">
+        <Anchors>
+          <Anchor point="CENTER" relativeTo="TinomChatStatFrameHeader">
+            <Offset>
+              <AbsDimension x="0" y="10"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+      </FontString>
+      <FontString name="$parentMsgNum" text="000" font="Fonts\ARKai_T.TTF" justifyH="CENTER" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOP" relativeTo="$parent">
+            <Offset>
+              <AbsDimension x="0" y="-20"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <FontHeight>
+          <AbsValue val="60"/>
+        </FontHeight>
+        <Shadow x="2" y="-2"/>
+          <!-- <Offset x="14" y="-14" />
+          <Color r="0" g="0" b="0" a="1"/>
+        </Shadow> -->
+        <Color r="1" g="1" b="0"/>
+      </FontString>
+      <Texture name="$parentUnderline">
+        <Anchors>
+          <Anchor point="TOP" relativeTo="$parentMsgNum" relativePoint="BOTTOM" x="0" y="-4"/>
+          <Anchor point="LEFT" relativeTo="$parent"  x="6"/>
+          <Anchor point="RIGHT" relativeTo="$parent" x="-6"/>parentMsgNum
+        </Anchors>
+        <Color r="1" g="1" b="0"/>
+      </Texture>
+      <FontString name="$parentText_BlackList" text="黑名单已屏蔽:" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentUnderline" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+        </Anchors>
+      </FontString>
+      <FontString name="$parentText_BlackKeywordList" text="关键字已屏蔽:" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentText_BlackList" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+        </Anchors>
+      </FontString>
+      <FontString name="$parentText_ReplaceMsg" text="替换消息:" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentText_BlackKeywordList" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+        </Anchors>
+      </FontString>
+      <FontString name="$parentText_FoldMsg" text="折叠消息:" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentText_ReplaceMsg" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+        </Anchors>
+      </FontString>
+      <FontString name="$parentText_RepeatMsg" text="重复消息:" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentText_FoldMsg" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+        </Anchors>
+      </FontString>
+
+      <FontString name="$parentText_BlackList_Num" text="0" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentText_BlackList" relativePoint="TOPRIGHT" x="4" y="0"/>
+        </Anchors>
+      </FontString>
+      <FontString name="$parentText_BlackKeywordList_Num" text="0" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentText_BlackKeywordList" relativePoint="TOPRIGHT" x="4" y="0"/>
+        </Anchors>
+      </FontString>
+      <FontString name="$parentText_ReplaceMsg_Num" text="0" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentText_ReplaceMsg" relativePoint="TOPRIGHT" x="4" y="0"/>
+        </Anchors>
+      </FontString>
+      <FontString name="$parentText_FoldMsg_Num" text="0" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentText_FoldMsg" relativePoint="TOPRIGHT" x="4" y="0"/>
+        </Anchors>
+      </FontString>
+      <FontString name="$parentText_RepeatMsg_Num" text="0" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentText_RepeatMsg" relativePoint="TOPRIGHT" x="4" y="0"/>
+        </Anchors>
+      </FontString>
+    </Layer>
+  </Layers>
+  <Backdrop bgFile="Interface\dialogframe\ui-dialogbox-gold-background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+    <EdgeSize>
+      <AbsValue val="16"/>
+    </EdgeSize>
+    <TileSize>
+				<AbsValue val="16"/>
+			</TileSize>
+    <BorderColor r="1" g="1" b="1" a="1"/>
+    <Color r="0.2" g="0.2" b="0.2" a="0.8"/>
+
+    <BackgroundInsets>
+      <AbsInset left="5" right="5" top="5" bottom="5"/>
+    </BackgroundInsets>
+  </Backdrop>
+  <Scripts>
    <OnLoad>
     Tdebug(self,"log","ChatStat.xml加载");
+    self:RegisterForDrag("LeftButton");
    </OnLoad>
+   <OnDragStart>
+      if not self.isLocked then
+        self:StartMoving();
+      end
+   </OnDragStart>
+   <OnDragStop>
+    self:StopMovingOrSizing();
+   </OnDragStop>
    <OnEvent>
     
    </OnEvent>

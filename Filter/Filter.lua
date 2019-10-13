@@ -102,6 +102,7 @@ function Tinom.ReplaceMsg( ... )
         if ( msg:find(k) ) then
             if ( ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg == true ) and #v.newMsg > 0 ) then
                 newMsg = v.newMsg;
+                --TinomChatStatFrameText_ReplaceMsg_Num:SetText(TinomChatStatFrameText_ReplaceMsg_Num:GetText()+0.1);
                 return newMsg;
             end
             if ( ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord == true ) and #v.newWord > 0 ) then
@@ -110,6 +111,9 @@ function Tinom.ReplaceMsg( ... )
             msg = newMsg or msg;
         end
     end
+    -- if msg ~= ... then
+    --     TinomChatStatFrameText_ReplaceMsg_Num:SetText(TinomChatStatFrameText_ReplaceMsg_Num:GetText()+0.1);
+    -- end
     return msg;
 end
 
@@ -151,6 +155,7 @@ function Tinom.FoldMsg( newArg1 )
                 theMsg, num = theMsg:gsub(msg2,"")
                 msg2 = msg2:gsub("%%","")
                 theMsg = msg2..theMsg.." x"..num
+                --TinomChatStatFrameText_FoldMsg_Num:SetText(TinomChatStatFrameText_FoldMsg_Num:GetText()+0.1);
             end
         end
         newArg1 = theMsg;
@@ -240,7 +245,8 @@ function Tinom.MsgFilter( self,event,... )
         if ((TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord
         or (TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg)
         )) then
-            newArg1 = Tinom.ReplaceMsg( newArg1 );
+            newArg1 = Tinom.ReplaceMsg( newArg1 or arg1 );
+            --TinomChatStatFrameText_ReplaceMsg_Num:SetText(TinomChatStatFrameText_ReplaceMsg_Num:GetText()+0.1);
         end
 
         if ( newArg1 == nil ) then newArg1 = arg1; end
@@ -252,6 +258,7 @@ function Tinom.MsgFilter( self,event,... )
             newArg1 = Tinom.FoldMsg( newArg1 ) or newArg1;
         end
         PlaySound(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID);
+        --TinomChatStatFrameText_FoldMsg_Num:SetText(TinomChatStatFrameText_FoldMsg_Num:GetText()+0.1);
         return false, newArg1, newArg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14;
     end
 
@@ -264,6 +271,7 @@ function Tinom.MsgFilter( self,event,... )
     if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackList ) then
         for k,v in pairs(TinomDB.filterDB.blackList) do
             if ( authorName == v ) then
+                --TinomChatStatFrameText_BlackList_Num:SetText(TinomChatStatFrameText_BlackList_Num:GetText()+0.1);
                 return true;
             end
         end
@@ -276,6 +284,7 @@ function Tinom.MsgFilter( self,event,... )
     if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackListKeyWord ) then
         for _,v in pairs(TinomDB.filterDB.blackListKeyWord) do
             if arg1:find(v) then
+                --TinomChatStatFrameText_BlackKeywordList_Num:SetText(TinomChatStatFrameText_BlackKeywordList_Num:GetText()+0.1);
                 return true;
             end
         end
@@ -284,6 +293,7 @@ function Tinom.MsgFilter( self,event,... )
     --  历史20条信息内重复,不区分角色  --
     if ( TinomDB.Options.Default.Tinom_Switch_MsgFilter_CacheMsgRepeat ) then
         if ( Tinom.CacheMsgRepeat( self,event,arg1 ) ) then
+            --TinomChatStatFrameText_RepeatMsg_Num:SetText(TinomChatStatFrameText_RepeatMsg_Num:GetText()+0.1);
             return true;
         end
     end
