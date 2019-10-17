@@ -131,7 +131,7 @@ end
 -------------------------------------------------------------------------]]--
 local function chat_stat_handler(self, event, msg, author,_,_,_,_,_,channelIndex,_,_,lineID, guid,...)
     local authorName, authorServer = author:match( "(.-)%-(.*)" )
-    if not guid:find("Player") then
+    if (not guid) or (not guid:find("Player")) then
         return;
     end
     if not authorServer then
@@ -143,23 +143,6 @@ local function chat_stat_handler(self, event, msg, author,_,_,_,_,_,channelIndex
     if authorName == UnitName("player") and IsTest == false then
         return;
     end
-
-    TinomDB_ChatStatDB_Text = {
-        TinomChatStatFrameText_ReplaceMsg_Num = "TinomChatStatFrameText_ReplaceMsg_Num",
-        TinomChatStatFrameText_FoldMsg_Num = "TinomChatStatFrameText_FoldMsg_Num",
-        TinomChatStatFrameText_BlackList_Num = "TinomChatStatFrameText_BlackList_Num",
-        TinomChatStatFrameText_BlackKeywordList_Num = "TinomChatStatFrameText_BlackKeywordList_Num",
-        TinomChatStatFrameText_RepeatMsg_Num = "TinomChatStatFrameText_RepeatMsg_Num",
-    };
-    TinomChatStatFrameMsgNum:SetText(lineID);
-    TinomChatStatFrameText_Author:SetText("当前玩家:|cffff0000"..authorName.."|r");
-TinomChatStatFrameText_ReplaceMsg_Num:SetText(TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_ReplaceMsg_Num);
-TinomChatStatFrameText_FoldMsg_Num:SetText(TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_FoldMsg_Num);
-TinomChatStatFrameText_BlackList_Num:SetText(TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_BlackList_Num);
-TinomChatStatFrameText_BlackKeywordList_Num:SetText(TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_BlackKeywordList_Num);
-TinomChatStatFrameText_RepeatMsg_Num:SetText(TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_RepeatMsg_Num);
-TinomChatStatFrameText_IntervalMsg_Num:SetText(TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_IntervalMsg_Num);
---PlaySoundFile("Interface/Addons/Tinom/Media/di.ogg","SFX")
 
     -- 初始化服务器信息
     if TinomDB.chatStatDB[authorServer] == nil then
@@ -206,6 +189,38 @@ TinomChatStatFrameText_IntervalMsg_Num:SetText(TinomDB_ChatStatDB_cacheMsgTemp.T
         authorNameDB_write.msg_last_time = time();
         chat_normal( channelIndex, authorName, authorNameDB_read.msg_count );
     end
+
+    -- 统计模块更新数据
+    -- TinomDB_ChatStatDB_Text = {
+    --     TinomChatStatFrameText_ReplaceMsg_Num = "TinomChatStatFrameText_ReplaceMsg_Num",
+    --     TinomChatStatFrameText_FoldMsg_Num = "TinomChatStatFrameText_FoldMsg_Num",
+    --     TinomChatStatFrameText_BlackList_Num = "TinomChatStatFrameText_BlackList_Num",
+    --     TinomChatStatFrameText_BlackKeywordList_Num = "TinomChatStatFrameText_BlackKeywordList_Num",
+    --     TinomChatStatFrameText_RepeatMsg_Num = "TinomChatStatFrameText_RepeatMsg_Num",
+    -- };
+    -- TinomChatStatFrameMsgNum:SetText(lineID);
+    -- TinomChatStatFrameText_Author:SetText("当前玩家:|cffff0000"..authorName.."|r");
+    -- TinomChatStatFrameText_ReplaceMsg_Num:SetText(math.floor(TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_ReplaceMsg_Num));
+    -- TinomChatStatFrameText_FoldMsg_Num:SetText(math.floor(TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_FoldMsg_Num));
+    -- TinomChatStatFrameText_BlackList_Num:SetText(math.floor(TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_BlackList_Num));
+    -- TinomChatStatFrameText_BlackKeywordList_Num:SetText(math.floor(TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_BlackKeywordList_Num));
+    -- TinomChatStatFrameText_RepeatMsg_Num:SetText(math.floor(TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_RepeatMsg_Num));
+    -- TinomChatStatFrameText_IntervalMsg_Num:SetText(math.floor(TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_IntervalMsg_Num));
+    -- PlaySoundFile("Interface/Addons/Tinom/Media/di.ogg","SFX")
+    -- 无条件加入黑名单
+    -- local function cheakName( )
+    --     for k,v in pairs(TinomDB.filterDB.blackList) do
+    --         if authorName == v then
+    --             return false;
+    --         end
+    --     end
+    --     return true;
+    -- end
+    -- if cheakName( ) then
+    --     tinsert(TinomDB.filterDB.blackList,authorName);
+    --     PlaySoundFile("Interface/Addons/Tinom/Media/di.ogg","SFX")
+    --     print("black add:"..authorName)
+    -- end
 end
 
 --[[-------------------------------------------------------------------------
@@ -231,12 +246,3 @@ function Tinom.ChatStat_OnLoad()
 end
 
 Tdebug(self,"log","ChatStat.lua加载完成");
-
-
---TinomChatStatFrameText_ReplaceMsg_Num:SetText(TinomChatStatFrameText_ReplaceMsg_Num:GetText()+0.1);
---TinomChatStatFrameText_FoldMsg_Num:SetText(TinomChatStatFrameText_FoldMsg_Num:GetText()+0.1);
---TinomChatStatFrameText_ReplaceMsg_Num:SetText(TinomChatStatFrameText_ReplaceMsg_Num:GetText()+0.1);
---TinomChatStatFrameText_FoldMsg_Num:SetText(TinomChatStatFrameText_FoldMsg_Num:GetText()+0.1);
---TinomChatStatFrameText_BlackList_Num:SetText(TinomChatStatFrameText_BlackList_Num:GetText()+0.1);
---TinomChatStatFrameText_BlackKeywordList_Num:SetText(TinomChatStatFrameText_BlackKeywordList_Num:GetText()+0.1);
---TinomChatStatFrameText_RepeatMsg_Num:SetText(TinomChatStatFrameText_RepeatMsg_Num:GetText()+0.1);

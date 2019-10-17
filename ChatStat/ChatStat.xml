@@ -3,7 +3,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
 
 <Script file="ChatStat.lua" />
 
-<Frame name="TinomChatStatFrame" parent="UIParent" toplevel="true" hidden="ture" movable="true" enableMouse="true">
+<Frame name="TinomChatStatFrame" parent="UIParent" toplevel="true" hidden="true" movable="true" enableMouse="true">
   <Size x="200" y="300"/>
   <Anchors>
       <Anchor point="CENTER"/>

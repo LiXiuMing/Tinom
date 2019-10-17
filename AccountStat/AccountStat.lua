@@ -11,6 +11,7 @@
 --  角色登陆次数统计
 -------------------------------------------------------------------------]]--
 local playerName = UnitName("player");
+local loginMsg = "";
 
 function Tinom.LoginLog(self, event, addonName)
     if ( TinomDB.accountDB == nil ) then
@@ -21,15 +22,14 @@ function Tinom.LoginLog(self, event, addonName)
 
     if ((event == "ADDON_LOADED") and (addonName == "Tinom")) then
         if (accountDB_Temp[playerName] == nil) then
-            --此处需要格式化角色名,不然会导致覆盖而不是添加.
-            accountDB_Temp[playerName] = {times=1,lastTime=0,}; --##--删掉了format()
-			print("你好:"..playerName.." 初次见面,请多多关照.");
-            Tdebug(self,"log","LoginLog.CreateCharacter:"..playerName);
+            accountDB_Temp[playerName] = {times=1,lastTime=0,};
+            loginMsg = "你好:"..playerName.." 初次见面,请多多关照.";
+            DEFAULT_CHAT_FRAME:AddMessage(loginMsg, 1, 1, 0, 1);
         else
             accountDB_Temp[playerName].times = accountDB_Temp[playerName].times + 1;
             local elapsed = time() - accountDB_Temp[playerName].lastTime;
-            print("你好 "..playerName .. " \n这是我们第".. accountDB_Temp[playerName].times .."次相见.\n距离你上次登出的时间是" .. SecondsToTime(elapsed));
-            Tdebug(self,"log","LoginLog.RecordCharacter:"..playerName);
+            loginMsg = "你好 "..playerName .. "\n 这是我们第".. accountDB_Temp[playerName].times .."次相见.\n 距离你上次登出的时间是" .. SecondsToTime(elapsed);
+            DEFAULT_CHAT_FRAME:AddMessage(loginMsg, 1, 1, 0, 1);
         end
     elseif (event == "PLAYER_LEAVING_WORLD")then
         accountDB_Temp[playerName].lastTime = time();
@@ -43,16 +43,3 @@ function Tinom.LoginLog(self, event, addonName)
 end
 
 Tdebug(self,"log","AccountStat.lua.OnLoaded");
-
--- SLASH_HAVEWEMET1 = "/hwm"
--- SlashCmdList["HAVEWEMET"] = function(arg1)
---     if #arg1 == 0 then
---         print("这个角色一共登陆过 " .. TinomDB.accountDB[playerName].times .. " 次.");
---     elseif arg1 == "rm" then
---         table.remove( TinomDB.accountDB );
---     elseif arg1 == "show" then
---         for k,v in pairs(TinomDB.accountDB[playerName]) do
---             print(k,v);
---         end
---     end
--- end

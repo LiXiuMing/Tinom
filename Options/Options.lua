@@ -15,7 +15,7 @@ TINOM_OPTION_MAINPANEL_TITLE = L["Tinom聊天过滤v"]..Tinom.version;
 -- TINOM_OPTION_MAINPANEL_SUBTEXT = L["去年高三帮好朋友给实验班的男孩子写一封信,只有“山有木兮木有枝”七个字,
 -- 想让他领会后半句心悦君兮君不知的含义.第二天男孩子主动来班里送信,还是昨天那封,他在后面补充到“心悦君兮君已知,奈何十二寒窗苦,
 -- 待到金榜题名时.”   后来这段故事无疾而终 愿你们遇到的每段感情都能有处安放"];
-TINOM_OPTION_MAINPANEL_SUBTEXT = L["目前插件处于Beta测试阶段,更新会比较频繁.您可以经常浏览我的更新贴以获取最新版本.NGA:搜索\"Tinom\"进行反馈."];
+TINOM_OPTION_MAINPANEL_SUBTEXT = L["Beta测试阶段,更新频繁.更新贴:NGA:搜索\"Tinom\".|cffffff00关键字默认支持正则表达式,若关键字中带有符号\( \) \. \% \+ \- \* \\ \? \[ \^ \$,请在符号前加\"\\\".如\"1\-60\"写成\"1\\\-60\"|r"];
 TINOM_OPTION_MAINPANEL_CHACKBUTTON_MAINENABLE_TEXT = L["开启过滤"];
 
 --[[-------------------------------------------------------------------------
@@ -23,16 +23,16 @@ TINOM_OPTION_MAINPANEL_CHACKBUTTON_MAINENABLE_TEXT = L["开启过滤"];
 -------------------------------------------------------------------------]]--
 Tinom.defaultOptionsCheckButtons = {
 	Tinom_Switch_MsgFilter_MainEnable = true,
-	Tinom_Switch_MsgFilter_WhiteList = false,
-	Tinom_Switch_MsgFilter_WhiteListKeyWord = false,
+	-- Tinom_Switch_MsgFilter_WhiteList = false,
+	-- Tinom_Switch_MsgFilter_WhiteListKeyWord = false,
 	Tinom_Switch_MsgFilter_WhiteListOnly = false,
-	Tinom_Switch_MsgFilter_BlackList = true,
-	Tinom_Switch_MsgFilter_BlackListKeyWord = false,
-	Tinom_Switch_MsgFilter_ReplaceName = false,
-	Tinom_Switch_MsgFilter_ReplaceNameMsg = false,
-	Tinom_Switch_MsgFilter_ReplaceKeyWord = true,
-	Tinom_Switch_MsgFilter_ReplaceKeyWordMsg = false,
-	Tinom_Switch_MsgFilter_RepeatMsg = false,
+	-- Tinom_Switch_MsgFilter_BlackList = true,
+	-- Tinom_Switch_MsgFilter_BlackListKeyWord = false,
+	-- Tinom_Switch_MsgFilter_ReplaceName = false,
+	-- Tinom_Switch_MsgFilter_ReplaceNameMsg = false,
+	-- Tinom_Switch_MsgFilter_ReplaceKeyWord = true,
+	-- Tinom_Switch_MsgFilter_ReplaceKeyWordMsg = false,
+	-- Tinom_Switch_MsgFilter_RepeatMsg = false,
 	Tinom_Switch_MsgFilter_AbbrChannelName = false,
 	Tinom_Switch_MsgFilter_AbbrAuthorName = false,
 	Tinom_Switch_MsgFilter_WhiteListSound = false,
@@ -52,20 +52,37 @@ Tinom.defaultOptionsCheckButtons = {
 -------------------------------------------------------------------------]]--
 Tinom.defaultCheckButtonsName = {
 	WhiteList = "白名单",
-	WhiteListKeyWord = "白名单关键字",
+	WhiteListKeyWord = "白关键字",
 	BlackList = "黑名单",
-	BlackListKeyWord = "黑名单关键字",
+	BlackListKeyWord = "黑关键字",
 	ReplaceName = "替换角色名",
-	ReplaceNameMsg = "替换角色的消息",
+	ReplaceNameMsg = "替换角色消息",
 	ReplaceKeyWord = "替换关键字",
-	ReplaceKeyWordMsg = "替换关键字的消息",
+	ReplaceKeyWordMsg = "替换关键字消息",
 	RepeatMsg = "屏蔽重复消息",
+	SensitiveList = "敏感名单",
+	SensitiveKeyword = "敏感关键字",
+	AutoBlackList = "自动黑名单",
 	WhiteListOnly = "只有白名单",
 	AbbrChannelName = "缩写频道名",
 	FoldMsg = "折叠复读消息",
 	IgnoreGrayItems = "屏蔽灰色物品拾取消息",
 	IntervalMsg = "消息间隔限制",
 	AbbrAuthorName = "缩写玩家名(|cffffff00注意!被缩写的角色将导致其右键内交互功能失效!|r)"
+};
+Tinom.defaultCheckButtons = {
+	[1] = {1, true, "WhiteList", "MsgFilter_Whitelist",},
+	[2] = {2, true, "WhiteListKeyWord", "MsgFilter_WhitelistKeyword",},
+	[3] = {3, true, "BlackList", "MsgFilter_Blacklist",},
+	[4] = {4, true, "BlackListKeyWord", "MsgFilter_BlacklistKeyword",},
+	[5] = {5, true, "ReplaceName", "MsgFilter_ReplaceName",},
+	[6] = {6, true, "ReplaceNameMsg", "MsgFilter_ReplaceNameMsg",},
+	[7] = {7, true, "ReplaceKeyWord", "MsgFilter_ReplaceKeyword",},
+	[8] = {8, true, "ReplaceKeyWordMsg", "MsgFilter_ReplaceKeywordMsg",},
+	[9] = {9, true, "RepeatMsg", "MsgFilter_RepeatMsg",},
+	[10] = {10, true, "SensitiveList", "MsgFilter_SensitiveList",},
+	[11] = {11, true, "SensitiveKeyword", "MsgFilter_SensitiveKeyword",},
+	[12] = {12, true, "AutoBlackList", "MsgFilter_AutoBlackList",},
 };
 --[[-------------------------------------------------------------------------
 --  地址索引:标签按钮 = 子设置界面
@@ -96,7 +113,7 @@ function Tinom.OptionsMainPanel_OnLoad( self )
 	end
 
 	--<!-- 先为框架设置一个名字才能添加到设置面板的列表里 -->
-	self.name = Tinom.L["Tinom聊天过滤"];
+	self.name = L["Tinom聊天过滤"];
 	InterfaceOptions_AddCategory(self);
 
 	--<!-- 可移动设置面板 -->
@@ -186,16 +203,7 @@ end
 -------------------------------------------------------------------------]]--
 function Tinom.OptionsMainPanel_LoadOptions()
 	TinomOptionsMainPanelCheckButton_MainEnable:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_MainEnable);
-	TinomOptionsMainPanelBaseSettingCheckButton_WhiteList:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteList);
-	TinomOptionsMainPanelBaseSettingCheckButton_WhiteListKeyWord:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWord);
-	TinomOptionsMainPanelBaseSettingCheckButton_WhiteListOnly:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListOnly);
-	TinomOptionsMainPanelBaseSettingCheckButton_BlackList:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackList);
-	TinomOptionsMainPanelBaseSettingCheckButton_BlackListKeyWord:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackListKeyWord);
-	TinomOptionsMainPanelBaseSettingCheckButton_ReplaceName:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName);
-	TinomOptionsMainPanelBaseSettingCheckButton_ReplaceNameMsg:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg);
-	TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWord:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord);
-	TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWordMsg:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg);
-	TinomOptionsMainPanelBaseSettingCheckButton_RepeatMsg:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_RepeatMsg);
+	-- TinomOptionsMainPanelBaseSettingCheckButton_WhiteListOnly:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListOnly);
 	TinomOptionsMainPanelBaseSettingCheckButton_AbbrChannelName:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrChannelName);
 	TinomOptionsMainPanelBaseSettingCheckButton_FoldMsg:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_FoldMsg);
 	TinomOptionsMainPanelBaseSettingCheckButton_IgnoreGrayItems:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_IgnoreGrayItems);
@@ -213,6 +221,7 @@ function Tinom.OptionsMainPanel_LoadOptions()
 	Tinom.OptionsTabButton_OnLoad();
 	Tinom.OptionsMainPanel_Replace_ListBrowseButton_LoadData( "Name" )
 	Tinom.OptionsMainPanel_Replace_ListBrowseButton_LoadData( "KeyWord" )
+	TinomChatConfigWideCheckBoxMixin.OnLoad()
 	Tdebug(self,"log","OptionsMainPanel_OnLoad.配置加载完成");
 end
 
@@ -221,13 +230,13 @@ end
 -------------------------------------------------------------------------]]--
 function Tinom.OptionsPanel_EditBox_LoadOptions(self)
 	TinomOptionsMainPanelWhiteListSettingEditList_WhiteListScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.whiteList,"\n"))
-	TinomOptionsMainPanelWhiteListSettingEditList_WhiteListTitle:SetText(Tinom.L["白名单:玩家"].."-"..#TinomDB.filterDB.whiteList)
+	TinomOptionsMainPanelWhiteListSettingEditList_WhiteListTitle:SetText(L["白名单:玩家"].."-"..#TinomDB.filterDB.whiteList)
 	TinomOptionsMainPanelWhiteListSettingEditList_WhiteListKeyWordScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.whiteListKeyWord,"\n"))
-	TinomOptionsMainPanelWhiteListSettingEditList_WhiteListKeyWordTitle:SetText(Tinom.L["白名单:关键字"].."-"..#TinomDB.filterDB.whiteListKeyWord)
+	TinomOptionsMainPanelWhiteListSettingEditList_WhiteListKeyWordTitle:SetText(L["白名单:关键字"].."-"..#TinomDB.filterDB.whiteListKeyWord)
 	TinomOptionsMainPanelBlackListSettingEditList_BlackListScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.blackList,"\n"))
-	TinomOptionsMainPanelBlackListSettingEditList_BlackListTitle:SetText(Tinom.L["黑名单:玩家"].."-"..#TinomDB.filterDB.blackList)
+	TinomOptionsMainPanelBlackListSettingEditList_BlackListTitle:SetText(L["黑名单:玩家"].."-"..#TinomDB.filterDB.blackList)
 	TinomOptionsMainPanelBlackListSettingEditList_BlackListKeyWordScrollFrameEditBox:SetText(table.concat(TinomDB.filterDB.blackListKeyWord,"\n"))
-	TinomOptionsMainPanelBlackListSettingEditList_BlackListKeyWordTitle:SetText(Tinom.L["黑名单:关键字"].."-"..#TinomDB.filterDB.blackListKeyWord)
+	TinomOptionsMainPanelBlackListSettingEditList_BlackListKeyWordTitle:SetText(L["黑名单:关键字"].."-"..#TinomDB.filterDB.blackListKeyWord)
 
 	Tdebug(self,"log","Options.名单已加载:");
 end
@@ -248,16 +257,7 @@ end
 -------------------------------------------------------------------------]]--
 function Tinom.OptionsMainPanel_Updata(self)
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_MainEnable 					= TinomOptionsMainPanelCheckButton_MainEnable:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteList 					= TinomOptionsMainPanelBaseSettingCheckButton_WhiteList:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListKeyWord 			= TinomOptionsMainPanelBaseSettingCheckButton_WhiteListKeyWord:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListOnly 				= TinomOptionsMainPanelBaseSettingCheckButton_WhiteListOnly:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackList 					= TinomOptionsMainPanelBaseSettingCheckButton_BlackList:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackListKeyWord 			= TinomOptionsMainPanelBaseSettingCheckButton_BlackListKeyWord:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceName 					= TinomOptionsMainPanelBaseSettingCheckButton_ReplaceName:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceNameMsg 				= TinomOptionsMainPanelBaseSettingCheckButton_ReplaceNameMsg:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWord 				= TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWord:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_ReplaceKeyWordMsg 			= TinomOptionsMainPanelBaseSettingCheckButton_ReplaceKeyWordMsg:GetChecked();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_RepeatMsg 					= TinomOptionsMainPanelBaseSettingCheckButton_RepeatMsg:GetChecked();
+	-- TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListOnly 				= TinomOptionsMainPanelBaseSettingCheckButton_WhiteListOnly:GetChecked();
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrChannelName 				= TinomOptionsMainPanelBaseSettingCheckButton_AbbrChannelName:GetChecked();
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_FoldMsg 						= TinomOptionsMainPanelBaseSettingCheckButton_FoldMsg:GetChecked();
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_IgnoreGrayItems 				= TinomOptionsMainPanelBaseSettingCheckButton_IgnoreGrayItems:GetChecked();
@@ -272,8 +272,8 @@ function Tinom.OptionsMainPanel_Updata(self)
 	TinomDB.Options.Default.Tinom_Value_MsgFilter_IntervalMsgTime				= TinomOptionsMainPanelBaseSettingSlider_IntervalMsg:GetValue();
 	--TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID = TinomOptionsMainPanelWhiteListSettingDropDown:GetValue();
 	Tdebug(self,"log","Options.Tinom配置已保存");
-	Tinom.OptionsPanel_EditBox_Updata()
-	
+	Tinom.OptionsPanel_EditBox_Updata();
+	Tinom.FiltersList_Updata();
 end
 
 --[[-------------------------------------------------------------------------
@@ -362,8 +362,8 @@ function Tinom.OptionsWhiteListSoundDropDown_Initialize(self)
 	local selectedValue = UIDropDownMenu_GetSelectedValue(self);
 	local info = UIDropDownMenu_CreateInfo();
 	local table_sounds = {
-		[1] = {12867,Tinom.L["铃声"].."1"},
-		[2] = {12889,Tinom.L["铃声"].."2"},
+		[1] = {12867,L["铃声"].."1"},
+		[2] = {12889,L["铃声"].."2"},
 	};
 
 	for k,v in pairs(table_sounds) do
@@ -444,10 +444,10 @@ function Tinom.OptionsMainPanel_ReplaceName_ButtonAdd_OnClick()
     local newNameStr = _G["TinomOptionsMainPanelReplaceNameListNewName"]:GetText();
 	local newMsgStr = _G["TinomOptionsMainPanelReplaceNameListNewMsg"]:GetText();
 	if (#name < 1) then
-		_G["TinomOptionsMainPanelReplaceNameListName"]:SetText(Tinom.L["你太短啦!"]);
+		_G["TinomOptionsMainPanelReplaceNameListName"]:SetText(L["你太短啦!"]);
 		--Tdebug(self,"log","Options.replaceName.新增条目.你太短啦!");
 	elseif ((#newNameStr<1) and (#newMsgStr<1)) then
-		_G["TinomOptionsMainPanelReplaceNameListName"]:SetText(Tinom.L["你太短了!"]);
+		_G["TinomOptionsMainPanelReplaceNameListName"]:SetText(L["你太短了!"]);
 		--Tdebug(self,"log","Options.replaceName.新增条目.你太短啦!");
 	else
 		TinomDB.filterDB.replaceName[name] = {newName=newNameStr,newMsg=newMsgStr}
@@ -489,8 +489,8 @@ function Tinom.OptionsReplaceDropDown_Initialize(self)
 	local selectedValue = UIDropDownMenu_GetSelectedValue(self);
 	local info = UIDropDownMenu_CreateInfo();
 	local table_sounds = {
-		[1] = {"NameList",Tinom.L["按角色名替换"]},
-		[2] = {"KeyWordList",Tinom.L["按关键字替换"]},
+		[1] = {"NameList",L["按角色名替换"]},
+		[2] = {"KeyWordList",L["按关键字替换"]},
 	};
 
 	for k,v in pairs(table_sounds) do
@@ -580,9 +580,9 @@ function Tinom.OptionsMainPanel_ReplaceKeyWord_ButtonAdd_OnClick()
     local newWordStr = TinomOptionsMainPanelReplaceKeyWordListNewWord:GetText();
 	local newMsgStr = TinomOptionsMainPanelReplaceKeyWordListNewMsg:GetText();
 	if (#KeyWord < 1) then
-		_G["TinomOptionsMainPanelReplaceKeyWordListKeyWord"]:SetText(Tinom.L["你太短啦!"]);
+		_G["TinomOptionsMainPanelReplaceKeyWordListKeyWord"]:SetText(L["你太短啦!"]);
 	elseif ((#newWordStr<1) and (#newMsgStr<1)) then
-		_G["TinomOptionsMainPanelReplaceKeyWordListKeyWord"]:SetText(Tinom.L["你太短了!"]);
+		_G["TinomOptionsMainPanelReplaceKeyWordListKeyWord"]:SetText(L["你太短了!"]);
 	else
 		TinomDB.filterDB.replaceKeyWord[KeyWord] = {newWord=newWordStr,newMsg=newMsgStr}
 		----Tdebug(self,"log","Options.replaceName.新增条目");
@@ -750,15 +750,98 @@ function Tinom.OptionsMainPanel_Replace_EditBoxName_OnTextChanged( self, listTyp
 
 	if listType == "KeyWord" then
 		if ( TinomDB.filterDB.replaceKeyWord[self:GetText()] or TinomDB.filterDB.replaceKeyWord[self:GetText()] ) then
-			_G[self:GetParent():GetName().."ButtonAdd"]:SetText(Tinom.L["修改"]);
+			_G[self:GetParent():GetName().."ButtonAdd"]:SetText(L["修改"]);
 		else
-			_G[self:GetParent():GetName().."ButtonAdd"]:SetText(Tinom.L["新增"]);
+			_G[self:GetParent():GetName().."ButtonAdd"]:SetText(L["新增"]);
 		end
 	elseif listType == "Name" then
 		if ( TinomDB.filterDB.replaceName[self:GetText()] or TinomDB.filterDB.replaceKeyWord[self:GetText()] ) then
-			_G[self:GetParent():GetName().."ButtonAdd"]:SetText(Tinom.L["修改"]);
+			_G[self:GetParent():GetName().."ButtonAdd"]:SetText(L["修改"]);
 		else
-			_G[self:GetParent():GetName().."ButtonAdd"]:SetText(Tinom.L["新增"]);
+			_G[self:GetParent():GetName().."ButtonAdd"]:SetText(L["新增"]);
 		end
 	end
 end
+
+TinomChatConfigWideCheckBoxMixin = {}
+local lastData;
+function TinomChatConfigWideCheckBoxMixin:OnDragStat()
+	lastData = self:GetInfo();
+	self:AlphaDown();
+	self:SetAlpha(1)
+	self:SetScript("OnUpdate", TinomChatConfigWideCheckBoxMixin.OnUpdate);
+end
+
+function TinomChatConfigWideCheckBoxMixin:OnUpdate()
+	for i,v in ipairs(TinomOptionsMainPanelBaseSetting.TinomFilterButtons) do
+		local MouseOver = v:IsMouseOver();
+		if MouseOver then
+			if i == lastData[1] then break; end
+			self:AlphaDown();
+			v:SetAlpha(1)
+			self:SetInfo(lastData[1], v:GetInfo());
+			self:SetInfo(i, lastData);
+			lastData = v:GetInfo();
+		end
+	end
+end
+
+function TinomChatConfigWideCheckBoxMixin:StopMovingEntry()
+	self:AlphaUp()
+	self:SetScript("OnUpdate", nil);
+	--self:UpdateStates();
+end
+
+function TinomChatConfigWideCheckBoxMixin:OnLoad()
+	for i,v in ipairs(TinomOptionsMainPanelBaseSetting.TinomFilterButtons) do
+		v:SetInfo( i, TinomDB.Options.Default.Tinom_Value_MsgFilter_FiltersList[i] or Tinom.defaultCheckButtons[i] )
+	end
+end
+
+function Tinom.FiltersList_Updata()
+	msgFilters = {};
+	TinomDB.Options.Default.Tinom_Value_MsgFilter_FiltersList = {};
+
+	for i,v in ipairs(TinomOptionsMainPanelBaseSetting.TinomFilterButtons) do
+		buttonInfo = v:GetInfo()
+		tinsert(TinomDB.Options.Default.Tinom_Value_MsgFilter_FiltersList,i,buttonInfo);
+		if v.CheckButton:GetChecked() then
+			print(v.filterFunc)
+			Tinom.MsgFilter_AddMsgFilter(Tinom[v.filterFunc])
+		end
+	end
+end
+
+function TinomChatConfigWideCheckBoxMixin:AlphaDown()
+	for i,v in ipairs(TinomOptionsMainPanelBaseSetting.TinomFilterButtons) do
+		v:SetAlpha(0.5);
+	end
+end
+function TinomChatConfigWideCheckBoxMixin:AlphaUp()
+	for i,v in ipairs(TinomOptionsMainPanelBaseSetting.TinomFilterButtons) do
+		v:SetAlpha(1);
+	end
+end
+
+function TinomChatConfigWideCheckBoxMixin:GetInfo()
+	local info = {};
+	ID = self:GetID();
+	isChecked = self.CheckButton:GetChecked();
+	filterName = self.filterName;
+	filterFunc = self.filterFunc;
+	info = {ID, isChecked, filterName, filterFunc}
+	return info;
+end
+
+function TinomChatConfigWideCheckBoxMixin:SetInfo( index, data )
+	TinomOptionsMainPanelBaseSetting.TinomFilterButtons[index].CheckButton:SetChecked(data[2]);
+	TinomOptionsMainPanelBaseSetting.TinomFilterButtons[index].filterName = data[3]
+	TinomOptionsMainPanelBaseSetting.TinomFilterButtons[index].filterFunc = data[4]
+	TinomOptionsMainPanelBaseSetting.TinomFilterButtons[index].CheckButton.Text:SetText(index.."."..Tinom.defaultCheckButtonsName[data[3]]);
+	return true;
+end
+
+	--WhiteListOnly = "只有白名单",
+	--AbbrChannelName = "缩写频道名",
+	--FoldMsg = "折叠复读消息","Tinom.MsgFilter_FoldMsg",
+	--IntervalMsg = "消息间隔限制","Tinom.MsgFilter_IntervalMsg",

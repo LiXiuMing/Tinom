@@ -45,9 +45,10 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
   </Frame>
   <!-- 复选按钮模板 -->
   <CheckButton name="TinomOptionsMainPanelCheckButton_Template" inherits="InterfaceOptionsCheckButtonTemplate" virtual="true">
+    <!-- <Size x="36" y="36"/> -->
     <Layers>
       <Layer level="ARTWORK">
-        <FontString name="$parentText" inherits="GameFontHighlightLeft" parentKey="Text">
+        <!-- <FontString name="$parentText" inherits="GameFontHighlightLeft" parentKey="Text">
           <Anchors>
             <Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
               <Offset>
@@ -55,13 +56,15 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
               </Offset>
             </Anchor>
           </Anchors>
-        </FontString>
+        </FontString> -->
       </Layer>
     </Layers>
     <Scripts>
       <OnLoad>
         Tinom.OptionsBaseSettingCheckButton_OnLoad(self)
+        self:RegisterForDrag("LeftButton");
       </OnLoad>
+
       <OnClick>
         Tinom.OptionsBaseSettingCheckButton_OnClick(self);
       </OnClick>
@@ -446,6 +449,145 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
 
   </Button>
 
+  <!-- 特殊复选框 -->
+	<Frame name="TinomChatConfigCheckBoxTemplate" parentArray="TinomFilterButtons" mixin="TinomChatConfigWideCheckBoxMixin" virtual="true">
+		<Size x="200" y="32"/>
+		<Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<EdgeSize>
+				<AbsValue val="16"/>
+			</EdgeSize>
+			<TileSize>
+				<AbsValue val="16"/>
+			</TileSize>
+      <BorderColor r="0.6" g="0.6" b="0.6" a="1"/>
+      <Color r="0.2" g="0.2" b="0.2" a="1"/>
+      <BackgroundInsets>
+        <AbsInset left="5" right="5" top="5" bottom="5"/>
+      </BackgroundInsets>
+		</Backdrop>
+		<Frames>
+			<CheckButton name="$parentCheck"  parentArray="TinomFilterCheckBoxes" parentKey="CheckButton" >
+				<Size>
+					<AbsDimension x="32" y="32"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT">
+						<Offset x="5" y="0"/>
+					</Anchor>
+				</Anchors>
+        <Layers>
+          <Layer level="ARTWORK">
+            <FontString name="$parentText" parentKey="Text" inherits="GameFontHighlight" justifyH="LEFT">
+              <Anchors>
+                <Anchor point="LEFT" relativePoint="RIGHT">
+                  <Offset>
+                    <AbsDimension x="-2" y="0"/>
+                  </Offset>
+                </Anchor>
+              </Anchors>
+            </FontString>
+          </Layer>
+        </Layers>
+        <Scripts>
+          <OnClick>
+            <!-- local checked = self:GetChecked();
+            if ( self.func ) then
+              self.func(self, checked);
+            end -->
+
+            <!-- PlaySound(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID); -->
+          </OnClick>
+          <OnEnter>
+            if (self.tooltip) then
+              GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+              GameTooltip:SetText(self.tooltip, nil, nil, nil, nil, (self.tooltipStyle or true));
+            end
+          </OnEnter>
+          <OnLeave>
+            GameTooltip:Hide();
+          </OnLeave>
+        </Scripts>
+        <NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+        <PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+        <HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+        <CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+        <DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+			</CheckButton>
+      <Button name="$parentColorSwatch">
+				<Size x="16" y="16"/>
+				<Anchors>
+					<Anchor point="LEFT" x="178" y="0"/>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="$parentSwatchBg" file="Interface\Buttons\UI-OptionsButton" parentKey="texture">
+							<Size>
+								<AbsDimension x="14" y="14"/>
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER">
+									<Offset>
+										<AbsDimension x="0" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<Color r="1" g="0" b="0" a="1"/>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+          <OnLoad>
+            self:SetAlpha(0.4);
+          </OnLoad>
+					<OnClick>
+						print("123");
+					</OnClick>
+          <OnEnter>
+            if (self.tooltip) then
+              GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+              GameTooltip:SetText(self.tooltip, nil, nil, nil, nil, (self.tooltipStyle or true));
+            end
+            self:SetAlpha(1)
+          </OnEnter>
+          <OnMouseDown>
+            self.texture:SetPoint("CENTER", 1, -1);
+          </OnMouseDown>
+          <OnMouseUp>
+            self.texture:SetPoint("CENTER", 0, 0);
+          </OnMouseUp>
+          <OnLeave>
+            GameTooltip:Hide();
+            self:SetAlpha(0.4)
+          </OnLeave>
+				</Scripts>
+			</Button>
+		</Frames>
+    
+		<Scripts>
+			<OnLoad>
+        local filterName;
+        local filterFunc;
+        self:RegisterForDrag("LeftButton");
+        self:SetAlpha(1)
+			</OnLoad>
+      <OnDragStart>
+        self:OnDragStat(self);
+      </OnDragStart>
+      <OnDragStop>
+        self:StopMovingEntry()
+      </OnDragStop>
+      <OnMouseDown>
+        self:AlphaDown();
+        self:SetAlpha(1);
+      </OnMouseDown>
+      <OnMouseUp>
+        self:AlphaUp()
+      </OnMouseUp>
+      <OnLeave>
+      </OnLeave>
+		</Scripts>
+	</Frame>
+
   <!-- 主设置界面 -->
   <Frame name="TinomOptionsMainPanel" text="" hidden="true" parent="InterfaceOptionsFramePanelContainer">
     <Layers>
@@ -512,153 +654,138 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
 
       <!-- 基础设置框架 -->
       <Frame name="$parentBaseSetting" parent="TinomOptionsMainPanel" inherits="TinomOptionsMainPanelTabTemplate">
-        <Layers>
-          <Layer level="ARTWORK">
-            <!-- 分割条 -->
-            <Texture parentKey="$parentTextureLine1">
-              <Size y="1"/>
-              <Anchors>
-                <Anchor point="LEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="10" y="-110"/>
-                <Anchor point="RIGHT" relativeTo="$parent" x="-300" y="0"/>
-              </Anchors>
-              <Color r="0.6" g="0.6" b="0.6" a="1"/>
-            </Texture>
-            <Texture parentKey="$parentTextureLine2">
-              <Anchors>
-                <Anchor point="LEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="10" y="-190"/>
-                <Anchor point="RIGHT" relativeTo="$parent" x="-300" y="0"/>
-              </Anchors>
-              <Color r="0.6" g="0.6" b="0.6" a="1"/>
-            </Texture>
-            <Texture parentKey="$parentTextureLine3">
-              <Anchors>
-                <Anchor point="LEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="10" y="-270"/>
-                <Anchor point="RIGHT" relativeTo="$parent" x="-300" y="0"/>
-              </Anchors>
-              <Color r="0.6" g="0.6" b="0.6" a="1"/>
-            </Texture>
-            <Texture parentKey="$parentTextureLine4">
-              <Anchors>
-                <Anchor point="LEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="10" y="-350"/>
-                <Anchor point="RIGHT" relativeTo="$parent" x="-300" y="0"/>
-              </Anchors>
-              <Color r="0.6" g="0.6" b="0.6" a="1"/>
-            </Texture>
-          </Layer>
-        </Layers>
         <Frames>
-          <!-- 白名单复选按钮 -->
-          <CheckButton name="$parentCheckButton_WhiteList" inherits="TinomOptionsMainPanelCheckButton_Template">
+          <Frame name="$parentFiltersList" hide="false">
+            <Size x="208"/>
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentTitleUnderline" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-12"/>
-              </Anchor>
+              <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="-38"/>
+              <Anchor point="BOTTOMLEFT"/>
             </Anchors>
-          </CheckButton>
-          <!-- 白名单关键字复选按钮 -->
-          <CheckButton name="$parentCheckButton_WhiteListKeyWord" inherits="TinomOptionsMainPanelCheckButton_Template">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_WhiteList" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-5"/>
-              </Anchor>
-            </Anchors>
-          </CheckButton>
-          <!-- 只显示白名单消息复选按钮 -->
-          <CheckButton name="$parentCheckButton_WhiteListOnly" inherits="TinomOptionsMainPanelCheckButton_Template">
-            <Anchors>
-              <Anchor point="LEFT" relativeTo="$parentCheckButton_WhiteListKeyWordText" relativePoint="RIGHT">
-                <Offset x="10" y="0"/>
-              </Anchor>
-            </Anchors>
-          </CheckButton>
-          <!-- 黑名单复选按钮 -->
-          <CheckButton name="$parentCheckButton_BlackList" inherits="TinomOptionsMainPanelCheckButton_Template">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_WhiteListKeyWord" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-20"/>
-              </Anchor>
-            </Anchors>
-          </CheckButton>
-          <!-- 黑名单关键字复选按钮 -->
-          <CheckButton name="$parentCheckButton_BlackListKeyWord" inherits="TinomOptionsMainPanelCheckButton_Template">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_BlackList" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-5"/>
-              </Anchor>
-            </Anchors>
-          </CheckButton>
+            <Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+              <EdgeSize>
+                <AbsValue val="16"/>
+              </EdgeSize>
+              <TileSize>
+                <AbsValue val="16"/>
+              </TileSize>
+              <BorderColor r="0.2" g="0.2" b="0.2" a="1"/>
+              <Color r="0.2" g="0.2" b="0.2" a="0.4"/>
+              <BackgroundInsets>
+                <AbsInset left="5" right="5" top="5" bottom="5"/>
+              </BackgroundInsets>
+            </Backdrop>
+          </Frame>
 
-          <!-- 替换名单复选按钮 -->
-          <CheckButton name="$parentCheckButton_ReplaceName" inherits="TinomOptionsMainPanelCheckButton_Template">
+          <Frame name="$parentCheckButton1" inherits="TinomChatConfigCheckBoxTemplate" id="1">
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_BlackListKeyWord" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-20"/>
+              <Anchor point="TOPLEFT" relativeTo="$parentFiltersList" relativePoint="TOPLEFT">
+                <Offset x="4" y="-4"/>
               </Anchor>
             </Anchors>
-          </CheckButton>
-          <!-- 替换关键字复选按钮 -->
-          <CheckButton name="$parentCheckButton_ReplaceNameMsg" inherits="TinomOptionsMainPanelCheckButton_Template">
+          </Frame>
+          <Frame name="$parentCheckButton2" inherits="TinomChatConfigCheckBoxTemplate" id="2">
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_ReplaceName" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-5"/>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton1" relativePoint="BOTTOMLEFT">
+                <Offset x="0" y="-2"/>
               </Anchor>
             </Anchors>
-          </CheckButton>
-          <!-- 替换角色消息复选按钮 -->
-          <CheckButton name="$parentCheckButton_ReplaceKeyWord" inherits="TinomOptionsMainPanelCheckButton_Template">
+          </Frame>
+          <Frame name="$parentCheckButton3" inherits="TinomChatConfigCheckBoxTemplate" id="3">
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_ReplaceNameMsg" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-20"/>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton2" relativePoint="BOTTOMLEFT">
+                <Offset x="0" y="-2"/>
               </Anchor>
             </Anchors>
-          </CheckButton>
-          <!-- 替换关键字消息复选按钮 -->
-          <CheckButton name="$parentCheckButton_ReplaceKeyWordMsg" inherits="TinomOptionsMainPanelCheckButton_Template">
+          </Frame>
+          <Frame name="$parentCheckButton4" inherits="TinomChatConfigCheckBoxTemplate" id="4">
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_ReplaceKeyWord" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-5"/>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton3" relativePoint="BOTTOMLEFT">
+                <Offset x="0" y="-2"/>
               </Anchor>
             </Anchors>
-          </CheckButton>
+          </Frame>
+          <Frame name="$parentCheckButton5" inherits="TinomChatConfigCheckBoxTemplate" id="5">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton4" relativePoint="BOTTOMLEFT">
+                <Offset x="0" y="-2"/>
+              </Anchor>
+            </Anchors>
+          </Frame>
+          <Frame name="$parentCheckButton6" inherits="TinomChatConfigCheckBoxTemplate" id="6">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton5" relativePoint="BOTTOMLEFT">
+                <Offset x="0" y="-2"/>
+              </Anchor>
+            </Anchors>
+          </Frame>
+          <Frame name="$parentCheckButton7" inherits="TinomChatConfigCheckBoxTemplate" id="7">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton6" relativePoint="BOTTOMLEFT">
+                <Offset x="0" y="-2"/>
+              </Anchor>
+            </Anchors>
+          </Frame>
+          <Frame name="$parentCheckButton8" inherits="TinomChatConfigCheckBoxTemplate" id="8">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton7" relativePoint="BOTTOMLEFT">
+                <Offset x="0" y="-2"/>
+              </Anchor>
+            </Anchors>
+          </Frame>
+          <Frame name="$parentCheckButton9" inherits="TinomChatConfigCheckBoxTemplate" id="9">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton8" relativePoint="BOTTOMLEFT">
+                <Offset x="0" y="-2"/>
+              </Anchor>
+            </Anchors>
+          </Frame>
+          <Frame name="$parentCheckButton10" inherits="TinomChatConfigCheckBoxTemplate" id="10">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton9" relativePoint="BOTTOMLEFT">
+                <Offset x="0" y="-2"/>
+              </Anchor>
+            </Anchors>
+          </Frame>
+          <Frame name="$parentCheckButton11" inherits="TinomChatConfigCheckBoxTemplate" id="11">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton10" relativePoint="BOTTOMLEFT">
+                <Offset x="0" y="-2"/>
+              </Anchor>
+            </Anchors>
+          </Frame>
+          <Frame name="$parentCheckButton12" inherits="TinomChatConfigCheckBoxTemplate" id="12">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton11" relativePoint="BOTTOMLEFT">
+                <Offset x="0" y="-2"/>
+              </Anchor>
+            </Anchors>
+          </Frame>
 
-          <!-- 折叠长消息内重复句子 -->
-          <CheckButton name="$parentCheckButton_FoldMsg" inherits="TinomOptionsMainPanelCheckButton_Template">
+          <Frame name="$parentFunctions" hide="false">
+            <!-- <Size x="20" y="20"/> -->
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_ReplaceKeyWordMsg" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-20"/>
-              </Anchor>
+              <Anchor point="TOPLEFT" relativeTo="$parentFiltersList" relativePoint="TOPRIGHT" x="1" y="0"/>
+              <Anchor point="BOTTOMRIGHT" x="0" y="0"/>
             </Anchors>
-          </CheckButton>
-          <!-- 频道与姓名缩写 -->
-          <CheckButton name="$parentCheckButton_AbbrChannelName" inherits="TinomOptionsMainPanelCheckButton_Template">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_FoldMsg" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-5"/>
-              </Anchor>
-            </Anchors>
-          </CheckButton>
-          <!-- 屏蔽灰色物品拾取消息 -->
-          <CheckButton name="$parentCheckButton_IgnoreGrayItems" inherits="TinomOptionsMainPanelCheckButton_Template">
-            <Anchors>
-              <Anchor point="LEFT" relativeTo="$parentCheckButton_AbbrChannelName" relativePoint="RIGHT">
-                <Offset x="130" y="0"/>
-              </Anchor>
-            </Anchors>
-          </CheckButton>
-          <!-- 姓名缩写隐藏服务器:NOTE!被缩写的角色将导致邀请组队失效,因为服务器被隐藏了. -->
-          <CheckButton name="$parentCheckButton_AbbrAuthorName" inherits="TinomOptionsMainPanelCheckButton_Template">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_AbbrChannelName" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-5"/>
-              </Anchor>
-            </Anchors>
-          </CheckButton>
+            <Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+              <EdgeSize>
+                <AbsValue val="16"/>
+              </EdgeSize>
+              <TileSize>
+                <AbsValue val="16"/>
+              </TileSize>
+              <BorderColor r="0.2" g="0.2" b="0.2" a="1"/>
+              <Color r="0.2" g="0.2" b="0.2" a="0.4"/>
+              <BackgroundInsets>
+                <AbsInset left="5" right="5" top="5" bottom="5"/>
+              </BackgroundInsets>
+            </Backdrop>
+          </Frame>
           
           <!-- 屏蔽重复消息复选按钮 -->
           <CheckButton name="$parentCheckButton_RepeatMsg" inherits="TinomOptionsMainPanelCheckButton_Template">
             <Anchors>
-              <Anchor point="LEFT" relativeTo="$parent" relativePoint="TOP"/>
-              <Anchor point="TOP" relativeTo="$parentCheckButton_WhiteList" relativePoint="TOP"/>
+              <Anchor point="TOPLEFT" relativeTo="$parentFunctions" relativePoint="TOPLEFT" x="6" y="-12"/>
             </Anchors>
           </CheckButton>
           <!-- 屏蔽重复消息水平滑条模块 -->
@@ -705,7 +832,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
           <!-- 屏蔽间隔interval时间内消息复选按钮 -->
           <CheckButton name="$parentCheckButton_IntervalMsg" inherits="TinomOptionsMainPanelCheckButton_Template">
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_RepeatMsg" relativePoint="BOTTOMLEFT" y="-5"/>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_RepeatMsg" relativePoint="BOTTOMLEFT" y="-12"/>
             </Anchors>
           </CheckButton>
           <!-- 屏蔽重复消息水平滑条模块 -->
@@ -748,6 +875,39 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
               </OnEvent>
             </Scripts>
           </Slider>
+
+          <!-- 折叠长消息内重复句子 -->
+          <CheckButton name="$parentCheckButton_FoldMsg" inherits="TinomOptionsMainPanelCheckButton_Template">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_IntervalMsg" relativePoint="BOTTOMLEFT">
+                <Offset x="0" y="-20"/>
+              </Anchor>
+            </Anchors>
+          </CheckButton>
+          <!-- 频道与姓名缩写 -->
+          <CheckButton name="$parentCheckButton_AbbrChannelName" inherits="TinomOptionsMainPanelCheckButton_Template">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_FoldMsg" relativePoint="BOTTOMLEFT">
+                <Offset x="0" y="-5"/>
+              </Anchor>
+            </Anchors>
+          </CheckButton>
+          <!-- 屏蔽灰色物品拾取消息 -->
+          <CheckButton name="$parentCheckButton_IgnoreGrayItems" inherits="TinomOptionsMainPanelCheckButton_Template">
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="$parentCheckButton_AbbrChannelName" relativePoint="RIGHT">
+                <Offset x="130" y="0"/>
+              </Anchor>
+            </Anchors>
+          </CheckButton>
+          <!-- 姓名缩写隐藏服务器:NOTE!被缩写的角色将导致邀请组队失效,因为服务器被隐藏了. -->
+          <CheckButton name="$parentCheckButton_AbbrAuthorName" inherits="TinomOptionsMainPanelCheckButton_Template">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_AbbrChannelName" relativePoint="BOTTOMLEFT">
+                <Offset x="0" y="-5"/>
+              </Anchor>
+            </Anchors>
+          </CheckButton>
           
         </Frames>
         
