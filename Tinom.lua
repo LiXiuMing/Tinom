@@ -121,31 +121,31 @@ function Tinom.classicCheak()
         Tinom.Tinom_Switch_MsgFilter_Classic = true;
         Tdebug(self,"log","检测到怀旧版");
     end
-    -- --	脏话过滤
-    -- Tinom.profanityFilter = GetCVarInfo("profanityFilter")
-    -- if Tinom.profanityFilter == "1" then
-    --     print("脏话过滤已开")
-    --     SetCVar("profanityFilter",0);
-    -- else
-    --     print("脏话过滤未开")
-    -- end
-    -- --  角色名染色
-    -- Tinom.colorChatNamesByClass = GetCVarInfo("colorChatNamesByClass")
-    -- if Tinom.colorChatNamesByClass == "1" then
-    --     print("角色名染色已开")
-    -- else
-    --     print("角色名染色未开")
-    --     SetCVar("colorChatNamesByClass",1);
-    -- end
+    --	脏话过滤
+    Tinom.profanityFilter = GetCVarInfo("profanityFilter")
+    if Tinom.profanityFilter == "1" then
+        print("脏话过滤已开")
+        SetCVar("profanityFilter",0);
+    else
+        print("脏话过滤未开")
+    end
+    --  角色名染色
+    Tinom.chatClassColorOverride = GetCVarInfo("chatClassColorOverride")
+    if Tinom.chatClassColorOverride == "0" then
+        print("角色名染色已开")
+    else
+        print("角色名染色未开")
+        SetCVar("chatClassColorOverride",0);
+    end
     
-    -- --  模型河蟹
-    -- Tinom.overrideArchive = GetCVarInfo("overrideArchive")
-    -- if Tinom.overrideArchive == "1" then
-    --     print("模型河蟹已开")
-    --     SetCVar("overrideArchive",0);
-    -- else
-    --     print("模型河蟹未开")
-    -- end
+    --  模型河蟹
+    Tinom.overrideArchive = GetCVarInfo("overrideArchive")
+    if Tinom.overrideArchive == "1" then
+        print("模型河蟹已开")
+        SetCVar("overrideArchive",0);
+    else
+        print("模型河蟹未开")
+    end
 end
 
 function Tinom.Check()

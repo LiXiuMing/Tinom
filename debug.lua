@@ -32,7 +32,7 @@ function Tdebug( ... )
 	local logStr = timeNow.."-["..callType.."]: "..callMsg
     if ( callType == "log" ) then
         table.insert( debugDB_Temp.log, logStr );
-        print(logStr);
+        --print(logStr);
     elseif ( callType == "error" ) then
         table.insert( debugDB_Temp.error, logStr );
         --print(logStr);
@@ -42,10 +42,10 @@ end
 function TdebugSwitch()
     Tinom_Switch_Debug = not Tinom_Switch_Debug;
     if Tinom_Switch_Debug then
-        print("排错函数已:开")
+        ChatFrame1:AddMessage("排错函数已:开")
         return;
     end
-    print("排错函数已:关")
+    ChatFrame1:AddMessage("排错函数已:关")
 end
 SLASH_TINOMDEBUG1 = "/tdebug"
 SLASH_TINOMDEBUG2 = "/td"

@@ -60,7 +60,7 @@ Tinom.defaultCheckButtonsName = {
 	FoldMsg = "折叠复读消息",
 	IgnoreGrayItems = "屏蔽灰色物品拾取消息",
 	IntervalMsg = "发言间隔限制",
-	AbbrAuthorName = "缩写玩家名(|cffffff00注意!\n被缩写的角色将导致其右键内交互功能失效!|r)"
+	AbbrAuthorName = "缩写玩家名"
 };
 Tinom.FilterFramesTitle = {
     WhiteList = 0,

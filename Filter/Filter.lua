@@ -33,22 +33,6 @@ Tinom.ReminderType = {
     };
 };
 
---  颜色表
-Tinom.classes = {
-    ["HUNTER"]      = "ffa9d271",
-    ["WARLOCK"]     = "ff8686ec",
-    ["PRIEST"]      = "fffefefe",
-    ["PALADIN"]     = "fff38bb9",
-    ["MAGE"]        = "ff3ec5e9",
-    ["ROGUE"]       = "fffef367",
-    ["DRUID"]       = "fffe7b09",
-    ["SHAMAN"]      = "ff006fdc",
-    ["WARRIOR"]     = "ffc59a6c",
-    ["DEATHKNIGHT"] = "ffc31d39",
-    ["MONK"]        = "ff00fe95",
-    ["DEMONHUNTER"] = "ffa22fc8"
-};
-
 --[[-------------------------------------------------------------------------
 --  聊天频道名替换函数:因上级函数使用频道名字符串长度作为逻辑条件不便更改,
 --  故通过接管聊天框的AddMessage函数替换字符串,此处为把频道序号后的频道名隐藏.
@@ -59,21 +43,13 @@ function Tinom.ReplaceChannelName()
             local chatFrame = _G["ChatFrame"..i]
             local addmsg = chatFrame.AddMessage
             chatFrame.AddMessage = function(frame, text,...)
-                if ( Tinom.Tinom_Switch_MsgFilter_Classic ) then
-                    local name = text:match("|Hplayer.-|h%[(%S-)%]|h")
-                    if ( name and TinomDB_playerDB_classTemp[name]) then
-                        local playerClass = TinomDB_playerDB_classTemp[name];
-                        local colorname = "|c"..Tinom.classes[playerClass]..name.."|r"
-                        text = string.gsub(text,"%["..name.."%]","%["..colorname.."%]")
-                    end
-                end
                 if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrChannelName) then
-                    text = text:gsub( "%[(%d)%..-%]", "%[%1%]" )
+                    text = text:gsub( "%[(%d).-%]", "[%1]", 1 )
                 end
                 if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrAuthorName) then
-                    text = text:gsub( "(%|%w-%S-)%-%S-%|", "%1%#%|" );
+                    text = text:gsub( "%[|cff([0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f])(.-)(%-%S%S%S).-|r%]", "[|cff%1%2%3|r]", 1 );
                 end
-                Tdebug(self,"log",frame.name)
+                Tdebug(self,"log",frame.name..":"..text)
                 return addmsg(frame,text,...)
             end
         end
@@ -109,11 +85,6 @@ function Tinom.MsgFilter( self,event,... )
     if not authorServer then
         authorName = arg2;
         authorServer = "server";
-    end
-    --  怀旧服缓存发言角色职业
-    if Tinom.Tinom_Switch_MsgFilter_Classic then
-        local _, Class  = GetPlayerInfoByGUID(arg12);
-        TinomDB_playerDB_classTemp[authorName] = Class;
     end
     
     --  统计函数  --
