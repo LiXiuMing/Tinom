@@ -4,7 +4,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
 <Script file="ChatStat.lua" />
 
 <Frame name="TinomChatStatFrame" parent="UIParent" toplevel="true" hidden="true" movable="true" enableMouse="true">
-  <Size x="200" y="300"/>
+  <Size x="200" y="400"/>
   <Anchors>
       <Anchor point="CENTER"/>
   </Anchors>
@@ -52,72 +52,78 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
         </Anchors>
         <Color r="1" g="1" b="0"/>
       </Texture>
-      <FontString name="$parentText_BlackList" text="黑名单已屏蔽:" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+      <FontString name="$parentText1" parentArray="Texts" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
         <Anchors>
           <Anchor point="TOPLEFT" relativeTo="$parentUnderline" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
         </Anchors>
       </FontString>
-      <FontString name="$parentText_BlackKeywordList" text="关键字已屏蔽:" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+      <FontString name="$parentText2" parentArray="Texts" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
         <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentText_BlackList" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+          <Anchor point="TOPLEFT" relativeTo="$parentText1" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
         </Anchors>
       </FontString>
-      <FontString name="$parentText_ReplaceMsg" text="替换消息:" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+      <FontString name="$parentText3" parentArray="Texts" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
         <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentText_BlackKeywordList" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+          <Anchor point="TOPLEFT" relativeTo="$parentText2" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
         </Anchors>
       </FontString>
-      <FontString name="$parentText_FoldMsg" text="折叠消息:" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+      <FontString name="$parentText4" parentArray="Texts" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
         <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentText_ReplaceMsg" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+          <Anchor point="TOPLEFT" relativeTo="$parentText3" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
         </Anchors>
       </FontString>
-      <FontString name="$parentText_RepeatMsg" text="重复消息:" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+      <FontString name="$parentText5" parentArray="Texts" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
         <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentText_FoldMsg" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+          <Anchor point="TOPLEFT" relativeTo="$parentText4" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
         </Anchors>
       </FontString>
-      <FontString name="$parentText_IntervalMsg" text="间隔限制:" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+      <FontString name="$parentText6" parentArray="Texts" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
         <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentText_RepeatMsg" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+          <Anchor point="TOPLEFT" relativeTo="$parentText5" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
         </Anchors>
       </FontString>
-      <FontString name="$parentText_Author" text="玩家名:" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+      <FontString name="$parentText7" parentArray="Texts" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
         <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentText_IntervalMsg" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+          <Anchor point="TOPLEFT" relativeTo="$parentText6" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+        </Anchors>
+      </FontString>
+      <FontString name="$parentText8" parentArray="Texts" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentText7" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+        </Anchors>
+      </FontString>
+      <FontString name="$parentText9" parentArray="Texts" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentText8" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+        </Anchors>
+      </FontString>
+      <FontString name="$parentText10" parentArray="Texts" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentText9" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+        </Anchors>
+      </FontString>
+      <FontString name="$parentText11" parentArray="Texts" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentText10" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+        </Anchors>
+      </FontString>
+      <FontString name="$parentText12" parentArray="Texts" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentText11" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+        </Anchors>
+      </FontString>
+      <FontString name="$parentText13" parentArray="Texts" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentText12" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+        </Anchors>
+      </FontString>
+      <FontString name="$parentText14" parentArray="Texts" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentText13" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
         </Anchors>
       </FontString>
 
-      <FontString name="$parentText_BlackList_Num" text="0" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
-        <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentText_BlackList" relativePoint="TOPRIGHT" x="4" y="0"/>
-        </Anchors>
-      </FontString>
-      <FontString name="$parentText_BlackKeywordList_Num" text="0" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
-        <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentText_BlackKeywordList" relativePoint="TOPRIGHT" x="4" y="0"/>
-        </Anchors>
-      </FontString>
-      <FontString name="$parentText_ReplaceMsg_Num" text="0" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
-        <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentText_ReplaceMsg" relativePoint="TOPRIGHT" x="4" y="0"/>
-        </Anchors>
-      </FontString>
-      <FontString name="$parentText_FoldMsg_Num" text="0" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
-        <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentText_FoldMsg" relativePoint="TOPRIGHT" x="4" y="0"/>
-        </Anchors>
-      </FontString>
-      <FontString name="$parentText_RepeatMsg_Num" text="0" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
-        <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentText_RepeatMsg" relativePoint="TOPRIGHT" x="4" y="0"/>
-        </Anchors>
-      </FontString>
-      <FontString name="$parentText_IntervalMsg_Num" text="0" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
-        <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentText_IntervalMsg" relativePoint="TOPRIGHT" x="4" y="0"/>
-        </Anchors>
-      </FontString>
+
     </Layer>
   </Layers>
   <Backdrop bgFile="Interface\dialogframe\ui-dialogbox-gold-background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">

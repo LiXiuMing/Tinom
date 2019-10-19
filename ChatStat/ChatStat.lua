@@ -6,7 +6,6 @@
 --  功能:统计角色频道发言,重复发言,广告等信息.
 --
 -------------------------------------------------------------------------]]--
-Tdebug(self,"log","ChatStat.lua加载开始");
 --测试开关:测试时处理自己的发言,反之则不处理自己的发言.
 local IsTest = true;
 
@@ -19,6 +18,23 @@ Chat_Switch = {
     Spammer =       true,
     Spammer_A =     true,
 }
+
+ChatStat_FilteredList = {
+    WhiteList = 0,
+    WhiteListKeyword = 0,
+    BlackList = 0,
+    BlackListKeyword = 0,
+    ReplaceName = 0,
+    ReplaceNameMsg = 0,
+    ReplaceKeyword = 0,
+    ReplaceKeywordMsg = 0,
+    RepeatMsg = 0,
+    SensitiveList = 0,
+    SensitiveKeyword = 0,
+    AutoBlackList = 0,
+    FoldMsg = 0,
+    IntervalMsg = 0,
+};
 
 --  成就变量
 local Achievement_Normal = {
@@ -115,10 +131,8 @@ local function chat_spammer( channel, authorName, msg_repeat_times, elapsed )
     if ( chat_level > 0) and ((msg_repeat_times % 10) == 0 ) then
         write_msg = write_msg..chat_Achievement("Spammer",chat_level);
         chat_send("Spammer_A",write_msg,"CHANNEL",nil,channel);
-        for k,v in pairs(TinomDB.filterDB.blackList) do
-            if authorName == v then
-                return false;
-            end
+        if Tinom.CheckNameInTable(TinomDB.filterDB.autoBlackList,authorName) then
+            return false;
         end
         return true;
     else
@@ -134,17 +148,18 @@ local function chat_stat_handler(self, event, msg, author,_,_,_,_,_,channelIndex
     if (not guid) or (not guid:find("Player")) then
         return;
     end
+
     if not authorServer then
         authorName = author;
         authorServer = "server";
     end
+
     local ignore = false
-    --判断是否是本人,是否非测试模式,如果全部满足则跳出.
-    if authorName == UnitName("player") and IsTest == false then
+
+    if Tinom.IsMe(authorName) and IsTest == false then
         return;
     end
 
-    -- 初始化服务器信息
     if TinomDB.chatStatDB[authorServer] == nil then
         TinomDB.chatStatDB[authorServer] = {}
         Tdebug(self,"log","==初始化服务器信息==")
@@ -179,8 +194,8 @@ local function chat_stat_handler(self, event, msg, author,_,_,_,_,_,channelIndex
 
         spammer = chat_spammer( channelIndex, authorName, authorNameDB_read.msg_repeat_times, SecondsToTime(elapsed) );
         if spammer and TinomDB.Options.Default.Tinom_Switch_MsgFilter_AutoBlackList then
+            Tinom.AddAuthorToTable(TinomDB.filterDB.autoBlackList,authorName);
             Tdebug(self,"log","AutoBlackList"..authorName..":"..msg);
-            tinsert(TinomDB.filterDB.blackList,authorName);
         end
     else
         --正常发言
@@ -190,44 +205,27 @@ local function chat_stat_handler(self, event, msg, author,_,_,_,_,_,channelIndex
         chat_normal( channelIndex, authorName, authorNameDB_read.msg_count );
     end
 
-    -- 统计模块更新数据
-    -- TinomDB_ChatStatDB_Text = {
-    --     TinomChatStatFrameText_ReplaceMsg_Num = "TinomChatStatFrameText_ReplaceMsg_Num",
-    --     TinomChatStatFrameText_FoldMsg_Num = "TinomChatStatFrameText_FoldMsg_Num",
-    --     TinomChatStatFrameText_BlackList_Num = "TinomChatStatFrameText_BlackList_Num",
-    --     TinomChatStatFrameText_BlackKeywordList_Num = "TinomChatStatFrameText_BlackKeywordList_Num",
-    --     TinomChatStatFrameText_RepeatMsg_Num = "TinomChatStatFrameText_RepeatMsg_Num",
-    -- };
-    -- TinomChatStatFrameMsgNum:SetText(lineID);
-    -- TinomChatStatFrameText_Author:SetText("当前玩家:|cffff0000"..authorName.."|r");
-    -- TinomChatStatFrameText_ReplaceMsg_Num:SetText(math.floor(TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_ReplaceMsg_Num));
-    -- TinomChatStatFrameText_FoldMsg_Num:SetText(math.floor(TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_FoldMsg_Num));
-    -- TinomChatStatFrameText_BlackList_Num:SetText(math.floor(TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_BlackList_Num));
-    -- TinomChatStatFrameText_BlackKeywordList_Num:SetText(math.floor(TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_BlackKeywordList_Num));
-    -- TinomChatStatFrameText_RepeatMsg_Num:SetText(math.floor(TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_RepeatMsg_Num));
-    -- TinomChatStatFrameText_IntervalMsg_Num:SetText(math.floor(TinomDB_ChatStatDB_cacheMsgTemp.TinomChatStatFrameText_IntervalMsg_Num));
-    -- PlaySoundFile("Interface/Addons/Tinom/Media/di.ogg","SFX")
-    -- 无条件加入黑名单
-    -- local function cheakName( )
-    --     for k,v in pairs(TinomDB.filterDB.blackList) do
-    --         if authorName == v then
-    --             return false;
-    --         end
-    --     end
-    --     return true;
-    -- end
-    -- if cheakName( ) then
-    --     tinsert(TinomDB.filterDB.blackList,authorName);
-    --     PlaySoundFile("Interface/Addons/Tinom/Media/di.ogg","SFX")
-    --     print("black add:"..authorName)
-    -- end
+    -- 统计模块更新数据ChatStat_FilteredList
+    if TinomChatStatFrame:IsShown() then
+        TinomChatStatFrameMsgNum:SetText(lineID);
+        local index = 1;
+        for p,v in pairs(TinomDB.Options.Default.Tinom_Value_MsgFilter_FiltersList) do
+            local filterName = v[3];
+            filterName = Tinom.defaultCheckButtonsName[filterName]
+            local number = ":|cffff0000"..ChatStat_FilteredList[v[3]].."|r";
+            local str = filterName .. number;
+            TinomChatStatFrame.Texts[index]:SetText(str)
+            index = index + 1;
+        end
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+        --PlaySoundFile("Interface/Addons/Tinom/Media/di.ogg","SFX")
+    end
 end
 
 --[[-------------------------------------------------------------------------
 --  数据库初始化函数
 -------------------------------------------------------------------------]]--
 local function initializer_DB(...)
-    --##--
     if ( TinomDB.chatStatDB ~= nil ) and (TinomDB.filterDB ~= nil ) then
         local chat_stat_frame = CreateFrame("Frame")
         chat_stat_frame:RegisterEvent("CHAT_MSG_CHANNEL")
@@ -239,10 +237,15 @@ local function initializer_DB(...)
 end
 
 --[[-------------------------------------------------------------------------
+--  过滤器过滤次数统计
+-------------------------------------------------------------------------]]--
+function Tinom.ChatStat_Filtered(filterName)
+    ChatStat_FilteredList[filterName] = ChatStat_FilteredList[filterName] + 1;
+end
+
+--[[-------------------------------------------------------------------------
 --  入口,注册初始化触发事件
 -------------------------------------------------------------------------]]--
 function Tinom.ChatStat_OnLoad()
     initializer_DB();
 end
-
-Tdebug(self,"log","ChatStat.lua加载完成");

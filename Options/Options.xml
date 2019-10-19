@@ -1,73 +1,126 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
+..\UI.xsd">
   <Script file="Options.lua"/>
 
-  <!-- 设置框架模板 -->
-  <Frame name="TinomOptionsMainPanelTabTemplate" hidden="true" virtual="true">
-    <Anchors>
-      <Anchor point="TOPLEFT" x="5" y="-110"/>
-      <Anchor point="BOTTOMRIGHT" x="-5" y="5"/>
-    </Anchors>
-    
-    <Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="false">
-      <EdgeSize>
-        <AbsValue val="16"/>
-      </EdgeSize>
-
-      <BorderColor r="1" g="1" b="0" a="1"/>
-      <Color r="0.2" g="0.2" b="0.2" a="0.4"/>
-
-      <BackgroundInsets>
-        <AbsInset left="5" right="5" top="5" bottom="5"/>
-      </BackgroundInsets>
-    </Backdrop>
-
+  <!-- 按钮模板 -->
+  <Button name="TinomButtonNoTooltipTemplate" virtual="true">
+    <Size x="40" y="22"/>
+    <Layers>
+      <Layer level="BACKGROUND">
+        <Texture parentKey="Left" file="Interface\Buttons\UI-Panel-Button-Up">
+          <Size x="12" y="22"/>
+          <Anchors>
+            <Anchor point="TOPLEFT"/>
+            <Anchor point="BOTTOMLEFT"/>
+          </Anchors>
+          <TexCoords left="0" right="0.09375" top="0" bottom="0.6875"/>
+        </Texture>
+        <Texture parentKey="Right" file="Interface\Buttons\UI-Panel-Button-Up">
+          <Size x="12" y="22"/>
+          <Anchors>
+            <Anchor point="TOPRIGHT"/>
+            <Anchor point="BOTTOMRIGHT"/>
+          </Anchors>
+          <TexCoords left="0.53125" right="0.625" top="0" bottom="0.6875"/>
+        </Texture>
+        <Texture parentKey="Middle" file="Interface\Buttons\UI-Panel-Button-Up">
+          <Size x="12" y="22"/>
+          <Anchors>
+            <Anchor point="TOPLEFT" relativeKey="$parent.Left" relativePoint="TOPRIGHT"/>
+            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Right" relativePoint="BOTTOMLEFT"/>
+          </Anchors>
+          <TexCoords left="0.09375" right="0.53125" top="0" bottom="0.6875"/>
+        </Texture>
+      </Layer>
+    </Layers>
+    <Scripts>
+      <OnLoad function="UIPanelButton_OnLoad"/>
+      <OnMouseDown function="UIPanelButton_OnMouseDown"/>
+      <OnMouseUp function="UIPanelButton_OnMouseUp"/>
+      <OnShow function="UIPanelButton_OnShow"/>
+      <OnDisable function="UIPanelButton_OnDisable"/>
+      <OnEnable function="UIPanelButton_OnEnable"/>
+    </Scripts>
+    <ButtonText name="$parentText" parentKey="Text"/>
+    <NormalFont style="GameFontNormal"/>
+    <HighlightFont style="GameFontHighlight"/>
+    <DisabledFont style="GameFontDisable"/>
+    <HighlightTexture inherits="UIPanelButtonHighlightTexture"/>
+  </Button>
+  <Button name="TinomButtonTemplate" inherits="TinomButtonNoTooltipTemplate" virtual="true">
+    <Size>
+      <AbsDimension x="144" y="21"/>
+    </Size>
+    <Scripts>
+      <OnClick>
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+      </OnClick>
+      <OnEnter>
+        if ( self.tooltipText ) then
+        GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT");
+        GameTooltip:SetText(self.tooltipText, nil, nil, nil, nil, true);
+        end
+        if ( self.tooltipRequirement ) then
+        GameTooltip:AddLine(self.tooltipRequirement, 1.0, 1.0, 1.0, true);
+        GameTooltip:Show();
+        end
+      </OnEnter>
+      <OnLeave>
+        GameTooltip:Hide();
+      </OnLeave>
+    </Scripts>
+  </Button>
+  <!-- 复选按钮模板 -->
+  <CheckButton name="TinomCheckButtonTemplate" virtual="true">
+    <Size>
+      <AbsDimension x="32" y="32"/>
+    </Size>
     <Layers>
       <Layer level="ARTWORK">
-        <FontString name="$parentTitle" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+        <FontString name="$parentText" parentKey="Text" inherits="GameFontHighlight" justifyH="LEFT">
           <Anchors>
-            <Anchor point="TOPLEFT">
+            <Anchor point="LEFT" relativePoint="RIGHT">
               <Offset>
-                <AbsDimension x="16" y="-16"/>
+                <AbsDimension x="-2" y="0"/>
               </Offset>
             </Anchor>
           </Anchors>
         </FontString>
-        <Texture name="$parentTitleUnderline">
-          <Anchors>
-            <Anchor point="LEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
-            <Anchor point="RIGHT" relativeTo="$parentTitle" x="0" y="0"/>
-          </Anchors>
-          <Color r="1" g="1" b="0"/>
-        </Texture>
-      </Layer>
-    </Layers>
-  </Frame>
-  <!-- 复选按钮模板 -->
-  <CheckButton name="TinomOptionsMainPanelCheckButton_Template" inherits="InterfaceOptionsCheckButtonTemplate" virtual="true">
-    <!-- <Size x="36" y="36"/> -->
-    <Layers>
-      <Layer level="ARTWORK">
-        <!-- <FontString name="$parentText" inherits="GameFontHighlightLeft" parentKey="Text">
-          <Anchors>
-            <Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
-              <Offset>
-                <AbsDimension x="0" y="0"/>
-              </Offset>
-            </Anchor>
-          </Anchors>
-        </FontString> -->
       </Layer>
     </Layers>
     <Scripts>
-      <OnLoad>
-        Tinom.OptionsBaseSettingCheckButton_OnLoad(self)
-        self:RegisterForDrag("LeftButton");
-      </OnLoad>
-
       <OnClick>
-        Tinom.OptionsBaseSettingCheckButton_OnClick(self);
+        if ( self:GetChecked() ) then
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+        else
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
+        end
       </OnClick>
+      <OnEnter>
+        if ( self.tooltipText ) then
+        GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT");
+        GameTooltip:SetText(self.tooltipText, nil, nil, nil, nil, true);
+        end
+        if ( self.tooltipRequirement ) then
+        GameTooltip:AddLine(self.tooltipRequirement, 1.0, 1.0, 1.0, true);
+        GameTooltip:Show();
+        end
+      </OnEnter>
+      <OnLeave>
+        GameTooltip:Hide();
+      </OnLeave>
+    </Scripts>
+    <NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+    <PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+    <HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+    <CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+    <DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+  </CheckButton>
+  <CheckButton name="TinomOptionsMainPanelCheckButton_Template" inherits="TinomCheckButtonTemplate" virtual="true">
+    <Scripts>
+      <OnLoad>
+        Tinom.OptionsBaseCheckButton_OnLoad(self)
+      </OnLoad>
     </Scripts>
   </CheckButton>
   <!-- 标签按钮模板 -->
@@ -120,8 +173,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
         </Anchors>
         
         <Frames>
-          <EditBox name="$parentEditBox" multiLine="true" autoFocus="false" mytype="ssss">
-            <FontString inherits="ChatFontNormal"></FontString>
+          <EditBox name="$parentEditBox" multiLine="true" autoFocus="false">
             <Scripts>
               <OnLoad>
                 <!-- Test.ScrollFrame_EditBox_OnLoad(self) -->
@@ -136,6 +188,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
                 <!-- Tinom.OptionsPanel_EditBox_OnCursorChanged(self); -->
               </OnCursorChanged>
             </Scripts>
+            <FontString inherits="ChatFontNormal"></FontString>
           </EditBox>
         </Frames>
         <Scripts>
@@ -149,7 +202,6 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
   <!-- 编辑框模板 -->
   <EditBox name="TinomOptionsMainPanelEditBoxTemplate" autoFocus="false" virtual="true">
     <Size x="100" y="20"/>
-    <FontString inherits="ChatFontNormal"></FontString>
     <Layers>
       <Layer level="BACKGROUND">
         <Texture file="Interface\ChatFrame\UI-ChatInputBorder-Left">
@@ -185,11 +237,12 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
         self:ClearFocus();
       </OnEscapePressed>
     </Scripts>
+    <FontString inherits="ChatFontNormal"></FontString>
   </EditBox>
   <!-- 名单按钮模板 -->
   <Button name="TinomOptionsMainPanelNameListButton" virtual="true">
     <Size>
-      <AbsDimension y="32"/>
+      <AbsDimension x="0" y="32"/>
     </Size>
     <Anchors>
       <Anchor point="TOPLEFT" x="5" y="-5"/>
@@ -200,7 +253,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
         <!-- 角色姓名 -->
         <FontString name="$parent_Name" inherits="GameFontHighlightLeft" parentKey="Text">
           <Size>
-            <AbsDimension x="120"/>
+            <AbsDimension x="120" y="0"/>
           </Size>
           <Anchors>
             <Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT">
@@ -213,7 +266,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
         <!-- 替换姓名 -->
         <FontString name="$parent_NewName" inherits="ChatFontNormal" maxLines="2">
           <Size>
-            <AbsDimension x="120"/>
+            <AbsDimension x="120" y="0"/>
           </Size>
           <Anchors>
             <Anchor point="LEFT" relativeTo="$parent_Name" relativePoint="RIGHT">
@@ -248,7 +301,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
         <!-- 中间材质 -->
         <Texture name="$parentCenter" file="Interface\Buttons\ListButtons">
           <Size>
-            <AbsDimension y="32"/>
+            <AbsDimension x="0" y="32"/>
           </Size>
           <Anchors>
             <Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT">
@@ -318,9 +371,9 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
 
   </Button>
   <!-- 关键字按钮模板 -->
-  <Button name="TinomOptionsMainPanelKeyWordListButton" virtual="true">
+  <Button name="TinomOptionsMainPanelKeywordListButton" virtual="true">
     <Size>
-      <AbsDimension y="32"/>
+      <AbsDimension x="0" y="32"/>
     </Size>
     <Anchors>
       <Anchor point="TOPLEFT" x="5" y="-5"/>
@@ -329,9 +382,9 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
     <Layers>
       <Layer level="ARTWORK">
         <!-- 关键字 -->
-        <FontString name="$parent_KeyWord" inherits="GameFontHighlightLeft" parentKey="Text">
+        <FontString name="$parent_Keyword" inherits="GameFontHighlightLeft" parentKey="Text">
           <Size>
-            <AbsDimension x="120"/>
+            <AbsDimension x="120" y="0"/>
           </Size>
           <Anchors>
             <Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT">
@@ -344,10 +397,10 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
         <!-- 替换关键字 -->
         <FontString name="$parent_NewWord" inherits="ChatFontNormal" maxLines="2">
           <Size>
-            <AbsDimension x="120"/>
+            <AbsDimension x="120" y="0"/>
           </Size>
           <Anchors>
-            <Anchor point="LEFT" relativeTo="$parent_KeyWord" relativePoint="RIGHT">
+            <Anchor point="LEFT" relativeTo="$parent_Keyword" relativePoint="RIGHT">
               <Offset>
                 <AbsDimension x="10" y="0"/>
               </Offset>
@@ -379,7 +432,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
         <!-- 中间材质 -->
         <Texture name="$parentCenter" file="Interface\Buttons\ListButtons">
           <Size>
-            <AbsDimension y="32"/>
+            <AbsDimension x="0" y="32"/>
           </Size>
           <Anchors>
             <Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT">
@@ -416,7 +469,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
         self.texture:SetPoint("TOPLEFT", 0, 0);
       </OnMouseUp>
       <OnClick>
-        Tinom.OptionsMainPanel_ReplaceKeyWord_ListBrowseButton_OnClick( self );
+        Tinom.OptionsMainPanel_ReplaceKeyword_ListBrowseButton_OnClick( self );
       </OnClick>
     </Scripts>
     <!-- 高亮纹理 -->
@@ -448,9 +501,89 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
     </PushedTexture>
 
   </Button>
+  <!-- 设置框架模板 -->
+  <Frame name="TinomOptionsMainPanelTabTemplate" hidden="true" virtual="true">
+    <Anchors>
+      <Anchor point="TOPLEFT" x="5" y="-110"/>
+      <Anchor point="BOTTOMRIGHT" x="-5" y="5"/>
+    </Anchors>
 
-  <!-- 特殊复选框 -->
-	<Frame name="TinomChatConfigCheckBoxTemplate" parentArray="TinomFilterButtons" mixin="TinomChatConfigWideCheckBoxMixin" virtual="true">
+    <Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="false">
+      <EdgeSize>
+        <AbsValue val="16"/>
+      </EdgeSize>
+
+      <BorderColor r="1" g="1" b="0" a="1"/>
+      <Color r="0.2" g="0.2" b="0.2" a="0.4"/>
+
+      <BackgroundInsets>
+        <AbsInset left="5" right="5" top="5" bottom="5"/>
+      </BackgroundInsets>
+    </Backdrop>
+
+    <Layers>
+      <Layer level="ARTWORK">
+        <FontString name="$parentTitle" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+          <Anchors>
+            <Anchor point="TOPLEFT">
+              <Offset>
+                <AbsDimension x="10" y="-10"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </FontString>
+        <Texture name="$parentTitleUnderline">
+          <Anchors>
+            <Anchor point="LEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+            <Anchor point="RIGHT" relativeTo="$parentTitle" x="0" y="4"/>
+          </Anchors>
+          <Color r="1" g="1" b="0"/>
+        </Texture>
+      </Layer>
+    </Layers>
+  </Frame>
+  <!-- 子设置框架 -->
+  <Frame name="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" hidden="true" virtual="true">
+    <Layers>
+      <Layer level="ARTWORK">
+        <FontString name="$parentTitle" text="标题" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP" parentKey="Text">
+          <Anchors>
+            <Anchor point="TOPLEFT">
+              <Offset>
+                <AbsDimension x="5" y="-5"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </FontString>
+        <Texture name="$parentTitleUnderline">
+          <Anchors>
+            <Anchor point="LEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+            <Anchor point="RIGHT" relativeTo="$parentTitle"/>
+          </Anchors>
+          <Color r="0.6" g="0.6" b="0.6"/>
+        </Texture>
+      </Layer>
+    </Layers>
+    <Anchors>
+      <Anchor point="TOPLEFT" relativeTo="$parentFiltersList" relativePoint="TOPRIGHT" x="0" y="-32"/>
+      <Anchor point="BOTTOMRIGHT" x="0" y="0"/>
+    </Anchors>
+    <Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+      <EdgeSize>
+        <AbsValue val="16"/>
+      </EdgeSize>
+      <TileSize>
+        <AbsValue val="16"/>
+      </TileSize>
+      <BorderColor r="0.2" g="0.2" b="0.2" a="1"/>
+      <Color r="0.2" g="0.2" b="0.2" a="0.4"/>
+      <BackgroundInsets>
+        <AbsInset left="5" right="5" top="5" bottom="5"/>
+      </BackgroundInsets>
+    </Backdrop>
+  </Frame>
+  <!-- 过滤器列表按钮模板 -->
+	<Frame name="TinomFilterButtonTemplate" parentArray="TinomFilterButtons" mixin="TinomFilterButtonsMixin" virtual="true">
 		<Size x="200" y="32"/>
 		<Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 			<EdgeSize>
@@ -466,54 +599,14 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
       </BackgroundInsets>
 		</Backdrop>
 		<Frames>
-			<CheckButton name="$parentCheck"  parentArray="TinomFilterCheckBoxes" parentKey="CheckButton" >
-				<Size>
-					<AbsDimension x="32" y="32"/>
-				</Size>
+			<CheckButton name="$parentCheck" inherits="TinomCheckButtonTemplate" parentArray="TinomFilterCheckBoxes" parentKey="CheckButton" >
 				<Anchors>
 					<Anchor point="LEFT">
 						<Offset x="5" y="0"/>
 					</Anchor>
 				</Anchors>
-        <Layers>
-          <Layer level="ARTWORK">
-            <FontString name="$parentText" parentKey="Text" inherits="GameFontHighlight" justifyH="LEFT">
-              <Anchors>
-                <Anchor point="LEFT" relativePoint="RIGHT">
-                  <Offset>
-                    <AbsDimension x="-2" y="0"/>
-                  </Offset>
-                </Anchor>
-              </Anchors>
-            </FontString>
-          </Layer>
-        </Layers>
-        <Scripts>
-          <OnClick>
-            <!-- local checked = self:GetChecked();
-            if ( self.func ) then
-              self.func(self, checked);
-            end -->
-
-            <!-- PlaySound(TinomDB.Options.Default.Tinom_Switch_MsgFilter_WhiteListSoundID); -->
-          </OnClick>
-          <OnEnter>
-            if (self.tooltip) then
-              GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-              GameTooltip:SetText(self.tooltip, nil, nil, nil, nil, (self.tooltipStyle or true));
-            end
-          </OnEnter>
-          <OnLeave>
-            GameTooltip:Hide();
-          </OnLeave>
-        </Scripts>
-        <NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
-        <PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
-        <HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
-        <CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
-        <DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
 			</CheckButton>
-      <Button name="$parentColorSwatch">
+      <Button name="$parentColorSwatch" parentKey="Button">
 				<Size x="16" y="16"/>
 				<Anchors>
 					<Anchor point="LEFT" x="178" y="0"/>
@@ -540,8 +633,8 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
             self:SetAlpha(0.4);
           </OnLoad>
 					<OnClick>
-						print("123");
-					</OnClick>
+            Tinom.FilterButton_OnClick( self );
+          </OnClick>
           <OnEnter>
             if (self.tooltip) then
               GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
@@ -562,13 +655,10 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
 				</Scripts>
 			</Button>
 		</Frames>
-    
 		<Scripts>
 			<OnLoad>
-        local filterName;
-        local filterFunc;
+        local filterName, filterFunc;
         self:RegisterForDrag("LeftButton");
-        self:SetAlpha(1)
 			</OnLoad>
       <OnDragStart>
         self:OnDragStat(self);
@@ -577,19 +667,17 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
         self:StopMovingEntry()
       </OnDragStop>
       <OnMouseDown>
-        self:AlphaDown();
+        self:AlphaAllDown();
         self:SetAlpha(1);
       </OnMouseDown>
       <OnMouseUp>
-        self:AlphaUp()
+        self:AlphaAllUp()
       </OnMouseUp>
-      <OnLeave>
-      </OnLeave>
 		</Scripts>
 	</Frame>
 
   <!-- 主设置界面 -->
-  <Frame name="TinomOptionsMainPanel" text="" hidden="true" parent="InterfaceOptionsFramePanelContainer">
+  <Frame name="TinomOptionsMainPanel" hidden="true" parent="InterfaceOptionsFramePanelContainer">
     <Layers>
       <Layer level="ARTWORK">
 
@@ -653,12 +741,50 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
       </CheckButton>
 
       <!-- 基础设置框架 -->
-      <Frame name="$parentBaseSetting" parent="TinomOptionsMainPanel" inherits="TinomOptionsMainPanelTabTemplate">
+      <Frame name="$parentBase" parent="TinomOptionsMainPanel">
+        <Anchors>
+          <Anchor point="TOPLEFT" x="5" y="-110"/>
+          <Anchor point="BOTTOMRIGHT" x="-5" y="5"/>
+        </Anchors>
+
+        <Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="false">
+          <EdgeSize>
+            <AbsValue val="16"/>
+          </EdgeSize>
+
+          <BorderColor r="1" g="1" b="0" a="1"/>
+          <Color r="0.2" g="0.2" b="0.2" a="0.4"/>
+
+          <BackgroundInsets>
+            <AbsInset left="5" right="5" top="5" bottom="5"/>
+          </BackgroundInsets>
+        </Backdrop>
+        <Layers>
+          <Layer level="ARTWORK">
+            <FontString name="$parentTitle" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
+              <Anchors>
+                <Anchor point="TOPLEFT">
+                  <Offset>
+                    <AbsDimension x="220" y="-10"/>
+                  </Offset>
+                </Anchor>
+              </Anchors>
+            </FontString>
+            <Texture name="$parentTitleUnderline">
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+                <Anchor point="RIGHT" relativeTo="$parentTitle" x="0" y="4"/>
+              </Anchors>
+              <Color r="1" g="1" b="0"/>
+            </Texture>
+          </Layer>
+        </Layers>
         <Frames>
-          <Frame name="$parentFiltersList" hide="false">
+          
+          <Frame name="$parentFiltersList" hidden="false">
             <Size x="208"/>
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="-38"/>
+              <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="0"/>
               <Anchor point="BOTTOMLEFT"/>
             </Anchors>
             <Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
@@ -676,427 +802,450 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
             </Backdrop>
           </Frame>
 
-          <Frame name="$parentCheckButton1" inherits="TinomChatConfigCheckBoxTemplate" id="1">
+          <Frame name="$parentCheckButton1" inherits="TinomFilterButtonTemplate" id="1">
             <Anchors>
               <Anchor point="TOPLEFT" relativeTo="$parentFiltersList" relativePoint="TOPLEFT">
                 <Offset x="4" y="-4"/>
               </Anchor>
             </Anchors>
           </Frame>
-          <Frame name="$parentCheckButton2" inherits="TinomChatConfigCheckBoxTemplate" id="2">
+          <Frame name="$parentCheckButton2" inherits="TinomFilterButtonTemplate" id="2">
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton1" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-2"/>
-              </Anchor>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton1" relativePoint="BOTTOMLEFT"/>
             </Anchors>
           </Frame>
-          <Frame name="$parentCheckButton3" inherits="TinomChatConfigCheckBoxTemplate" id="3">
+          <Frame name="$parentCheckButton3" inherits="TinomFilterButtonTemplate" id="3">
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton2" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-2"/>
-              </Anchor>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton2" relativePoint="BOTTOMLEFT"/>
             </Anchors>
           </Frame>
-          <Frame name="$parentCheckButton4" inherits="TinomChatConfigCheckBoxTemplate" id="4">
+          <Frame name="$parentCheckButton4" inherits="TinomFilterButtonTemplate" id="4">
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton3" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-2"/>
-              </Anchor>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton3" relativePoint="BOTTOMLEFT"/>
             </Anchors>
           </Frame>
-          <Frame name="$parentCheckButton5" inherits="TinomChatConfigCheckBoxTemplate" id="5">
+          <Frame name="$parentCheckButton5" inherits="TinomFilterButtonTemplate" id="5">
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton4" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-2"/>
-              </Anchor>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton4" relativePoint="BOTTOMLEFT"/>
             </Anchors>
           </Frame>
-          <Frame name="$parentCheckButton6" inherits="TinomChatConfigCheckBoxTemplate" id="6">
+          <Frame name="$parentCheckButton6" inherits="TinomFilterButtonTemplate" id="6">
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton5" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-2"/>
-              </Anchor>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton5" relativePoint="BOTTOMLEFT"/>
             </Anchors>
           </Frame>
-          <Frame name="$parentCheckButton7" inherits="TinomChatConfigCheckBoxTemplate" id="7">
+          <Frame name="$parentCheckButton7" inherits="TinomFilterButtonTemplate" id="7">
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton6" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-2"/>
-              </Anchor>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton6" relativePoint="BOTTOMLEFT"/>
             </Anchors>
           </Frame>
-          <Frame name="$parentCheckButton8" inherits="TinomChatConfigCheckBoxTemplate" id="8">
+          <Frame name="$parentCheckButton8" inherits="TinomFilterButtonTemplate" id="8">
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton7" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-2"/>
-              </Anchor>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton7" relativePoint="BOTTOMLEFT"/>
             </Anchors>
           </Frame>
-          <Frame name="$parentCheckButton9" inherits="TinomChatConfigCheckBoxTemplate" id="9">
+          <Frame name="$parentCheckButton9" inherits="TinomFilterButtonTemplate" id="9">
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton8" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-2"/>
-              </Anchor>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton8" relativePoint="BOTTOMLEFT"/>
             </Anchors>
           </Frame>
-          <Frame name="$parentCheckButton10" inherits="TinomChatConfigCheckBoxTemplate" id="10">
+          <Frame name="$parentCheckButton10" inherits="TinomFilterButtonTemplate" id="10">
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton9" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-2"/>
-              </Anchor>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton9" relativePoint="BOTTOMLEFT"/>
             </Anchors>
           </Frame>
-          <Frame name="$parentCheckButton11" inherits="TinomChatConfigCheckBoxTemplate" id="11">
+          <Frame name="$parentCheckButton11" inherits="TinomFilterButtonTemplate" id="11">
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton10" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-2"/>
-              </Anchor>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton10" relativePoint="BOTTOMLEFT"/>
             </Anchors>
           </Frame>
-          <Frame name="$parentCheckButton12" inherits="TinomChatConfigCheckBoxTemplate" id="12">
+          <Frame name="$parentCheckButton12" inherits="TinomFilterButtonTemplate" id="12">
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton11" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-2"/>
-              </Anchor>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton11" relativePoint="BOTTOMLEFT"/>
+            </Anchors>
+          </Frame>
+          <Frame name="$parentCheckButton13" inherits="TinomFilterButtonTemplate" id="13">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton12" relativePoint="BOTTOMLEFT"/>
+            </Anchors>
+          </Frame>
+          <Frame name="$parentCheckButton14" inherits="TinomFilterButtonTemplate" id="14">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton13" relativePoint="BOTTOMLEFT"/>
             </Anchors>
           </Frame>
 
-          <Frame name="$parentFunctions" hide="false">
-            <!-- <Size x="20" y="20"/> -->
+          <!-- FilterSettingShow -->
+          <Button name="$parentShowChatStatFrame" inherits="TinomButtonTemplate">
+            <Size x="26" y="26"/>
             <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentFiltersList" relativePoint="TOPRIGHT" x="1" y="0"/>
-              <Anchor point="BOTTOMRIGHT" x="0" y="0"/>
-            </Anchors>
-            <Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-              <EdgeSize>
-                <AbsValue val="16"/>
-              </EdgeSize>
-              <TileSize>
-                <AbsValue val="16"/>
-              </TileSize>
-              <BorderColor r="0.2" g="0.2" b="0.2" a="1"/>
-              <Color r="0.2" g="0.2" b="0.2" a="0.4"/>
-              <BackgroundInsets>
-                <AbsInset left="5" right="5" top="5" bottom="5"/>
-              </BackgroundInsets>
-            </Backdrop>
-          </Frame>
-          
-          <!-- 屏蔽重复消息复选按钮 -->
-          <CheckButton name="$parentCheckButton_RepeatMsg" inherits="TinomOptionsMainPanelCheckButton_Template">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentFunctions" relativePoint="TOPLEFT" x="6" y="-12"/>
-            </Anchors>
-          </CheckButton>
-          <!-- 屏蔽重复消息水平滑条模块 -->
-          <Slider name="$parentSlider_RepeatMsg" inherits="OptionsSliderTemplate">
-            <Layers>
-              <Layer>
-                <!-- 滑条标题 -->
-                <FontString name="$parentText" parentKey="Text" inherits="GameFontHighlight" text="">
-                  <Anchors>
-                    <Anchor point="BOTTOM" relativePoint="TOP"/>
-                  </Anchors>
-                </FontString>
-              </Layer>
-            </Layers>
-            <Anchors>
-              <Anchor point="LEFT" relativeTo="$parentCheckButton_RepeatMsgText" relativePoint="RIGHT" x="8"/>
+              <Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="TOPRIGHT"/>
             </Anchors>
             <Scripts>
               <OnLoad>
-                self.tooltipText = Tinom.L["屏蔽此时间内的重复消息\n0为不限时间."];
-                self:SetMinMaxValues(0,300);
-                self:SetValueStep(1);
-                self:SetValue(0);
-                self:SetOrientation("HORIZONTAL");
-                _G[self:GetName().."Low"]:SetText("")
-                _G[self:GetName().."High"]:SetText("")
+                self:SetText(Tinom.L["H"]);
               </OnLoad>
-              <OnValueChanged>
-                value = math.floor(value * 100 + 0.5) / 100;
-                if (value ~= 0) then
-                  value = math.max(0.5, value);
-                end
-                self.value = value;
-                self:SetValue(value);
-                TinomOptionsMainPanelBaseSettingSlider_RepeatMsgText:SetText(self.value.."秒");
-                <!-- TinomDB.Options.Default.Tinom_Value_MsgFilter_RepeatMsgElapsed = self.value; -->
-              </OnValueChanged>
-              <OnEvent>
-
-              </OnEvent>
+              <OnClick>
+                Tinom.FilterSettingFramesAllHide()
+                TinomOptionsMainPanelBaseFilterSetting:Show();
+              </OnClick>
             </Scripts>
-          </Slider>
+          </Button>
+          <Frame name="$parentFilterSetting" hidden="false" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
+            <Frames>
+              <!-- 频道与姓名缩写 -->
+              <CheckButton name="$parentCheckButton_AbbrChannelName" inherits="TinomOptionsMainPanelCheckButton_Template">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+                    <Offset x="10" y="-30"/>
+                  </Anchor>
+                </Anchors>
+              </CheckButton>
+              <!-- 屏蔽灰色物品拾取消息 -->
+              <CheckButton name="$parentCheckButton_IgnoreGrayItems" inherits="TinomOptionsMainPanelCheckButton_Template">
+                <Anchors>
+                  <Anchor point="LEFT" relativeTo="$parentCheckButton_AbbrChannelName" relativePoint="RIGHT">
+                    <Offset x="130" y="0"/>
+                  </Anchor>
+                </Anchors>
+              </CheckButton>
+              <!-- 姓名缩写隐藏服务器:NOTE!被缩写的角色将导致邀请组队失效,因为服务器被隐藏了. -->
+              <CheckButton name="$parentCheckButton_AbbrAuthorName" inherits="TinomOptionsMainPanelCheckButton_Template">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_AbbrChannelName" relativePoint="BOTTOMLEFT">
+                    <Offset x="0" y="-5"/>
+                  </Anchor>
+                </Anchors>
+              </CheckButton>
+              <!-- 调试按钮 -->
+              <Button name="$parentShowChatStatFrame" inherits="TinomButtonTemplate">
+                <Size x="100" y="26"/>
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_AbbrAuthorName" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>
+                    self:SetText(Tinom.L["调试统计"]);
+                  </OnLoad>
+                  <OnClick>
+                    TinomChatStatFrame:Show();
+                  </OnClick>
+                </Scripts>
+              </Button>
+            </Frames>
+          </Frame>
+          <Frame name="$parentFilterSetting_WhiteList" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
+            <Frames>
+              <!-- 白名单编辑框 -->
+              <Frame name="$parentEditBox" inherits="TinomOptionsMainPanelEditListTemplate">
+                <Anchors>
+                  <Anchor point="TOPLEFT" x="5" y="-40"/>
+                  <Anchor point="BOTTOMLEFT" x="0" y="5"/>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>
+                    _G[self:GetName().."Title"]:SetText(Tinom.L["白名单:玩家"]);
+                  </OnLoad>
+                </Scripts>
+              </Frame>
+            </Frames>
+          </Frame>
+          <Frame name="$parentFilterSetting_WhiteListKeyword" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
+            <Frames>
+              <!-- 白名单关键字编辑框 -->
+              <Frame name="$parentEditBox" inherits="TinomOptionsMainPanelEditListTemplate">
+                <Anchors>
+                  <Anchor point="TOPLEFT" x="5" y="-40"/>
+                  <Anchor point="BOTTOMLEFT" y="5"/>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>
+                    _G[self:GetName().."Title"]:SetText(Tinom.L["白名单:关键字"]);
+                  </OnLoad>
+                </Scripts>
+              </Frame>
+            </Frames>
+          </Frame>
+          <Frame name="$parentFilterSetting_BlackList" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
+            <Frames>
+              <!-- 黑名单编辑框 -->
+              <Frame name="$parentEditBox" inherits="TinomOptionsMainPanelEditListTemplate">
+                <Anchors>
+                  <Anchor point="TOPLEFT" x="5" y="-40"/>
+                  <Anchor point="BOTTOMLEFT" y="5"/>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>
+                    _G[self:GetName().."Title"]:SetText(Tinom.L["黑名单:玩家"]);
+                  </OnLoad>
+                </Scripts>
+              </Frame>
+            </Frames>
+          </Frame>
+          <Frame name="$parentFilterSetting_BlackListKeyword" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
+            <Frames>
+              <!-- 黑名单关键字编辑框 -->
+              <Frame name="$parentEditBox" inherits="TinomOptionsMainPanelEditListTemplate">
+                <Anchors>
+                  <Anchor point="TOPLEFT" x="5" y="-40"/>
+                  <Anchor point="BOTTOMLEFT" y="5"/>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>
+                    _G[self:GetName().."Title"]:SetText(Tinom.L["黑名单:关键字"]);
+                  </OnLoad>
+                </Scripts>
+              </Frame>
+            </Frames>
+          </Frame>
+          <Frame name="$parentFilterSetting_ReplaceName" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
+          </Frame>
+          <Frame name="$parentFilterSetting_ReplaceNameMsg" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
+          </Frame>
+          <Frame name="$parentFilterSetting_ReplaceKeyword" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
+          </Frame>
+          <Frame name="$parentFilterSetting_ReplaceKeywordMsg" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
+          </Frame>
+          <Frame name="$parentFilterSetting_SensitiveList" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
+            <Frames>
+              <!-- 编辑框 -->
+              <Frame name="$parentEditBox" inherits="TinomOptionsMainPanelEditListTemplate">
+                <Anchors>
+                  <Anchor point="TOPLEFT" x="5" y="-40"/>
+                  <Anchor point="BOTTOMLEFT" y="5"/>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>
+                    _G[self:GetName().."Title"]:SetText(Tinom.L["敏感名单"]);
+                  </OnLoad>
+                </Scripts>
+              </Frame>
+              <!-- 高亮显示复选框 -->
+              <CheckButton name="$parentHighlight" inherits="TinomOptionsMainPanelCheckButton_Template">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentEditBox" relativePoint="TOPRIGHT" x="10" y="-10"/>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>
+                    self.Text:SetText(Tinom.L["高亮显示"]);
+                  </OnLoad>
+                </Scripts>
+              </CheckButton>
+              <!-- 名字声音提醒复选框 -->
+              <CheckButton name="$parentSound" inherits="TinomOptionsMainPanelCheckButton_Template">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentHighlight" relativePoint="BOTTOMLEFT" x="0" y="0"/>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>
+                    self.Text:SetText(Tinom.L["声音提醒"]);
+                  </OnLoad>
+                </Scripts>
+              </CheckButton>
+              <!-- 下拉菜单 -->
+              <Frame name="$parentDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentSound" relativePoint="BOTTOMLEFT" x="0" y="-20"/>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>
+                    self.type = CONTROLTYPE_DROPDOWN;
+                    BlizzardOptionsPanel_RegisterControl(self, self:GetParent());
+                  </OnLoad>
+                  <OnEnter>
+                    if ( not self.isDisabled ) then
+                    GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT");
+                    GameTooltip:SetText(self.tooltip, nil, nil, nil, nil, true);
+                    end
+                  </OnEnter>
+                  <OnLeave function="GameTooltip_Hide"/>
+                  <OnShow>
+                    Tinom.OptionsSensitiveListSoundDropDown_OnShow(self,event);
+                  </OnShow>
+                </Scripts>
+              </Frame>
+            </Frames>
+          </Frame>
+          <Frame name="$parentFilterSetting_SensitiveKeyword" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
+            <Frames>
+            <!-- 编辑框 -->
+              <Frame name="$parentEditBox" inherits="TinomOptionsMainPanelEditListTemplate">
+                <Anchors>
+                  <Anchor point="TOPLEFT" x="5" y="-40"/>
+                  <Anchor point="BOTTOMLEFT" y="5"/>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>
+                    _G[self:GetName().."Title"]:SetText(Tinom.L["敏感关键字"]);
+                  </OnLoad>
+                </Scripts>
+              </Frame>
+              <!-- 敏感关键字高亮显示复选框 -->
+              <CheckButton name="$parentHighlight" inherits="TinomOptionsMainPanelCheckButton_Template">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentEditBox" relativePoint="TOPRIGHT" x="10" y="-10"/>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>
+                    self.Text:SetText(Tinom.L["高亮显示"]);
+                  </OnLoad>
+                </Scripts>
+              </CheckButton>
+              <!-- 关键字声音提醒复选框 -->
+              <CheckButton name="$parentSound" inherits="TinomOptionsMainPanelCheckButton_Template">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentHighlight" relativePoint="BOTTOMLEFT" x="0" y="0"/>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>
+                    self.Text:SetText(Tinom.L["声音提醒"]);
+                  </OnLoad>
+                </Scripts>
+              </CheckButton>
+              <!-- 下拉菜单 -->
+              <Frame name="$parentDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentSound" relativePoint="BOTTOMLEFT" x="0" y="-20"/>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>
+                    self.type = CONTROLTYPE_DROPDOWN;
+                    BlizzardOptionsPanel_RegisterControl(self, self:GetParent());
+                  </OnLoad>
+                  <OnEnter>
+                    if ( not self.isDisabled ) then
+                    GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT");
+                    GameTooltip:SetText(self.tooltip, nil, nil, nil, nil, true);
+                    end
+                  </OnEnter>
+                  <OnLeave function="GameTooltip_Hide"/>
+                  <OnShow>
+                    Tinom.OptionsSensitiveKeywordSoundDropDown_OnShow(self,event);
+                  </OnShow>
+                </Scripts>
+              </Frame>
+            </Frames>
+          </Frame>
+          <Frame name="$parentFilterSetting_AutoBlackList" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
+            <Frames>
+              <!-- 编辑框 -->
+              <Frame name="$parentEditBox" inherits="TinomOptionsMainPanelEditListTemplate">
+                <Anchors>
+                  <Anchor point="TOPLEFT" x="5" y="-40"/>
+                  <Anchor point="BOTTOMLEFT" y="5"/>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>
+                    _G[self:GetName().."Title"]:SetText(Tinom.L["黑名单:玩家"]);
+                  </OnLoad>
+                </Scripts>
+              </Frame>
+              <!-- 自动添加黑名单 -->
+              <CheckButton name="$parentCheckButton" inherits="InterfaceOptionsCheckButtonTemplate">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentEditBox" relativePoint="TOPRIGHT" x="10" y="-20"/>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>
+                    self.Text:SetText(Tinom.L["自动添加黑名单"]);
+                  </OnLoad>
+                </Scripts>
+              </CheckButton>
+            </Frames>
+          </Frame>
+          <Frame name="$parentFilterSetting_FoldMsg" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
+          </Frame>
+          <Frame name="$parentFilterSetting_RepeatMsg" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
+            <Frames>
+              <!-- 屏蔽重复消息水平滑条模块 -->
+              <Slider name="$parentSlider" inherits="OptionsSliderTemplate">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="10" y="-48"/>
+                </Anchors>
+                <Layers>
+                  <Layer>
+                    <!-- 滑条标题 -->
+                    <FontString name="$parentText" parentKey="Text" inherits="GameFontHighlight" text="">
+                      <Anchors>
+                        <Anchor point="BOTTOM" relativePoint="TOP"/>
+                      </Anchors>
+                    </FontString>
+                  </Layer>
+                </Layers>
+                <Scripts>
+                  <OnLoad>
+                    self.tooltipText = Tinom.L["屏蔽此时间内的重复消息\n0为不限时间."];
+                    self:SetMinMaxValues(0,300);
+                    self:SetValueStep(1);
+                    self:SetValue(0);
+                    self:SetOrientation("HORIZONTAL");
+                    _G[self:GetName().."Low"]:SetText("")
+                    _G[self:GetName().."High"]:SetText("")
+                  </OnLoad>
+                  <OnMouseWheel>
+                    Tinom.OptionsMainPanel_Slider_OnMouseWheel(self, delta);
+                  </OnMouseWheel>
+                  <OnValueChanged>
+                    value = Tinom.SliderValueFloor(value);
+                    self.value = value;
+                    self:SetValue(value);
+                    self.Text:SetText(self.value.."秒");
+                    <!-- TinomDB.Options.Default.Tinom_Value_MsgFilter_RepeatMsgElapsed = self.value; -->
+                  </OnValueChanged>
+                  <OnEvent>
 
-          <!-- 屏蔽间隔interval时间内消息复选按钮 -->
-          <CheckButton name="$parentCheckButton_IntervalMsg" inherits="TinomOptionsMainPanelCheckButton_Template">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_RepeatMsg" relativePoint="BOTTOMLEFT" y="-12"/>
-            </Anchors>
-          </CheckButton>
-          <!-- 屏蔽重复消息水平滑条模块 -->
-          <Slider name="$parentSlider_IntervalMsg" inherits="OptionsSliderTemplate">
-            <Layers>
-              <Layer>
-                <!-- 滑条标题 -->
-                <FontString name="$parentText" parentKey="Text" inherits="GameFontHighlight" text="">
-                  <Anchors>
-                    <Anchor point="BOTTOM" relativePoint="TOP"/>
-                  </Anchors>
-                </FontString>
-              </Layer>
-            </Layers>
-            <Anchors>
-              <Anchor point="LEFT" relativeTo="$parentCheckButton_IntervalMsgText" relativePoint="RIGHT" x="8"/>
-            </Anchors>
-            <Scripts>
-              <OnLoad>
-                self.tooltipText = Tinom.L["屏蔽此时间内的任何消息\n0为不限时间."];
-                self:SetMinMaxValues(0,300);
-                self:SetValueStep(1);
-                self:SetValue(0);
-                self:SetOrientation("HORIZONTAL");
-                _G[self:GetName().."Low"]:SetText("")
-                _G[self:GetName().."High"]:SetText("")
-              </OnLoad>
-              <OnValueChanged>
-                value = math.floor(value * 100 + 0.5) / 100;
-                if (value ~= 0) then
-                  value = math.max(0.5, value);
-                end
-                self.value = value;
-                self:SetValue(value);
-                TinomOptionsMainPanelBaseSettingSlider_IntervalMsgText:SetText(self.value.."秒");
-                <!-- TinomDB.Options.Default.Tinom_Value_MsgFilter_IntervalMsgTime = self.value; -->
-              </OnValueChanged>
-              <OnEvent>
-
-              </OnEvent>
-            </Scripts>
-          </Slider>
-
-          <!-- 折叠长消息内重复句子 -->
-          <CheckButton name="$parentCheckButton_FoldMsg" inherits="TinomOptionsMainPanelCheckButton_Template">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_IntervalMsg" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-20"/>
-              </Anchor>
-            </Anchors>
-          </CheckButton>
-          <!-- 频道与姓名缩写 -->
-          <CheckButton name="$parentCheckButton_AbbrChannelName" inherits="TinomOptionsMainPanelCheckButton_Template">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_FoldMsg" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-5"/>
-              </Anchor>
-            </Anchors>
-          </CheckButton>
-          <!-- 屏蔽灰色物品拾取消息 -->
-          <CheckButton name="$parentCheckButton_IgnoreGrayItems" inherits="TinomOptionsMainPanelCheckButton_Template">
-            <Anchors>
-              <Anchor point="LEFT" relativeTo="$parentCheckButton_AbbrChannelName" relativePoint="RIGHT">
-                <Offset x="130" y="0"/>
-              </Anchor>
-            </Anchors>
-          </CheckButton>
-          <!-- 姓名缩写隐藏服务器:NOTE!被缩写的角色将导致邀请组队失效,因为服务器被隐藏了. -->
-          <CheckButton name="$parentCheckButton_AbbrAuthorName" inherits="TinomOptionsMainPanelCheckButton_Template">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_AbbrChannelName" relativePoint="BOTTOMLEFT">
-                <Offset x="0" y="-5"/>
-              </Anchor>
-            </Anchors>
-          </CheckButton>
-          
+                  </OnEvent>
+                </Scripts>
+              </Slider>
+              
+            </Frames>
+          </Frame>
+          <Frame name="$parentFilterSetting_IntervalMsg" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
+            <Frames>
+              <!-- 间隔消息水平滑条模块 -->
+              <Slider name="$parentSlider" inherits="OptionsSliderTemplate">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="10" Y="-48"/>
+                </Anchors>
+                <Layers>
+                  <Layer>
+                    <!-- 滑条标题 -->
+                    <FontString name="$parentText" parentKey="Text" inherits="GameFontHighlight" text="">
+                      <Anchors>
+                        <Anchor point="BOTTOM" relativePoint="TOP"/>
+                      </Anchors>
+                    </FontString>
+                  </Layer>
+                </Layers>
+                <Scripts>
+                  <OnLoad>
+                    self.tooltipText = Tinom.L["屏蔽此时间内的任何消息\n0为不限时间."];
+                    self:SetMinMaxValues(0,300);
+                    self:SetValueStep(1);
+                    self:SetValue(0);
+                    self:SetOrientation("HORIZONTAL");
+                    _G[self:GetName().."Low"]:SetText("")
+                    _G[self:GetName().."High"]:SetText("")
+                  </OnLoad>
+                  <OnMouseWheel>
+                    Tinom.OptionsMainPanel_Slider_OnMouseWheel(self, delta);
+                  </OnMouseWheel>
+                  <OnValueChanged>
+                    value = Tinom.SliderValueFloor(value);
+                    self.value = value;
+                    self:SetValue(value);
+                    self.Text:SetText(self.value.."秒");
+                  </OnValueChanged>
+                </Scripts>
+              </Slider>
+            </Frames>
+          </Frame>
         </Frames>
         
         <Scripts>
           <OnLoad>
-            _G[self:GetName().."Title"]:SetText(Tinom.L["过滤优先级从上至下递减"])
-          </OnLoad>
-        </Scripts>
-      </Frame>
-
-      <!-- 白名单设置框架 -->
-      <Frame name="$parentWhiteListSetting" parent="TinomOptionsMainPanel" inherits="TinomOptionsMainPanelTabTemplate">
-        <Frames>
-          <!-- 白名单编辑框 -->
-          <Frame name="$parentEditList_WhiteList" inherits="TinomOptionsMainPanelEditListTemplate">
-            <Anchors>
-              <Anchor point="TOPLEFT" x="5" y="-60"/>
-              <Anchor point="BOTTOMLEFT" y="5"/>
-            </Anchors>
-            <Scripts>
-              <OnLoad>
-                _G[self:GetName().."Title"]:SetText(Tinom.L["白名单:玩家"]);
-              </OnLoad>
-            </Scripts>
-          </Frame>
-
-          <!-- 白名单关键字编辑框 -->
-          <Frame name="$parentEditList_WhiteListKeyWord" inherits="TinomOptionsMainPanelEditListTemplate">
-            <Anchors>
-              <Anchor point="TOPRIGHT" x="-5" y="-60"/>
-              <Anchor point="BOTTOMRIGHT" y="5"/>
-            </Anchors>
-            <Scripts>
-              <OnLoad>
-                _G[self:GetName().."Title"]:SetText(Tinom.L["白名单:关键字"]);
-              </OnLoad>
-            </Scripts>
-          </Frame>
-
-          <!-- 下拉菜单 -->
-          <Frame name="$parentDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true">
-            <Anchors>
-              <Anchor point="LEFT" relativeTo="$parentEditList_WhiteList" relativePoint="RIGHT"/>
-              <Anchor point="RIGHT" relativeTo="$parentEditList_WhiteListKeyWord" relativePoint="LEFT"/>
-            </Anchors>
-            <Layers>
-              <Layer level="ARTWORK">
-                <FontString name="$parentText2" text="" inherits="GameFontHighlightLeft">
-                  <Anchors>
-                    <Anchor point="BOTTOM" relativeTo="$parent" relativePoint="TOP" x="0" y="0"/>
-                  </Anchors>
-                </FontString>
-              </Layer>
-            </Layers>
-            <Scripts>
-              <OnLoad>
-                _G[self:GetName().."Text2"]:SetText(Tinom.L["声音提醒需要开启\n相应的白名单过滤"]);
-                self.type = CONTROLTYPE_DROPDOWN;
-                BlizzardOptionsPanel_RegisterControl(self, self:GetParent());
-              </OnLoad>
-              <OnEnter>
-                if ( not self.isDisabled ) then
-                GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT");
-                GameTooltip:SetText(self.tooltip, nil, nil, nil, nil, true);
-                end
-              </OnEnter>
-              <OnLeave function="GameTooltip_Hide"/>
-              <OnShow>
-                Tinom.OptionsWhiteListSoundDropDown_OnShow(self,event);
-              </OnShow>
-            </Scripts>
-          </Frame>
-
-          <!-- 白名单名字声音提醒复选框 -->
-          <CheckButton name="$parentSound_Name" inherits="TinomOptionsMainPanelCheckButton_Template">
-            <Anchors>
-              <Anchor point="BOTTOMLEFT" relativeTo="$parentDropDown" relativePoint="TOPLEFT" x="0" y="0"/>
-            </Anchors>
-          </CheckButton>
-
-           <!-- 白名单关键字声音提醒复选框 -->
-          <CheckButton name="$parentSound_KeyWord" inherits="TinomOptionsMainPanelCheckButton_Template">
-            <Anchors>
-              <Anchor point="BOTTOMRIGHT" relativeTo="$parentDropDown" relativePoint="TOPRIGHT" x="0" y="0"/>
-            </Anchors>
-          </CheckButton>
-          <!-- 白名单高亮显示复选框 -->
-          <CheckButton name="$parentWhiteList_Highlight" inherits="TinomOptionsMainPanelCheckButton_Template">
-            <Anchors>
-              <Anchor point="BOTTOMLEFT" relativeTo="$parentSound_Name" relativePoint="TOPLEFT" x="0" y="10"/>
-            </Anchors>
-            <Scripts>
-              <OnLoad>
-                
-              </OnLoad>
-            </Scripts>
-          </CheckButton>
-          <!-- 白名单关键字高亮显示复选框 -->
-          <CheckButton name="$parentWhiteListKeyWord_Highlight" inherits="TinomOptionsMainPanelCheckButton_Template">
-            <Anchors>
-              <Anchor point="BOTTOMRIGHT" relativeTo="$parentSound_KeyWord" relativePoint="TOPRIGHT" x="0" y="10"/>
-            </Anchors>
-            <Layers>
-              <Layer level="ARTWORK">
-                <FontString name="$parentText2" inherits="GameFontHighlightLeft" justifyH="CENTER">
-                  <Anchors>
-                    <Anchor point="RIGHT" relativeTo="$parent" relativePoint="LEFT"/>
-                    <Anchor point="LEFT" relativeTo="TinomOptionsMainPanelWhiteListSettingWhiteList_Highlight" relativePoint="RIGHT"/>
-                  </Anchors>
-                </FontString>
-              </Layer>
-            </Layers>
-            <Scripts>
-              <OnLoad>
-                _G[self:GetName().."Text2"]:SetText(Tinom.L["高亮显示"]);
-              </OnLoad>
-            </Scripts>
-          </CheckButton>
-        </Frames>
-
-        <Scripts>
-          <OnLoad>
-            _G[self:GetName().."Title"]:SetText(Tinom.L["白名单设置:每行一个角色名或者关键字"])
-          </OnLoad>
-        </Scripts>
-      </Frame>
-
-      <!-- 黑名单设置框架 -->
-      <Frame name="$parentBlackListSetting" parent="TinomOptionsMainPanel" inherits="TinomOptionsMainPanelTabTemplate">
-        <Frames>
-          <!-- 黑名单编辑框 -->
-          <Frame name="$parentEditList_BlackList" inherits="TinomOptionsMainPanelEditListTemplate">
-            <Anchors>
-              <Anchor point="TOPLEFT" x="5" y="-60"/>
-              <Anchor point="BOTTOMLEFT" y="5"/>
-            </Anchors>
-            <Scripts>
-              <OnLoad>
-                _G[self:GetName().."Title"]:SetText(Tinom.L["黑名单:玩家"]);
-              </OnLoad>
-            </Scripts>
-          </Frame>
-
-          <!-- 黑名单关键字编辑框 -->
-          <Frame name="$parentEditList_BlackListKeyWord" inherits="TinomOptionsMainPanelEditListTemplate">
-            <Anchors>
-              <Anchor point="TOPRIGHT" x="-5" y="-60"/>
-              <Anchor point="BOTTOMRIGHT" y="5"/>
-            </Anchors>
-            <Scripts>
-              <OnLoad>
-              _G[self:GetName().."Title"]:SetText(Tinom.L["黑名单:关键字"]);
-              </OnLoad>
-            </Scripts>
-          </Frame>
-
-          <!-- 自动统计并添加黑名单 -->
-          <CheckButton name="$parentAutoBlackList" inherits="InterfaceOptionsCheckButtonTemplate">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentEditList_BlackList" relativePoint="TOPRIGHT" x="10" y="0"/>
-              <!-- <Anchor point="CENTER" y="5"/> -->
-            </Anchors>
-            <Layers>
-              <Layer level="ARTWORK">
-                <FontString name="$parentText2" inherits="GameFontHighlightLeft"  parentKey="Text">
-                  <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="BOTTOMLEFT">
-                      <Offset>
-                        <AbsDimension x="0" y="0"/>
-                      </Offset>
-                    </Anchor>
-                  </Anchors>
-                </FontString>
-              </Layer>
-            </Layers>
-            <Scripts>
-              <OnLoad>
-                _G[self:GetName().."Text2"]:SetText(Tinom.L["自动添加黑名单"]);
-              </OnLoad>
-              <OnClick>
-
-              </OnClick>
-            </Scripts>
-          </CheckButton>
-        </Frames>
-
-        <Scripts>
-          <OnLoad>
-            _G[self:GetName().."Title"]:SetText(Tinom.L["黑名单设置:每行一个角色名或者关键字"])
+            _G[self:GetName().."Title"]:SetText(Tinom.L["过滤顺序从上至下"])
+            Tinom.FilterSettingFrames_SetTitle();
           </OnLoad>
         </Scripts>
       </Frame>
@@ -1335,7 +1484,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
           </Frame>
 
           <!-- 按关键字替换 -->
-          <Frame name="$parentKeyWordList" hidden="true">
+          <Frame name="$parentKeywordList" hidden="true">
             <Anchors>
               <Anchor point="TOPLEFT" x="5" y="-110"/>
               <Anchor point="BOTTOMRIGHT" x="-5" y="5"/>
@@ -1355,7 +1504,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
             </Backdrop>
 
             <Frames>
-              <EditBox name="$parentKeyWord" inherits="TinomOptionsMainPanelEditBoxTemplate">
+              <EditBox name="$parentKeyword" inherits="TinomOptionsMainPanelEditBoxTemplate">
                 <Size x="120" y="20"/>
                 <Anchors>
                   <Anchor point="BOTTOMLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="12" y="4"/>
@@ -1373,7 +1522,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
                     self:HighlightText(0,0);
                   </OnEditFocusLost>
                   <OnTextChanged>
-                    Tinom.OptionsMainPanel_Replace_EditBoxName_OnTextChanged(self,"KeyWord");
+                    Tinom.OptionsMainPanel_Replace_EditBoxName_OnTextChanged(self,"Keyword");
                   </OnTextChanged>
                   <OnTabPressed>
                     _G[self:GetParent():GetName().."NewWord"]:SetFocus();
@@ -1383,7 +1532,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
               <EditBox name="$parentNewWord" inherits="TinomOptionsMainPanelEditBoxTemplate">
                 <Size x="120" y="20"/>
                 <Anchors>
-                  <Anchor point="LEFT" relativeTo="$parentKeyWord" relativePoint="RIGHT" x="10"/>
+                  <Anchor point="LEFT" relativeTo="$parentKeyword" relativePoint="RIGHT" x="10"/>
                 </Anchors>
                 <Scripts>
                   <OnLoad>
@@ -1455,7 +1604,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
                     self:SetText(Tinom.L["新增"])
                   </OnLoad>
                   <OnClick>
-                    Tinom.OptionsMainPanel_ReplaceKeyWord_ButtonAdd_OnClick();
+                    Tinom.OptionsMainPanel_ReplaceKeyword_ButtonAdd_OnClick();
                   </OnClick>
                 </Scripts>
                 <NormalFont style="GameFontNormalSmall"/>
@@ -1475,60 +1624,60 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
                     self:SetText(Tinom.L["删除"])
                   </OnLoad>
                   <OnClick>
-                    Tinom.OptionsMainPanel_ReplaceKeyWord_ButtonDel_OnClick();
+                    Tinom.OptionsMainPanel_ReplaceKeyword_ButtonDel_OnClick();
                   </OnClick>
                 </Scripts>
                 <NormalFont style="GameFontNormalSmall"/>
                 <HighlightFont style="GameFontHighlightSmall"/>
               </Button>
 
-              <Button name="$parentButton1" inherits="TinomOptionsMainPanelKeyWordListButton" id="1">
+              <Button name="$parentButton1" inherits="TinomOptionsMainPanelKeywordListButton" id="1">
                 <Anchors>
                   <Anchor point="TOPLEFT" x="5" y="-5"/>
                   <Anchor point="RIGHT" x="-26"/>
                 </Anchors>
               </Button>
-              <Button name="$parentButton2" inherits="TinomOptionsMainPanelKeyWordListButton" id="2">
+              <Button name="$parentButton2" inherits="TinomOptionsMainPanelKeywordListButton" id="2">
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="$parentButton1" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
               </Button>
-              <Button name="$parentButton3" inherits="TinomOptionsMainPanelKeyWordListButton" id="3">
+              <Button name="$parentButton3" inherits="TinomOptionsMainPanelKeywordListButton" id="3">
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="$parentButton2" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
               </Button>
-              <Button name="$parentButton4" inherits="TinomOptionsMainPanelKeyWordListButton" id="4">
+              <Button name="$parentButton4" inherits="TinomOptionsMainPanelKeywordListButton" id="4">
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="$parentButton3" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
               </Button>
-              <Button name="$parentButton5" inherits="TinomOptionsMainPanelKeyWordListButton" id="5">
+              <Button name="$parentButton5" inherits="TinomOptionsMainPanelKeywordListButton" id="5">
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="$parentButton4" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
               </Button>
-              <Button name="$parentButton6" inherits="TinomOptionsMainPanelKeyWordListButton" id="6">
+              <Button name="$parentButton6" inherits="TinomOptionsMainPanelKeywordListButton" id="6">
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="$parentButton5" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
               </Button>
-              <Button name="$parentButton7" inherits="TinomOptionsMainPanelKeyWordListButton" id="7">
+              <Button name="$parentButton7" inherits="TinomOptionsMainPanelKeywordListButton" id="7">
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="$parentButton6" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
               </Button>
-              <Button name="$parentButton8" inherits="TinomOptionsMainPanelKeyWordListButton" id="8">
+              <Button name="$parentButton8" inherits="TinomOptionsMainPanelKeywordListButton" id="8">
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="$parentButton7" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
               </Button>
-              <Button name="$parentButton9" inherits="TinomOptionsMainPanelKeyWordListButton" id="9">
+              <Button name="$parentButton9" inherits="TinomOptionsMainPanelKeywordListButton" id="9">
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="$parentButton8" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
               </Button>
-              <Button name="$parentButton10" inherits="TinomOptionsMainPanelKeyWordListButton" id="10">
+              <Button name="$parentButton10" inherits="TinomOptionsMainPanelKeywordListButton" id="10">
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="$parentButton9" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
@@ -1551,7 +1700,7 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
                     self:SetScrollChild(Tinom_ScrollFrame_HightFrame2);
                   </OnLoad>
                   <OnMouseWheel>
-                    Tinom.OptionsMainPanel_ReplaceKeyWord_Scroll_OnMouseWheel(self, delta);
+                    Tinom.OptionsMainPanel_ReplaceKeyword_Scroll_OnMouseWheel(self, delta);
                   </OnMouseWheel>
                 </Scripts>
               </ScrollFrame>
@@ -1599,9 +1748,9 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
       </Frame>
 
       <!-- 基本设置标签按钮 -->
-      <Button name="$parentBaseSettingTabButton" inherits="TinomOptionsMainPanelTabButtonTemplate" text="">
+      <Button name="$parentBaseTabButton" inherits="TinomOptionsMainPanelTabButtonTemplate" text="">
         <Anchors>
-          <Anchor point="BOTTOMLEFT" relativeTo="$parentBaseSetting" relativePoint="TOPLEFT" x="120" y="0"/>
+          <Anchor point="BOTTOMLEFT" relativeTo="$parentBase" relativePoint="TOPLEFT" x="120" y="0"/>
         </Anchors>
         <Scripts>
           <OnLoad>
@@ -1610,20 +1759,33 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
         </Scripts>
       </Button>
 
-      <!-- 白名单标签按钮 -->
-      <Button name="$parentWhiteListTabButton" inherits="TinomOptionsMainPanelTabButtonTemplate" text="">
+
+
+      <!-- 替换标签按钮 -->
+      <Button name="$parentReplaceListTabButton" inherits="TinomOptionsMainPanelTabButtonTemplate" text="">
         <Anchors>
-          <Anchor point="LEFT" relativeTo="$parentBaseSettingTabButton" relativePoint="RIGHT" x="5" y="0"/>
+          <Anchor point="LEFT" relativeTo="$parentBaseTabButton" relativePoint="RIGHT" x="5" y="0"/>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            self:SetText(Tinom.L["替换单设置"]);
+          </OnLoad>
+        </Scripts>
+      </Button>
+      <!-- 白名单标签按钮 -->
+      <!-- <Button name="$parentWhiteListTabButton" inherits="TinomOptionsMainPanelTabButtonTemplate" text="">
+        <Anchors>
+          <Anchor point="LEFT" relativeTo="$parentReplaceListTabButton" relativePoint="RIGHT" x="5" y="0"/>
         </Anchors>
         <Scripts>
           <OnLoad>
             self:SetText(Tinom.L["白名单设置"]);
           </OnLoad>
         </Scripts>
-      </Button>
+      </Button> -->
 
       <!-- 黑名单标签按钮 -->
-      <Button name="$parentBlackListTabButton" inherits="TinomOptionsMainPanelTabButtonTemplate" text="">
+      <!-- <Button name="$parentBlackListTabButton" inherits="TinomOptionsMainPanelTabButtonTemplate" text="">
         <Anchors>
           <Anchor point="LEFT" relativeTo="$parentWhiteListTabButton" relativePoint="RIGHT" x="5" y="0"/>
         </Anchors>
@@ -1632,22 +1794,9 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
             self:SetText(Tinom.L["黑名单设置"]);
           </OnLoad>
         </Scripts>
-      </Button>
-
-      <!-- 替换标签按钮 -->
-      <Button name="$parentReplaceListTabButton" inherits="TinomOptionsMainPanelTabButtonTemplate" text="">
-        <Anchors>
-          <Anchor point="LEFT" relativeTo="$parentBlackListTabButton" relativePoint="RIGHT" x="5" y="0"/>
-        </Anchors>
-        <Scripts>
-          <OnLoad>
-            self:SetText(Tinom.L["替换单设置"]);
-          </OnLoad>
-        </Scripts>
-      </Button>
-
+      </Button> -->
       <!-- 应用按钮 -->
-      <Button name="$parentButton_Apply" inherits="UIPanelButtonTemplate">
+      <Button name="$parentButton_Apply" inherits="TinomButtonTemplate">
         <Size x="100" y="26"/>
         <Anchors>
           <Anchor point="BOTTOM" y="-35"/>
@@ -1661,8 +1810,8 @@ F:\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
             Tinom.OptionsMainPanel_Updata();
           </OnClick>
         </Scripts>
-        <NormalFont style="GameFontNormalSmall"/>
-        <HighlightFont style="GameFontHighlightSmall"/>
+        <!--<NormalFont style="GameFontNormalSmall"/>
+        <HighlightFont style="GameFontHighlightSmall"/>-->
       </Button>
     </Frames>
 

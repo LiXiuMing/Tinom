@@ -37,11 +37,14 @@ function Tinom.checkTinomDB()
             Options = {},
             filterDB = {
                 whiteList = {},
-                whiteListKeyWord = {},
+                whiteListKeyword = {},
                 blackList = {},
-                blackListKeyWord = {},
+                autoBlackList = {},
+                blackListKeyword = {},
+                sensitiveList = {},
+                sensitiveKeyword = {},
                 replaceName = {},
-                replaceKeyWord = {
+                replaceKeyword = {
                     ["?+"] = {
                         newWord = "?",
                         newMsg = "",
@@ -94,6 +97,7 @@ end
 function Tinom.OnLoaded(self,event,addonName)
     if (event == "ADDON_LOADED") and (addonName == "Tinom") and (Tinom.checkTinomDB()) then
         Tdebug(self,"log","Tinom.OnLoaded");
+        Tinom.Check();
         Tinom.classicCheak();
         Tinom.LoginLog(self,event,addonName);
         Tinom.OptionsMainPanel_checkOptions();
@@ -143,4 +147,83 @@ function Tinom.classicCheak()
     --     print("模型河蟹未开")
     -- end
 end
+
+function Tinom.Check()
+    if not TinomDB.Options.Default then
+        return;
+    end
+    if TinomDB.Options.Default.IsChanged == 20191018 then
+        return;
+    end
+    TinomDB.filterDB.sensitiveList = {};
+    TinomDB.filterDB.sensitiveKeyword = {};
+    Tinom.CheckOldFilterDB();
+    Tinom.OldListTable = {
+        "whiteListKeyWord",
+        "blackListKeyWord",
+        "replaceKeyWord",
+    };
+    if TinomDB.filterDB.whiteListKeyWord then
+        TinomDB.filterDB.whiteListKeyword = TinomDB.filterDB.whiteListKeyWord;
+        TinomDB.filterDB.whiteListKeyWord = nil;
+    end
+    if TinomDB.filterDB.blackListKeyWord then
+        TinomDB.filterDB.blackListKeyword = TinomDB.filterDB.blackListKeyWord;
+        TinomDB.filterDB.blackListKeyWord = nil;
+    end
+    if TinomDB.filterDB.replaceKeyWord then
+        TinomDB.filterDB.replaceKeyword = TinomDB.filterDB.replaceKeyWord;
+        TinomDB.filterDB.replaceKeyWord = nil;
+    end
+
+    Tinom.OldOptionsTable = {
+        "Tinom_Switch_MsgFilter_WhiteListKeyWordHighlight",
+        "Tinom_Switch_MsgFilter_ReplaceKeyWordMsg",
+        "Tinom_Switch_MsgFilter_ReplaceKeyWord",
+        "Tinom_Switch_MsgFilter_WhiteListKeyWordSound",
+        "Tinom_Switch_MsgFilter_BlackListKeyWord",
+        "Tinom_Switch_MsgFilter_WhiteListKeyWord",
+    };
+    Tinom.NewOptionsTable = {
+        "Tinom_Switch_MsgFilter_WhiteListKeywordHighlight",
+        "Tinom_Switch_MsgFilter_ReplaceKeywordMsg",
+        "Tinom_Switch_MsgFilter_ReplaceKeyword",
+        "Tinom_Switch_MsgFilter_WhiteListKeywordSound",
+        "Tinom_Switch_MsgFilter_BlackListKeyword",
+        "Tinom_Switch_MsgFilter_WhiteListKeyword",
+    };
+    for i,v in pairs(Tinom.OldOptionsTable) do
+        TinomDB.Options.Default[Tinom.NewOptionsTable[i]] = TinomDB.Options.Default[v]
+    end
+    if TinomDB.Options.Default[Tinom.NewOptionsTable[1]] ~= nil then
+        for k,v in pairs(Tinom.OldOptionsTable) do
+            TinomDB.Options.Default[v] = nil;
+        end
+        TinomDB.Options.Default.IsChanged = 20191018;
+        TinomDB.Options.Default.Tinom_Value_MsgFilter_FiltersList = {};
+    end
+end
+
+function Tinom.CheckOldFilterDB()
+    TinomDB.filterDB.blackList = toNewBlackList(TinomDB.filterDB.blackList)
+    
+    if not TinomDB.filterDB.autoBlackList then
+        TinomDB.filterDB.autoBlackList = {}
+    end
+end
+
+function toNewBlackList(tableList)
+    local newBlackList = {}
+    for k,v in next, tableList do
+        if type(v) == "string" then
+            index = strsub(v,1,3)
+            if not newBlackList[index] then
+                newBlackList[index] = {};
+            end
+            table.insert(newBlackList[index],v)
+        end
+    end
+    return newBlackList;
+end
+
 Tdebug(self,"log","Tinom.lua.OnLoaded");
