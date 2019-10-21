@@ -70,7 +70,7 @@ function Tinom.MsgFilter( self,event,... )
     end
     local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = ...;
     if not Tinom.CheckChannelLsit(self,arg9) then
-        return true;
+        return false;
     end
     
     --if ( event ~= "CHAT_MSG_CHANNEL" ) then return end
@@ -154,7 +154,7 @@ function Tinom.MsgFilter_Whitelist(msg, authorName, authorServer, remind)
             return false, nil, nil, remind;
         end
     end
-    Tinom.ChatStat_Filtered("WhiteList");
+    Tinom.ChatStat_Filtered("WhiteList",authorName);
     return true;
 end
 
@@ -166,7 +166,7 @@ function Tinom.MsgFilter_WhitelistKeyword( msg, authorName, authorServer, remind
             return false, nil, nil, remind;
         end
     end
-    Tinom.ChatStat_Filtered("WhiteListKeyword");
+    Tinom.ChatStat_Filtered("WhiteListKeyword",authorName);
     return true;
 end
 
@@ -174,7 +174,7 @@ function Tinom.MsgFilter_Blacklist( msg,authorName,authorServer, remind )
     assert(authorName);
     
         if (Tinom.CheckNameInTable(TinomDB.filterDB.blackList,authorName)) then
-            Tinom.ChatStat_Filtered("BlackList");
+            Tinom.ChatStat_Filtered("BlackList",authorName);
             remind = nil;
             return true, nil, nil, remind;
         end
@@ -186,7 +186,7 @@ function Tinom.MsgFilter_BlacklistKeyword( msg,authorName,authorServer, remind )
     
     for _,keyword in pairs(TinomDB.filterDB.blackListKeyword) do
         if msg:find(keyword) then
-            Tinom.ChatStat_Filtered("BlackListKeyword");
+            Tinom.ChatStat_Filtered("BlackListKeyword",authorName);
             return true, nil, nil, remind;
         end
     end
@@ -201,7 +201,7 @@ function Tinom.MsgFilter_SensitiveList( msg,authorName,authorServer, remind )
             else
                 newArg1 = msg;
             end
-            Tinom.ChatStat_Filtered("SensitiveList");
+            Tinom.ChatStat_Filtered("SensitiveList",authorName);
             remind = "SensitiveList";
             ignore = "RightNow!";
             return ignore, newArg1, nil, remind;
@@ -218,7 +218,7 @@ function Tinom.MsgFilter_SensitiveKeyword( msg,authorName,authorServer, remind )
             else
                 newArg1 = msg;
             end
-            Tinom.ChatStat_Filtered("SensitiveKeyword");
+            Tinom.ChatStat_Filtered("SensitiveKeyword",authorName);
             remind = "SensitiveKeyword";
             ignore = "RightNow!";
             return ignore, newArg1, nil, remind;
@@ -230,12 +230,10 @@ end
 function Tinom.MsgFilter_AutoBlackList( msg,authorName,authorServer, remind )
     assert(authorName);
 
-    for _,author in pairs(TinomDB.filterDB.autoBlackList) do
-        if ( authorName == author ) then
-            Tinom.ChatStat_Filtered("AutoBlackList");
-            remind = nil;
-            return true, nil, nil, remind;
-        end
+    if (Tinom.CheckNameInTable(TinomDB.filterDB.autoBlackList,authorName)) then
+        Tinom.ChatStat_Filtered("AutoBlackList",authorName);
+        remind = nil;
+        return true, nil, nil, remind;
     end
     return false, nil, nil, remind;
 end
@@ -247,7 +245,7 @@ function Tinom.MsgFilter_RepeatMsg( msg,authorName,authorServer, remind )
     if exist and ((elapsed < TinomDB.Options.Default.Tinom_Value_MsgFilter_RepeatMsgElapsed)
         or (TinomDB.Options.Default.Tinom_Value_MsgFilter_RepeatMsgElapsed == 0)) then
         if TinomDB.chatStatDB[authorServer][authorName].msg_last_text == msg then
-            Tinom.ChatStat_Filtered("RepeatMsg");
+            Tinom.ChatStat_Filtered("RepeatMsg",authorName);
             return true, nil, nil, remind;
         end
     end
@@ -260,7 +258,7 @@ function Tinom.MsgFilter_IntervalMsg( msg,authorName,authorServer, remind )
     local exist, elapsed = Tinom.MsgFilter_IsAuthorExist( authorName,authorServer );
     if exist and ((elapsed < TinomDB.Options.Default.Tinom_Value_MsgFilter_IntervalMsgTime)
         or (TinomDB.Options.Default.Tinom_Value_MsgFilter_IntervalMsgTime == 0)) then
-            Tinom.ChatStat_Filtered("IntervalMsg");
+            Tinom.ChatStat_Filtered("IntervalMsg",authorName);
             return true, nil, nil, remind;
     end
     return false, nil, nil, remind;
@@ -292,7 +290,7 @@ function Tinom.MsgFilter_FoldMsg( msg,authorName,authorServer, remind )
             newMsg, num = newMsg:gsub(foldMsg,"");
             foldMsg = foldMsg:gsub("%%","");
             newArg1 = foldMsg..newMsg.." x"..num;
-            Tinom.ChatStat_Filtered("FoldMsg");
+            Tinom.ChatStat_Filtered("FoldMsg",authorName);
             return false, newArg1;
         end
     end
@@ -305,15 +303,15 @@ function Tinom.MsgFilter_ReplaceName( msg,authorName,authorServer, remind )
 
     for k,v in pairs(TinomDB.filterDB.replaceName) do
         if ( authorName == k ) then
-            if (#v.newName > 0) then
-                Tinom.ChatStat_Filtered("ReplaceName");
-                newName = v.newName.."-"..authorServer;
+            if (v) then
+                Tinom.ChatStat_Filtered("ReplaceName",authorName);
+                newName = v.."-"..authorServer;
                 return false, newMsg, newName, remind;
             end
         elseif ( name == k ) then
-            if (#v.newName > 0) then
-                Tinom.ChatStat_Filtered("ReplaceName");
-                newName = v.newName;
+            if (v) then
+                Tinom.ChatStat_Filtered("ReplaceName",authorName);
+                newName = v;
                 return false, newMsg, newName, remind;
             end
         end
@@ -326,17 +324,17 @@ function Tinom.MsgFilter_ReplaceNameMsg( msg,authorName,authorServer, remind )
     local newMsg,newName;
     local name = authorName.."-"..authorServer;
 
-    for k,v in pairs(TinomDB.filterDB.replaceName) do
+    for k,v in pairs(TinomDB.filterDB.replaceNameMsg) do
         if ( authorName == k ) then
-            if (#v.newMsg > 0) then
-                Tinom.ChatStat_Filtered("ReplaceNameMsg");
-                newMsg = v.newMsg;
+            if (v) then
+                Tinom.ChatStat_Filtered("ReplaceNameMsg",authorName);
+                newMsg = v;
                 return false, newMsg, newName, remind;
             end
         elseif ( name == k ) then
-            if (#v.newMsg > 0) then
-                Tinom.ChatStat_Filtered("ReplaceNameMsg");
-                newMsg = v.newMsg;
+            if (v) then
+                Tinom.ChatStat_Filtered("ReplaceNameMsg",authorName);
+                newMsg = v;
                 return false, newMsg, newName, remind;
             end
         end
@@ -349,13 +347,13 @@ function Tinom.MsgFilter_ReplaceKeyword( msg,authorName,authorServer, remind )
     local newMsg = msg;
     for i=1,2 do
         for k,v in pairs(TinomDB.filterDB.replaceKeyword) do
-            if (#v.newWord > 0) then
-                newMsg = newMsg:gsub(k,v.newWord);
+            if (v) then
+                newMsg = newMsg:gsub(k,v);
             end
         end
     end
     if newMsg~=msg then
-        Tinom.ChatStat_Filtered("ReplaceKeyword");
+        Tinom.ChatStat_Filtered("ReplaceKeyword",authorName);
     end
     return false, newMsg, nil, remind;
 end
@@ -363,11 +361,11 @@ end
 --  关键字消息替换:
 function Tinom.MsgFilter_ReplaceKeywordMsg( msg,authorName,authorServer, remind )
     local newMsg;
-    for k,v in pairs(TinomDB.filterDB.replaceKeyword) do
+    for k,v in pairs(TinomDB.filterDB.replaceKeywordMsg) do
         if ( msg:find(k) ) then
-            if (#v.newMsg > 0) then
-                Tinom.ChatStat_Filtered("ReplaceKeywordMsg");
-                newMsg = v.newMsg;
+            if (v) then
+                Tinom.ChatStat_Filtered("ReplaceKeywordMsg",authorName);
+                newMsg = v;
                 return false, newMsg, nil, remind;
             end
         end
@@ -377,7 +375,6 @@ end
 
 --  声音提醒  --
 function Tinom.Reminder( type )
-    --assert(type);
     if not type then return; end
 
     if TinomDB.Options.Default[Tinom.ReminderType[type].switch] then
@@ -425,6 +422,3 @@ function Tinom.MsgFilterOff()
     ChatFrame_RemoveMessageEventFilter("CHAT_MSG_LOOT", Tinom.MsgFilter_Item)
     print("过滤已关闭")
 end
-
-
-Tdebug(self,"log","Filter.lua加载完成");

@@ -20,20 +20,20 @@ Chat_Switch = {
 }
 
 ChatStat_FilteredList = {
-    WhiteList = 0,
-    WhiteListKeyword = 0,
-    BlackList = 0,
-    BlackListKeyword = 0,
-    ReplaceName = 0,
-    ReplaceNameMsg = 0,
-    ReplaceKeyword = 0,
-    ReplaceKeywordMsg = 0,
-    RepeatMsg = 0,
-    SensitiveList = 0,
-    SensitiveKeyword = 0,
-    AutoBlackList = 0,
-    FoldMsg = 0,
-    IntervalMsg = 0,
+    WhiteList = {0,},
+    WhiteListKeyword = {0,},
+    BlackList = {0,},
+    BlackListKeyword = {0,},
+    ReplaceName = {0,},
+    ReplaceNameMsg = {0,},
+    ReplaceKeyword = {0,},
+    ReplaceKeywordMsg = {0,},
+    RepeatMsg = {0,},
+    SensitiveList = {0,},
+    SensitiveKeyword = {0,},
+    AutoBlackList = {0,},
+    FoldMsg = {0,},
+    IntervalMsg = {0,},
 };
 
 --  成就变量
@@ -212,8 +212,9 @@ local function chat_stat_handler(self, event, msg, author,_,_,_,_,_,channelIndex
         for p,v in pairs(TinomDB.Options.Default.Tinom_Value_MsgFilter_FiltersList) do
             local filterName = v[3];
             filterName = Tinom.defaultCheckButtonsName[filterName]
-            local number = ":|cffff0000"..ChatStat_FilteredList[v[3]].."|r";
-            local str = filterName .. number;
+            local number = ":|cffff0000"..ChatStat_FilteredList[v[3]][1].."|r";
+            local authorName = (ChatStat_FilteredList[v[3]][2]) or ""
+            local str = filterName..number..authorName;
             TinomChatStatFrame.Texts[index]:SetText(str)
             index = index + 1;
         end
@@ -239,8 +240,9 @@ end
 --[[-------------------------------------------------------------------------
 --  过滤器过滤次数统计
 -------------------------------------------------------------------------]]--
-function Tinom.ChatStat_Filtered(filterName)
-    ChatStat_FilteredList[filterName] = ChatStat_FilteredList[filterName] + 1;
+function Tinom.ChatStat_Filtered(filterName,authorName)
+    ChatStat_FilteredList[filterName][1] = ChatStat_FilteredList[filterName][1] + 1;
+    ChatStat_FilteredList[filterName][2] = authorName;
 end
 
 --[[-------------------------------------------------------------------------

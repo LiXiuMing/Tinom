@@ -1,8 +1,31 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\UI.xsd">
   <Script file="Options.lua"/>
+  <Texture name="TinomListButtonBackgroundTextureTemplate"  file="Interface\Buttons\ListButtons" virtual="true">
+    <Anchors>
+      <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="2"/>
+      <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-2"/>
+    </Anchors>
+    <TexCoords left="0.078125" right="0.78125" top="0" bottom="0.18"/>
+    <Color r="1" g="1" b="1" a="1"/>
+  </Texture>
+  <Texture name="TinomListButtonHighlightBlueTextureTemplate" file="Interface\Buttons\ListButtons" alphaMode="ADD" virtual="true">
+    <Anchors>
+      <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="4" y="-2"/>
+      <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-4" y="2"/>
+    </Anchors>
+    <TexCoords left="0.078125" right="0.78125" top="0.18" bottom="0.37"/>
+    <Color r="1" g="1" b="1" a="1"/>
+  </Texture>
+  <Texture name="TinomListButtonHighlightGreenTextureTemplate" file="Interface\Buttons\ListButtons" alphaMode="ADD" virtual="true">
+    <Anchors>
+      <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="4" y="-2"/>
+      <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-4" y="2"/>
+    </Anchors>
+    <TexCoords left="0.078125" right="0.78125" top="0.3828" bottom="0.5546875"/>
+    <Color r="1" g="1" b="1" a="1"/>
+  </Texture>
 
-  <!-- 按钮模板 -->
   <Button name="TinomButtonNoTooltipTemplate" virtual="true">
     <Size x="40" y="22"/>
     <Layers>
@@ -70,60 +93,6 @@
       </OnLeave>
     </Scripts>
   </Button>
-  <!-- 复选按钮模板 -->
-  <CheckButton name="TinomCheckButtonTemplate" virtual="true">
-    <Size>
-      <AbsDimension x="32" y="32"/>
-    </Size>
-    <Layers>
-      <Layer level="ARTWORK">
-        <FontString name="$parentText" parentKey="Text" inherits="GameFontHighlight" justifyH="LEFT">
-          <Anchors>
-            <Anchor point="LEFT" relativePoint="RIGHT">
-              <Offset>
-                <AbsDimension x="-2" y="0"/>
-              </Offset>
-            </Anchor>
-          </Anchors>
-        </FontString>
-      </Layer>
-    </Layers>
-    <Scripts>
-      <OnClick>
-        if ( self:GetChecked() ) then
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-        else
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
-        end
-      </OnClick>
-      <OnEnter>
-        if ( self.tooltipText ) then
-        GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT");
-        GameTooltip:SetText(self.tooltipText, nil, nil, nil, nil, true);
-        end
-        if ( self.tooltipRequirement ) then
-        GameTooltip:AddLine(self.tooltipRequirement, 1.0, 1.0, 1.0, true);
-        GameTooltip:Show();
-        end
-      </OnEnter>
-      <OnLeave>
-        GameTooltip:Hide();
-      </OnLeave>
-    </Scripts>
-    <NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
-    <PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
-    <HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
-    <CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
-    <DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
-  </CheckButton>
-  <CheckButton name="TinomOptionsMainPanelCheckButton_Template" inherits="TinomCheckButtonTemplate" virtual="true">
-    <Scripts>
-      <OnLoad>
-        Tinom.OptionsBaseCheckButton_OnLoad(self)
-      </OnLoad>
-    </Scripts>
-  </CheckButton>
-  <!-- 标签按钮模板 -->
   <Button name="TinomOptionsMainPanelTabButtonTemplate" inherits="TabButtonTemplate" virtual="true">
     <Size x="150" y="25"/>
     <Scripts>
@@ -137,109 +106,6 @@
       </OnClick>
     </Scripts>
   </Button>
-  <!-- 名单编辑框模板 -->
-  <Frame name="TinomOptionsMainPanelEditListTemplate" virtual="true">
-    <Size x="200"/>
-    <Layers>
-      <Layer level="ARTWORK">
-        <FontString name="$parentTitle" inherits="GameFontHighlightLeft" parentKey="Text">
-          <Anchors>
-            <Anchor point="CENTER" relativeTo="$parent" relativePoint="TOP">
-              <Offset>
-                <AbsDimension x="0" y="6"/>
-              </Offset>
-            </Anchor>
-          </Anchors>
-        </FontString>
-      </Layer>
-    </Layers>
-    <Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-      <EdgeSize>
-        <AbsValue val="16"/>
-      </EdgeSize>
-
-      <BorderColor r="1" g="1" b="0" a="1"/>
-      <Color r="0.1" g="0.2" b="0.2" a="1"/>
-
-      <BackgroundInsets>
-        <AbsInset left="5" right="5" top="5" bottom="5"/>
-      </BackgroundInsets>
-    </Backdrop>
-    <Frames>
-      <ScrollFrame name="$parentScrollFrame" inherits="UIPanelScrollFrameTemplate">
-        <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="6" y="-6"/>
-          <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-28" y="6"/>
-        </Anchors>
-        
-        <Frames>
-          <EditBox name="$parentEditBox" multiLine="true" autoFocus="false">
-            <Scripts>
-              <OnLoad>
-                <!-- Test.ScrollFrame_EditBox_OnLoad(self) -->
-              </OnLoad>
-              <OnShow>
-                self:SetWidth(self:GetParent():GetWidth());
-              </OnShow>
-              <OnEscapePressed>
-                self:ClearFocus();
-              </OnEscapePressed>
-              <OnCursorChanged>
-                <!-- Tinom.OptionsPanel_EditBox_OnCursorChanged(self); -->
-              </OnCursorChanged>
-            </Scripts>
-            <FontString inherits="ChatFontNormal"></FontString>
-          </EditBox>
-        </Frames>
-        <Scripts>
-          <OnLoad>
-            self:SetScrollChild(_G[self:GetName().."EditBox"]);
-          </OnLoad>
-        </Scripts>
-      </ScrollFrame>
-    </Frames>
-  </Frame>
-  <!-- 编辑框模板 -->
-  <EditBox name="TinomOptionsMainPanelEditBoxTemplate" autoFocus="false" virtual="true">
-    <Size x="100" y="20"/>
-    <Layers>
-      <Layer level="BACKGROUND">
-        <Texture file="Interface\ChatFrame\UI-ChatInputBorder-Left">
-          <Size>
-            <AbsDimension x="70" y="32"></AbsDimension>
-          </Size>
-          <Anchors>
-            <Anchor point="LEFT">
-              <Offset>
-                <AbsDimension x="-10" y="0"></AbsDimension>
-              </Offset>
-            </Anchor>
-          </Anchors>
-          <TexCoords left="0" right="0.3" top="0" bottom="1.0"></TexCoords>
-        </Texture>
-        <Texture file="Interface\ChatFrame\UI-ChatInputBorder-Right">
-          <Size>
-            <AbsDimension x="70" y="32"></AbsDimension>
-          </Size>
-          <Anchors>
-            <Anchor point="RIGHT">
-              <Offset>
-                <AbsDimension x="10" y="0"></AbsDimension>
-              </Offset>
-            </Anchor>
-          </Anchors>
-          <TexCoords left="0.7" right="1.0" top="0" bottom="1.0"></TexCoords>
-        </Texture>
-      </Layer>
-    </Layers>
-    <Scripts>
-      <OnEscapePressed>
-        self:ClearFocus();
-      </OnEscapePressed>
-    </Scripts>
-    <FontString inherits="ChatFontNormal"></FontString>
-  </EditBox>
-  <!-- 名单按钮模板 -->
   <Button name="TinomOptionsMainPanelNameListButton" virtual="true">
     <Size>
       <AbsDimension x="0" y="32"/>
@@ -342,35 +208,12 @@
       </OnClick>
     </Scripts>
     <!-- 高亮纹理 -->
-    <HighlightTexture file="Interface\Buttons\ListButtons" alphaMode="ADD">
-      <Anchors>
-        <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="2"/>
-        <Anchor point="BOTTOMRIGHT" relativeTo="$parentRight" relativePoint="BOTTOMRIGHT" x="-2"/>
-      </Anchors>
-      <TexCoords left="0.078125" right="0.75" top="0.18" bottom="0.37"/>
-      <Color r="1" g="1" b="1" a="1"/>
-    </HighlightTexture>
+    <HighlightTexture inherits="TinomListButtonHighlightGreenTextureTemplate"/>
     <!-- 按下纹理 -->
-    <PushedTexture file="Interface\Buttons\ListButtons" alphaMode="ADD">
-      <Anchors>
-        <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="2"/>
-        <Anchor point="BOTTOMRIGHT" relativeTo="$parentRight" relativePoint="BOTTOMRIGHT" x="-2"/>
-      </Anchors>
-      <TexCoords left="0.078125" right="0.75" top="0.37" bottom="0.53"/>
-      <Color r="1" g="1" b="1" a="1"/>
-    </PushedTexture>
-    <!-- 禁用纹理 -->
-    <PushedTexture file="Interface\Buttons\ListButtons" alphaMode="ADD">
-      <Anchors>
-        <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="2"/>
-        <Anchor point="BOTTOMRIGHT" relativeTo="$parentRight" relativePoint="BOTTOMRIGHT" x="-2"/>
-      </Anchors>
-      <TexCoords left="0.078125" right="0.75" top="0.37" bottom="0.53"/>
-      <Color r="1" g="1" b="1" a="1"/>
-    </PushedTexture>
-
+    <PushedTexture inherits="TinomListButtonHighlightBlueTextureTemplate"/>
   </Button>
-  <!-- 关键字按钮模板 -->
+  <Button name="TinomOptionsMainPanelNameListButton2" parentArray="ReplaceNameListButtons" inherits="TinomOptionsMainPanelNameListButton" virtual="true">
+  </Button>
   <Button name="TinomOptionsMainPanelKeywordListButton" virtual="true">
     <Size>
       <AbsDimension x="0" y="32"/>
@@ -501,7 +344,252 @@
     </PushedTexture>
 
   </Button>
-  <!-- 设置框架模板 -->
+	<Button name="TinomReplaceListButtonTemplate" parentArray="ReplaceListButtons" virtual="true">
+		<Size x="200" y="32"/>
+    <Anchors>
+      <Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT" x="10" y="0"/>
+      <Anchor point="RIGHT" relativeTo="$parent" relativePoint="RIGHT" x="-10" y="0"/>
+    </Anchors>
+		<Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<EdgeSize>
+				<AbsValue val="16"/>
+			</EdgeSize>
+			<TileSize>
+				<AbsValue val="16"/>
+			</TileSize>
+      <BorderColor r="0.6" g="0.6" b="0.6" a="1"/>
+      <Color r="0.2" g="0.2" b="0.2" a="1"/>
+      <BackgroundInsets>
+        <AbsInset left="5" right="5" top="5" bottom="5"/>
+      </BackgroundInsets>
+		</Backdrop>
+    <Layers>
+      <Layer level="ARTWORK">
+        <FontString name="$parent_Key" text="Key" inherits="GameFontHighlightLeft" parentKey="Key">
+          <Size>
+            <AbsDimension x="120" y="0"/>
+          </Size>
+          <Anchors>
+            <Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT">
+              <Offset>
+                <AbsDimension x="10" y="0"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </FontString>
+        <FontString name="$parent_NewKey" text="NewKey" inherits="GameFontHighlightLeft" parentKey="NewKey">
+          <Anchors>
+            <Anchor point="LEFT" relativeTo="$parent_Key" relativePoint="RIGHT" x="10" y="0"/>
+            <Anchor point="RIGHT" relativeTo="$parent" relativePoint="RIGHT" x="-10" y="0"/>
+          </Anchors>
+        </FontString>
+      </Layer>
+    </Layers>
+		<Scripts>
+			<OnLoad>
+			</OnLoad>
+      <OnClick>
+        _G[self:GetParent():GetParent():GetName().."Key"]:SetText(_G[self:GetName().."_Key"]:GetText())
+        _G[self:GetParent():GetParent():GetName().."NewKey"]:SetText(_G[self:GetName().."_NewKey"]:GetText() or "")
+      </OnClick>
+		</Scripts>
+    <HighlightTexture inherits="TinomListButtonHighlightGreenTextureTemplate"/>
+    <PushedTexture inherits="TinomListButtonHighlightBlueTextureTemplate"/>
+	</Button>
+
+  <CheckButton name="TinomCheckButtonTemplate" virtual="true">
+    <Size>
+      <AbsDimension x="32" y="32"/>
+    </Size>
+    <Layers>
+      <Layer level="ARTWORK">
+        <FontString name="$parentText" parentKey="Text" inherits="GameFontHighlight" justifyH="LEFT">
+          <Anchors>
+            <Anchor point="LEFT" relativePoint="RIGHT">
+              <Offset>
+                <AbsDimension x="-2" y="0"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </FontString>
+      </Layer>
+    </Layers>
+    <Scripts>
+      <OnClick>
+        if ( self:GetChecked() ) then
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+        else
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
+        end
+      </OnClick>
+      <OnEnter>
+        if ( self.tooltipText ) then
+        GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT");
+        GameTooltip:SetText(self.tooltipText, nil, nil, nil, nil, true);
+        end
+        if ( self.tooltipRequirement ) then
+        GameTooltip:AddLine(self.tooltipRequirement, 1.0, 1.0, 1.0, true);
+        GameTooltip:Show();
+        end
+      </OnEnter>
+      <OnLeave>
+        GameTooltip:Hide();
+      </OnLeave>
+    </Scripts>
+    <NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+    <PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+    <HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+    <CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+    <DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+  </CheckButton>
+  <CheckButton name="TinomOptionsMainPanelCheckButton_Template" inherits="TinomCheckButtonTemplate" virtual="true">
+    <Scripts>
+      <OnLoad>
+        Tinom.OptionsBaseCheckButton_OnLoad(self)
+      </OnLoad>
+    </Scripts>
+  </CheckButton>
+
+  <ScrollFrame name="TinomScrollFrameCodeTemplate" virtual="true">
+		<Scripts>
+			<OnLoad function="ScrollFrame_OnLoad"/>
+			<OnScrollRangeChanged function="ScrollFrame_OnScrollRangeChanged"/>
+			<OnVerticalScroll function="ScrollFrame_OnVerticalScroll"/>
+			<OnMouseWheel function="ScrollFrameTemplate_OnMouseWheel"/>
+		</Scripts>
+	</ScrollFrame>
+	<ScrollFrame name="TinomScrollFrameTemplate" virtual="true" inherits="TinomScrollFrameCodeTemplate">
+		<Frames>
+			<Slider name="$parentScrollBar" inherits="UIPanelScrollBarTemplate" parentKey="ScrollBar">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="6" y="-16"/>
+					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="6" y="16"/>
+				</Anchors>
+			</Slider>
+		</Frames>
+	</ScrollFrame>
+
+  <EditBox name="TinomOptionsMainPanelEditBoxTemplate" autoFocus="false" virtual="true">
+    <Size x="100" y="20"/>
+    <Layers>
+      <Layer level="BACKGROUND">
+        <Texture file="Interface\ChatFrame\UI-ChatInputBorder-Left">
+          <Size>
+            <AbsDimension x="70" y="32"></AbsDimension>
+          </Size>
+          <Anchors>
+            <Anchor point="LEFT">
+              <Offset>
+                <AbsDimension x="-10" y="0"></AbsDimension>
+              </Offset>
+            </Anchor>
+          </Anchors>
+          <TexCoords left="0" right="0.3" top="0" bottom="1.0"></TexCoords>
+        </Texture>
+        <Texture file="Interface\ChatFrame\UI-ChatInputBorder-Right">
+          <Size>
+            <AbsDimension x="70" y="32"></AbsDimension>
+          </Size>
+          <Anchors>
+            <Anchor point="RIGHT">
+              <Offset>
+                <AbsDimension x="10" y="0"></AbsDimension>
+              </Offset>
+            </Anchor>
+          </Anchors>
+          <TexCoords left="0.7" right="1.0" top="0" bottom="1.0"></TexCoords>
+        </Texture>
+      </Layer>
+    </Layers>
+    <Scripts>
+      <OnEscapePressed>
+        self:ClearFocus();
+      </OnEscapePressed>
+      <OnEditFocusLost>
+        self:HighlightText(0,0);
+      </OnEditFocusLost>
+    </Scripts>
+    <FontString inherits="ChatFontNormal"></FontString>
+  </EditBox>
+  <Frame name="TinomOptionsMainPanelEditListTemplate" virtual="true">
+    <Size x="200"/>
+    <Layers>
+      <Layer level="ARTWORK">
+        <FontString name="$parentTitle" inherits="GameFontHighlightLeft" parentKey="Text">
+          <Anchors>
+            <Anchor point="CENTER" relativeTo="$parent" relativePoint="TOP">
+              <Offset>
+                <AbsDimension x="0" y="6"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </FontString>
+      </Layer>
+    </Layers>
+    <Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+      <EdgeSize>
+        <AbsValue val="16"/>
+      </EdgeSize>
+
+      <BorderColor r="1" g="1" b="0" a="1"/>
+      <Color r="0.1" g="0.2" b="0.2" a="1"/>
+
+      <BackgroundInsets>
+        <AbsInset left="5" right="5" top="5" bottom="5"/>
+      </BackgroundInsets>
+    </Backdrop>
+    <Frames>
+      <ScrollFrame name="$parentScrollFrame" inherits="UIPanelScrollFrameTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="6" y="-6"/>
+          <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-28" y="6"/>
+        </Anchors>
+        
+        <Frames>
+          <EditBox name="$parentEditBox" multiLine="true" autoFocus="false">
+            <Scripts>
+              <OnLoad>
+                <!-- Test.ScrollFrame_EditBox_OnLoad(self) -->
+              </OnLoad>
+              <OnShow>
+                self:SetWidth(self:GetParent():GetWidth());
+              </OnShow>
+              <OnEscapePressed>
+                self:ClearFocus();
+              </OnEscapePressed>
+              <OnCursorChanged>
+                <!-- Tinom.OptionsPanel_EditBox_OnCursorChanged(self); -->
+              </OnCursorChanged>
+            </Scripts>
+            <FontString inherits="ChatFontNormal"></FontString>
+          </EditBox>
+        </Frames>
+        <Scripts>
+          <OnLoad>
+            self:SetScrollChild(_G[self:GetName().."EditBox"]);
+          </OnLoad>
+        </Scripts>
+      </ScrollFrame>
+    </Frames>
+  </Frame>
+
+  <Frame name="TinomNormalFrameTemplate" virtual="true">
+    <Size x="100" y="100"/>
+    <Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="false">
+      <!-- 背景厚度,与边框距离 -->
+      <BackgroundInsets>
+        <AbsInset left="5" right="5" top="5" bottom="5"/>
+      </BackgroundInsets>
+      <!-- 边框宽度 -->
+      <EdgeSize>
+        <AbsValue val="16"/>
+      </EdgeSize>
+      <!-- 边框颜色 -->
+      <BorderColor r="0.4" g="0.4" b="0.4" a="1"/>
+      <!-- 背景颜色 -->
+      <Color r="0" g="0" b="0" a="0.4"/>
+    </Backdrop>
+  </Frame>
   <Frame name="TinomOptionsMainPanelTabTemplate" hidden="true" virtual="true">
     <Anchors>
       <Anchor point="TOPLEFT" x="5" y="-110"/>
@@ -542,22 +630,21 @@
       </Layer>
     </Layers>
   </Frame>
-  <!-- 子设置框架 -->
   <Frame name="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" hidden="true" virtual="true">
     <Layers>
       <Layer level="ARTWORK">
-        <FontString name="$parentTitle" text="标题" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP" parentKey="Text">
+        <FontString name="$parentTitle" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP" parentKey="Text">
           <Anchors>
             <Anchor point="TOPLEFT">
               <Offset>
-                <AbsDimension x="5" y="-5"/>
+                <AbsDimension x="10" y="-10"/>
               </Offset>
             </Anchor>
           </Anchors>
         </FontString>
         <Texture name="$parentTitleUnderline">
           <Anchors>
-            <Anchor point="LEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+            <Anchor point="LEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT" x="0" y="-2"/>
             <Anchor point="RIGHT" relativeTo="$parentTitle"/>
           </Anchors>
           <Color r="0.6" g="0.6" b="0.6"/>
@@ -582,7 +669,168 @@
       </BackgroundInsets>
     </Backdrop>
   </Frame>
-  <!-- 过滤器列表按钮模板 -->
+  <Frame name="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate_List" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate"  virtual="true">
+    <Frames>
+      <!-- 编辑框 -->
+      <Frame name="$parentEditBox" inherits="TinomOptionsMainPanelEditListTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" x="5" y="-50"/>
+          <Anchor point="BOTTOMLEFT" x="0" y="5"/>
+        </Anchors>
+      </Frame>
+    </Frames>
+  </Frame>
+  <Frame name="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate_Replace"  inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" hidden="true" virtual="true">
+    <Frames>
+      <!-- <Frame name="$parentDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT" x="-10" y="-16"/>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            self.type = CONTROLTYPE_DROPDOWN;
+            BlizzardOptionsPanel_RegisterControl(self, self:GetParent());
+          </OnLoad>
+          <OnEnter>
+            if ( self.GameTooltip ) then
+              GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT");
+              GameTooltip:SetText(self.tooltip, nil, nil, nil, nil, true);
+            end
+          </OnEnter>
+          <OnLeave function="GameTooltip_Hide"/>
+          <OnShow>
+          </OnShow>
+        </Scripts>
+      </Frame> -->
+      <EditBox name="$parentKey" inherits="TinomOptionsMainPanelEditBoxTemplate">
+        <Size x="120" y="20"/>
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="20" y="-80"/>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            <!-- self:SetText(Tinom.L["角色名"]) -->
+          </OnLoad>
+          <OnEditFocusGained>
+            <!-- if (self:GetText() == Tinom.L["角色名"]) then
+              self:SetText("");
+            end -->
+          </OnEditFocusGained>
+          <OnTextChanged>
+            Tinom.OptionsMainPanel_Replace_OnTextChanged( self );
+          </OnTextChanged>
+          <OnTabPressed>
+            _G[self:GetParent():GetName().."NewKey"]:SetFocus();
+          </OnTabPressed>
+        </Scripts>
+      </EditBox>
+      <EditBox name="$parentNewKey" inherits="TinomOptionsMainPanelEditBoxTemplate">
+        <Size x="120" y="20"/>
+        <Anchors>
+          <Anchor point="LEFT" relativeTo="$parentKey" relativePoint="RIGHT" x="10"/>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            <!-- self:SetText(Tinom.L["新角色名"]) -->
+          </OnLoad>
+          <OnEditFocusGained>
+            <!-- if (self:GetText() == Tinom.L["新角色名"]) then
+              self:SetText("");
+            end -->
+          </OnEditFocusGained>
+          <OnTabPressed>
+            self:ClearFocus();
+          </OnTabPressed>
+        </Scripts>
+      </EditBox>
+      <Button name="$parentButtonAdd" inherits="TinomButtonNoTooltipTemplate">
+        <Size>
+          <AbsDimension x="45" y="26"/>
+        </Size>
+        <Anchors>
+          <Anchor point="LEFT" relativeTo="$parentNewKey" relativePoint="RIGHT" x="10">
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            self:SetText(Tinom.L["新增"])
+          </OnLoad>
+          <OnClick>
+            Tinom.OptionsMainPanel_Replace_ButtonAdd_OnClick(self);
+          </OnClick>
+        </Scripts>
+      </Button>
+      <Button name="$parentButtonDel" inherits="TinomButtonNoTooltipTemplate">
+        <Size>
+          <AbsDimension x="45" y="26"/>
+        </Size>
+        <Anchors>
+          <Anchor point="LEFT" relativeTo="$parentButtonAdd" relativePoint="RIGHT"/>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            self:SetText(Tinom.L["删除"])
+          </OnLoad>
+          <OnClick>
+            Tinom.OptionsMainPanel_Replace_ButtonDel_OnClick(self);
+          </OnClick>
+        </Scripts>
+      </Button>
+      <Frame name="$parentList" hidden="false" inherits="TinomNormalFrameTemplate">
+        <Anchors>
+          <Anchor point="TOP" relativeTo="$parentKey" relativePoint="BOTTOM" x="0" y="-4"/>
+          <Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT" x="0" y="0"/>
+          <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+        </Anchors>
+        <Frames>
+          <Button name="$parentButton1" inherits="TinomReplaceListButtonTemplate" id="1">
+            <Anchors>
+              <Anchor point="TOPLEFT" x="5" y="-5"/>
+              <Anchor point="RIGHT" x="-26"/>
+            </Anchors>
+          </Button>
+          <!-- 滚动条 -->
+          <ScrollFrame name="$parentScroll" inherits="UIPanelScrollFrameTemplate">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="6" y="-6"/>
+              <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-28" y="6"/>
+            </Anchors>
+            <Frames>
+              <Frame name="$parent_HightFrame">
+                <Size x="100" y="100"/>
+              </Frame>
+            </Frames>
+            <Scripts>
+              <OnLoad>
+                self:SetScrollChild(_G[self:GetName().."_HightFrame"]);
+                self.ScrollBar:SetValue(0);
+              </OnLoad>
+              <OnMouseWheel>
+                Tinom.OptionsMainPanel_Replace_Scroll_OnMouseWheel(self, delta);
+              </OnMouseWheel>
+            </Scripts>
+          </ScrollFrame>
+        </Frames>
+        <Scripts>
+          <OnLoad>
+            local FrameName = self:GetName();
+            local lastButton = _G[FrameName.."Button1"]
+            for i=2,11 do
+              local Button2 = CreateFrame("Button",FrameName.."Button"..i,self,"TinomReplaceListButtonTemplate")
+              Button2:SetPoint("TOPLEFT", lastButton ,"BOTTOMLEFT", 0, 0)
+              Button2:SetPoint("RIGHT", self ,"RIGHT", -26, 0)
+              lastButton = Button2;
+            end
+          </OnLoad>
+        </Scripts>
+      </Frame>
+    </Frames>
+    <Scripts>
+      <OnShow>
+        Tinom.OptionsMainPanel_Replace_OnShow( self );
+      </OnShow>
+    </Scripts>
+  </Frame>
 	<Frame name="TinomFilterButtonTemplate" parentArray="TinomFilterButtons" mixin="TinomFilterButtonsMixin" virtual="true">
 		<Size x="200" y="32"/>
 		<Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
@@ -680,7 +928,6 @@
   <Frame name="TinomOptionsMainPanel" hidden="true" parent="InterfaceOptionsFramePanelContainer">
     <Layers>
       <Layer level="ARTWORK">
-
         <!-- 主设置页面标题 -->
         <FontString name="$parentTitle" text="TINOM_OPTION_MAINPANEL_TITLE" inherits="GameFontNormalLarge" justifyH="LEFT" justifyV="TOP">
           <Anchors>
@@ -691,47 +938,13 @@
             </Anchor>
           </Anchors>
         </FontString>
-
-        <!-- 主设置页面插件说明 -->
-        <FontString name="$parentSubText" text="TINOM_OPTION_MAINPANEL_SUBTEXT" inherits="GameFontHighlightSmall" justifyH="LEFT" justifyV="TOP" maxLines="2">
-          <Size>
-            <AbsDimension x="0" y="30"/>
-          </Size>
-          <Anchors>
-            <Anchor point="TOPLEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT">
-              <Offset>
-                <AbsDimension x="16" y="-8"/>
-              </Offset>
-            </Anchor>
-            <Anchor point="TOPRIGHT">
-              <Offset>
-                <AbsDimension x="-32" y="0"/>
-              </Offset>
-            </Anchor>
-          </Anchors>
-        </FontString>
-
-        <!-- 分割条 -->
-        <Texture name="$parentTextureLine">
-          <Anchors>
-            <Anchor point="LEFT" relativeTo="$parentSubText" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
-            <Anchor point="RIGHT" relativeTo="$parentSubText" x="0" y="0"/>
-          </Anchors>
-          <Color r="0.6" g="0.6" b="0.6" a="1"/>
-        </Texture>
-
       </Layer>
     </Layers>
-
     <Frames>
       <!-- 插件开启复选按钮 -->
       <CheckButton name="$parentCheckButton_MainEnable" inherits="TinomOptionsMainPanelCheckButton_Template">
         <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentSubText" relativePoint="BOTTOMLEFT">
-            <Offset>
-              <AbsDimension x="-14" y="-10"/>
-            </Offset>
-          </Anchor>
+          <Anchor point="TOPLEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT" x="-14" y="-10"/>
         </Anchors>
         <Scripts>
           <OnClick>
@@ -741,149 +954,55 @@
       </CheckButton>
 
       <!-- 基础设置框架 -->
-      <Frame name="$parentBase" parent="TinomOptionsMainPanel">
+      <Frame name="$parentBase" parent="TinomOptionsMainPanel" inherits="TinomNormalFrameTemplate">
         <Anchors>
-          <Anchor point="TOPLEFT" x="5" y="-110"/>
-          <Anchor point="BOTTOMRIGHT" x="-5" y="5"/>
+          <Anchor point="TOPLEFT" x="2" y="-70"/>
+          <Anchor point="BOTTOMRIGHT" x="-2" y="2"/>
         </Anchors>
-
-        <Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="false">
-          <EdgeSize>
-            <AbsValue val="16"/>
-          </EdgeSize>
-
-          <BorderColor r="1" g="1" b="0" a="1"/>
-          <Color r="0.2" g="0.2" b="0.2" a="0.4"/>
-
-          <BackgroundInsets>
-            <AbsInset left="5" right="5" top="5" bottom="5"/>
-          </BackgroundInsets>
-        </Backdrop>
-        <Layers>
-          <Layer level="ARTWORK">
-            <FontString name="$parentTitle" inherits="OptionsFontHighlight" justifyH="LEFT" justifyV="TOP">
-              <Anchors>
-                <Anchor point="TOPLEFT">
-                  <Offset>
-                    <AbsDimension x="220" y="-10"/>
-                  </Offset>
-                </Anchor>
-              </Anchors>
-            </FontString>
-            <Texture name="$parentTitleUnderline">
-              <Anchors>
-                <Anchor point="LEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
-                <Anchor point="RIGHT" relativeTo="$parentTitle" x="0" y="4"/>
-              </Anchors>
-              <Color r="1" g="1" b="0"/>
-            </Texture>
-          </Layer>
-        </Layers>
         <Frames>
-          
-          <Frame name="$parentFiltersList" hidden="false">
+          <Frame name="$parentFiltersList" inherits="TinomNormalFrameTemplate">
             <Size x="208"/>
             <Anchors>
               <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="0"/>
               <Anchor point="BOTTOMLEFT"/>
             </Anchors>
-            <Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-              <EdgeSize>
-                <AbsValue val="16"/>
-              </EdgeSize>
-              <TileSize>
-                <AbsValue val="16"/>
-              </TileSize>
-              <BorderColor r="0.2" g="0.2" b="0.2" a="1"/>
-              <Color r="0.2" g="0.2" b="0.2" a="0.4"/>
-              <BackgroundInsets>
-                <AbsInset left="5" right="5" top="5" bottom="5"/>
-              </BackgroundInsets>
-            </Backdrop>
+            <Layers>
+              <Layer level="ARTWORK">
+                <FontString name="$parentTitle" inherits="GameFontHighlight" parentKey="Text">
+                  <Anchors>
+                    <Anchor point="TOPLEFT">
+                      <Offset>
+                        <AbsDimension x="10" y="-10"/>
+                      </Offset>
+                    </Anchor>
+                  </Anchors>
+                </FontString>
+              </Layer>
+            </Layers>
+            <Scripts>
+              <OnLoad>
+                self.Text:SetText("过滤器|cff909090(拖动改变过滤顺序)|r")
+              </OnLoad>
+            </Scripts>
           </Frame>
 
-          <Frame name="$parentCheckButton1" inherits="TinomFilterButtonTemplate" id="1">
+          <Frame name="$parentFilterButton1" inherits="TinomFilterButtonTemplate" id="1">
             <Anchors>
               <Anchor point="TOPLEFT" relativeTo="$parentFiltersList" relativePoint="TOPLEFT">
-                <Offset x="4" y="-4"/>
+                <Offset x="4" y="-26"/>
               </Anchor>
-            </Anchors>
-          </Frame>
-          <Frame name="$parentCheckButton2" inherits="TinomFilterButtonTemplate" id="2">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton1" relativePoint="BOTTOMLEFT"/>
-            </Anchors>
-          </Frame>
-          <Frame name="$parentCheckButton3" inherits="TinomFilterButtonTemplate" id="3">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton2" relativePoint="BOTTOMLEFT"/>
-            </Anchors>
-          </Frame>
-          <Frame name="$parentCheckButton4" inherits="TinomFilterButtonTemplate" id="4">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton3" relativePoint="BOTTOMLEFT"/>
-            </Anchors>
-          </Frame>
-          <Frame name="$parentCheckButton5" inherits="TinomFilterButtonTemplate" id="5">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton4" relativePoint="BOTTOMLEFT"/>
-            </Anchors>
-          </Frame>
-          <Frame name="$parentCheckButton6" inherits="TinomFilterButtonTemplate" id="6">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton5" relativePoint="BOTTOMLEFT"/>
-            </Anchors>
-          </Frame>
-          <Frame name="$parentCheckButton7" inherits="TinomFilterButtonTemplate" id="7">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton6" relativePoint="BOTTOMLEFT"/>
-            </Anchors>
-          </Frame>
-          <Frame name="$parentCheckButton8" inherits="TinomFilterButtonTemplate" id="8">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton7" relativePoint="BOTTOMLEFT"/>
-            </Anchors>
-          </Frame>
-          <Frame name="$parentCheckButton9" inherits="TinomFilterButtonTemplate" id="9">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton8" relativePoint="BOTTOMLEFT"/>
-            </Anchors>
-          </Frame>
-          <Frame name="$parentCheckButton10" inherits="TinomFilterButtonTemplate" id="10">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton9" relativePoint="BOTTOMLEFT"/>
-            </Anchors>
-          </Frame>
-          <Frame name="$parentCheckButton11" inherits="TinomFilterButtonTemplate" id="11">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton10" relativePoint="BOTTOMLEFT"/>
-            </Anchors>
-          </Frame>
-          <Frame name="$parentCheckButton12" inherits="TinomFilterButtonTemplate" id="12">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton11" relativePoint="BOTTOMLEFT"/>
-            </Anchors>
-          </Frame>
-          <Frame name="$parentCheckButton13" inherits="TinomFilterButtonTemplate" id="13">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton12" relativePoint="BOTTOMLEFT"/>
-            </Anchors>
-          </Frame>
-          <Frame name="$parentCheckButton14" inherits="TinomFilterButtonTemplate" id="14">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentCheckButton13" relativePoint="BOTTOMLEFT"/>
             </Anchors>
           </Frame>
 
           <!-- FilterSettingShow -->
-          <Button name="$parentShowChatStatFrame" inherits="TinomButtonTemplate">
-            <Size x="26" y="26"/>
+          <Button name="$parentFilterSettingFrame_Show" inherits="TinomButtonTemplate">
+            <Size x="60" y="26"/>
             <Anchors>
-              <Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="TOPRIGHT"/>
+              <Anchor point="TOPLEFT" relativeTo="$parentFiltersList" relativePoint="TOPRIGHT" x="0" y="-4"/>
             </Anchors>
             <Scripts>
               <OnLoad>
-                self:SetText(Tinom.L["H"]);
+                self:SetText(Tinom.L["Home"]);
               </OnLoad>
               <OnClick>
                 Tinom.FilterSettingFramesAllHide()
@@ -891,6 +1010,7 @@
               </OnClick>
             </Scripts>
           </Button>
+
           <Frame name="$parentFilterSetting" hidden="false" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
             <Frames>
               <!-- 频道与姓名缩写 -->
@@ -909,7 +1029,7 @@
                   </Anchor>
                 </Anchors>
               </CheckButton>
-              <!-- 姓名缩写隐藏服务器:NOTE!被缩写的角色将导致邀请组队失效,因为服务器被隐藏了. -->
+              <!-- 姓名缩写隐藏服务器 -->
               <CheckButton name="$parentCheckButton_AbbrAuthorName" inherits="TinomOptionsMainPanelCheckButton_Template">
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_AbbrChannelName" relativePoint="BOTTOMLEFT">
@@ -933,93 +1053,30 @@
                 </Scripts>
               </Button>
             </Frames>
+            <Scripts>
+              <OnShow>
+                self.Text:SetText("一般设置")
+              </OnShow>
+            </Scripts>
           </Frame>
-          <Frame name="$parentFilterSetting_WhiteList" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
+          <Frame name="$parentFilterSetting_WhiteList" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate_List">
+          </Frame>
+          <Frame name="$parentFilterSetting_WhiteListKeyword" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate_List" >
+          </Frame>
+          <Frame name="$parentFilterSetting_BlackList" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate_List" >
+          </Frame>
+          <Frame name="$parentFilterSetting_BlackListKeyword" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate_List" >
+          </Frame>
+          <Frame name="$parentFilterSetting_ReplaceName" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate_Replace" >
+          </Frame>
+          <Frame name="$parentFilterSetting_ReplaceNameMsg" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate_Replace" >
+          </Frame>
+          <Frame name="$parentFilterSetting_ReplaceKeyword" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate_Replace" >
+          </Frame>
+          <Frame name="$parentFilterSetting_ReplaceKeywordMsg" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate_Replace" >
+          </Frame>
+          <Frame name="$parentFilterSetting_SensitiveList" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate_List" >
             <Frames>
-              <!-- 白名单编辑框 -->
-              <Frame name="$parentEditBox" inherits="TinomOptionsMainPanelEditListTemplate">
-                <Anchors>
-                  <Anchor point="TOPLEFT" x="5" y="-40"/>
-                  <Anchor point="BOTTOMLEFT" x="0" y="5"/>
-                </Anchors>
-                <Scripts>
-                  <OnLoad>
-                    _G[self:GetName().."Title"]:SetText(Tinom.L["白名单:玩家"]);
-                  </OnLoad>
-                </Scripts>
-              </Frame>
-            </Frames>
-          </Frame>
-          <Frame name="$parentFilterSetting_WhiteListKeyword" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
-            <Frames>
-              <!-- 白名单关键字编辑框 -->
-              <Frame name="$parentEditBox" inherits="TinomOptionsMainPanelEditListTemplate">
-                <Anchors>
-                  <Anchor point="TOPLEFT" x="5" y="-40"/>
-                  <Anchor point="BOTTOMLEFT" y="5"/>
-                </Anchors>
-                <Scripts>
-                  <OnLoad>
-                    _G[self:GetName().."Title"]:SetText(Tinom.L["白名单:关键字"]);
-                  </OnLoad>
-                </Scripts>
-              </Frame>
-            </Frames>
-          </Frame>
-          <Frame name="$parentFilterSetting_BlackList" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
-            <Frames>
-              <!-- 黑名单编辑框 -->
-              <Frame name="$parentEditBox" inherits="TinomOptionsMainPanelEditListTemplate">
-                <Anchors>
-                  <Anchor point="TOPLEFT" x="5" y="-40"/>
-                  <Anchor point="BOTTOMLEFT" y="5"/>
-                </Anchors>
-                <Scripts>
-                  <OnLoad>
-                    _G[self:GetName().."Title"]:SetText(Tinom.L["黑名单:玩家"]);
-                  </OnLoad>
-                </Scripts>
-              </Frame>
-            </Frames>
-          </Frame>
-          <Frame name="$parentFilterSetting_BlackListKeyword" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
-            <Frames>
-              <!-- 黑名单关键字编辑框 -->
-              <Frame name="$parentEditBox" inherits="TinomOptionsMainPanelEditListTemplate">
-                <Anchors>
-                  <Anchor point="TOPLEFT" x="5" y="-40"/>
-                  <Anchor point="BOTTOMLEFT" y="5"/>
-                </Anchors>
-                <Scripts>
-                  <OnLoad>
-                    _G[self:GetName().."Title"]:SetText(Tinom.L["黑名单:关键字"]);
-                  </OnLoad>
-                </Scripts>
-              </Frame>
-            </Frames>
-          </Frame>
-          <Frame name="$parentFilterSetting_ReplaceName" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
-          </Frame>
-          <Frame name="$parentFilterSetting_ReplaceNameMsg" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
-          </Frame>
-          <Frame name="$parentFilterSetting_ReplaceKeyword" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
-          </Frame>
-          <Frame name="$parentFilterSetting_ReplaceKeywordMsg" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
-          </Frame>
-          <Frame name="$parentFilterSetting_SensitiveList" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
-            <Frames>
-              <!-- 编辑框 -->
-              <Frame name="$parentEditBox" inherits="TinomOptionsMainPanelEditListTemplate">
-                <Anchors>
-                  <Anchor point="TOPLEFT" x="5" y="-40"/>
-                  <Anchor point="BOTTOMLEFT" y="5"/>
-                </Anchors>
-                <Scripts>
-                  <OnLoad>
-                    _G[self:GetName().."Title"]:SetText(Tinom.L["敏感名单"]);
-                  </OnLoad>
-                </Scripts>
-              </Frame>
               <!-- 高亮显示复选框 -->
               <CheckButton name="$parentHighlight" inherits="TinomOptionsMainPanelCheckButton_Template">
                 <Anchors>
@@ -1066,20 +1123,8 @@
               </Frame>
             </Frames>
           </Frame>
-          <Frame name="$parentFilterSetting_SensitiveKeyword" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
+          <Frame name="$parentFilterSetting_SensitiveKeyword" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate_List" >
             <Frames>
-            <!-- 编辑框 -->
-              <Frame name="$parentEditBox" inherits="TinomOptionsMainPanelEditListTemplate">
-                <Anchors>
-                  <Anchor point="TOPLEFT" x="5" y="-40"/>
-                  <Anchor point="BOTTOMLEFT" y="5"/>
-                </Anchors>
-                <Scripts>
-                  <OnLoad>
-                    _G[self:GetName().."Title"]:SetText(Tinom.L["敏感关键字"]);
-                  </OnLoad>
-                </Scripts>
-              </Frame>
               <!-- 敏感关键字高亮显示复选框 -->
               <CheckButton name="$parentHighlight" inherits="TinomOptionsMainPanelCheckButton_Template">
                 <Anchors>
@@ -1126,20 +1171,8 @@
               </Frame>
             </Frames>
           </Frame>
-          <Frame name="$parentFilterSetting_AutoBlackList" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
+          <Frame name="$parentFilterSetting_AutoBlackList" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate_List" >
             <Frames>
-              <!-- 编辑框 -->
-              <Frame name="$parentEditBox" inherits="TinomOptionsMainPanelEditListTemplate">
-                <Anchors>
-                  <Anchor point="TOPLEFT" x="5" y="-40"/>
-                  <Anchor point="BOTTOMLEFT" y="5"/>
-                </Anchors>
-                <Scripts>
-                  <OnLoad>
-                    _G[self:GetName().."Title"]:SetText(Tinom.L["黑名单:玩家"]);
-                  </OnLoad>
-                </Scripts>
-              </Frame>
               <!-- 自动添加黑名单 -->
               <CheckButton name="$parentCheckButton" inherits="InterfaceOptionsCheckButtonTemplate">
                 <Anchors>
@@ -1244,505 +1277,14 @@
         
         <Scripts>
           <OnLoad>
-            _G[self:GetName().."Title"]:SetText(Tinom.L["过滤顺序从上至下"])
             Tinom.FilterSettingFrames_SetTitle();
-          </OnLoad>
-        </Scripts>
-      </Frame>
-
-      <!-- 替换单设置框架 -->
-      <Frame name="$parentReplace" parent="TinomOptionsMainPanel" inherits="TinomOptionsMainPanelTabTemplate">
-        <Frames>
-          <!-- 按角色名替换 -->
-          <Frame name="$parentNameList">
-            <Anchors>
-              <Anchor point="TOPLEFT" x="5" y="-110"/>
-              <Anchor point="BOTTOMRIGHT" x="-5" y="5"/>
-            </Anchors>
-            
-            <Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-              <EdgeSize>
-                <AbsValue val="16"/>
-              </EdgeSize>
-
-              <BorderColor r="1" g="1" b="0" a="1"/>
-              <Color r="0.2" g="0.2" b="0.2" a="0.4"/>
-
-              <BackgroundInsets>
-                <AbsInset left="5" right="5" top="5" bottom="5"/>
-              </BackgroundInsets>
-            </Backdrop>
-
-            <Frames>
-              <EditBox name="$parentName" inherits="TinomOptionsMainPanelEditBoxTemplate">
-                <Size x="120" y="20"/>
-                <Anchors>
-                  <Anchor point="BOTTOMLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="12" y="4"/>
-                </Anchors>
-                <Scripts>
-                  <OnLoad>
-                    self:SetText(Tinom.L["角色名"])
-                  </OnLoad>
-                  <OnEditFocusGained>
-                    if (self:GetText() == Tinom.L["角色名"]) then
-                      self:SetText("");
-                    end
-                  </OnEditFocusGained>
-                  <OnEditFocusLost>
-                    self:HighlightText(0,0);
-                  </OnEditFocusLost>
-                  <OnTextChanged>
-                    Tinom.OptionsMainPanel_Replace_EditBoxName_OnTextChanged(self,"Name");
-                  </OnTextChanged>
-                  <OnTabPressed>
-                    _G[self:GetParent():GetName().."NewName"]:SetFocus();
-                  </OnTabPressed>
-                </Scripts>
-              </EditBox>
-              <EditBox name="$parentNewName" inherits="TinomOptionsMainPanelEditBoxTemplate">
-                <Size x="120" y="20"/>
-                <Anchors>
-                  <Anchor point="LEFT" relativeTo="$parentName" relativePoint="RIGHT" x="10"/>
-                </Anchors>
-                <Scripts>
-                  <OnLoad>
-                    self:SetText(Tinom.L["新角色名-可选"])
-                  </OnLoad>
-                  <OnEditFocusGained>
-                    if (self:GetText() == Tinom.L["新角色名-可选"]) then
-                      self:SetText("");
-                    end
-                  </OnEditFocusGained>
-                  <OnEditFocusLost>
-                    self:HighlightText(0,0);
-                  </OnEditFocusLost>
-                  <OnTabPressed>
-                    _G[self:GetParent():GetName().."NewMsg"]:SetFocus();
-                  </OnTabPressed>
-                </Scripts>
-              </EditBox>
-              <EditBox name="$parentNewMsg" inherits="TinomOptionsMainPanelEditBoxTemplate">
-                <Size x="220" y="20"/>
-                <Anchors>
-                  <Anchor point="LEFT" relativeTo="$parentNewName" relativePoint="RIGHT" x="10"/>
-                </Anchors>
-                <Layers>
-                <Layer>
-                <Texture file="Interface\ChatFrame\UI-ChatInputBorder-Left">
-                  <Size>
-                    <AbsDimension x="100" y="32"></AbsDimension>
-                  </Size>
-                  <Anchors>
-                    <Anchor point="LEFT" relativeTo="$parent">
-                      <Offset>
-                        <AbsDimension x="60" y="0"></AbsDimension>
-                      </Offset>
-                    </Anchor>
-                  </Anchors>
-                  <TexCoords left="0.2" right="0.7" top="0" bottom="1.0"></TexCoords>
-                </Texture>
-                </Layer>
-                </Layers>
-                <Scripts>
-                  <OnLoad>
-                    self:SetText(Tinom.L["新消息-可选"])
-                  </OnLoad>
-                  <OnEditFocusGained>
-                    if (self:GetText() == Tinom.L["新消息-可选"]) then
-                      self:SetText("");
-                    end
-                  </OnEditFocusGained>
-                  <OnEditFocusLost>
-                    self:HighlightText(0,0);
-                  </OnEditFocusLost>
-                  <OnTabPressed>
-                    self:ClearFocus();
-                  </OnTabPressed>
-                </Scripts>
-              </EditBox>
-              <!-- 新增条目按钮模块 -->
-              <Button name="$parentButtonAdd" inherits="UIPanelButtonTemplate">
-                <Size>
-                  <AbsDimension x="45" y="26"/>
-                </Size>
-                <Anchors>
-                  <Anchor point="LEFT" relativeTo="$parentNewMsg" relativePoint="RIGHT" x="10">
-                  </Anchor>
-                </Anchors>
-                <Scripts>
-                  <OnLoad>
-                    self:SetText(Tinom.L["新增"])
-                  </OnLoad>
-                  <OnClick>
-                    Tinom.OptionsMainPanel_ReplaceName_ButtonAdd_OnClick();
-                  </OnClick>
-                </Scripts>
-                <NormalFont style="GameFontNormalSmall"/>
-                <HighlightFont style="GameFontHighlightSmall"/>
-              </Button>
-              <!-- 删除条目按钮模块 -->
-              <Button name="$parentButtonDel" inherits="UIPanelButtonTemplate">
-                <Size>
-                  <AbsDimension x="45" y="26"/>
-                </Size>
-                <Anchors>
-                  <Anchor point="LEFT" relativeTo="$parentButtonAdd" relativePoint="RIGHT">
-                  </Anchor>
-                </Anchors>
-                <Scripts>
-                  <OnLoad>
-                    self:SetText(Tinom.L["删除"])
-                  </OnLoad>
-                  <OnClick>
-                    Tinom.OptionsMainPanel_ReplaceName_ButtonDel_OnClick();
-                  </OnClick>
-                </Scripts>
-                <NormalFont style="GameFontNormalSmall"/>
-                <HighlightFont style="GameFontHighlightSmall"/>
-              </Button>
-
-              <Button name="$parentButton1" inherits="TinomOptionsMainPanelNameListButton" id="1">
-                <Anchors>
-                  <Anchor point="TOPLEFT" x="5" y="-5"/>
-                  <Anchor point="RIGHT" x="-26"/>
-                </Anchors>
-              </Button>
-              <Button name="$parentButton2" inherits="TinomOptionsMainPanelNameListButton" id="2">
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parentButton1" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-              </Button>
-              <Button name="$parentButton3" inherits="TinomOptionsMainPanelNameListButton" id="3">
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parentButton2" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-              </Button>
-              <Button name="$parentButton4" inherits="TinomOptionsMainPanelNameListButton" id="4">
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parentButton3" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-              </Button>
-              <Button name="$parentButton5" inherits="TinomOptionsMainPanelNameListButton" id="5">
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parentButton4" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-              </Button>
-              <Button name="$parentButton6" inherits="TinomOptionsMainPanelNameListButton" id="6">
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parentButton5" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-              </Button>
-              <Button name="$parentButton7" inherits="TinomOptionsMainPanelNameListButton" id="7">
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parentButton6" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-              </Button>
-              <Button name="$parentButton8" inherits="TinomOptionsMainPanelNameListButton" id="8">
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parentButton7" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-              </Button>
-              <Button name="$parentButton9" inherits="TinomOptionsMainPanelNameListButton" id="9">
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parentButton8" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-              </Button>
-              <Button name="$parentButton10" inherits="TinomOptionsMainPanelNameListButton" id="10">
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parentButton9" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-              </Button>
-
-              <!-- 滚动条 -->
-              <ScrollFrame name="$parentScrollFrame" inherits="UIPanelScrollFrameTemplate">
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="6" y="-6"/>
-                  <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-28" y="6"/>
-                </Anchors>
-                
-                <Frames>
-                  <Frame name="Tinom_ScrollFrame_HightFrame">
-                    <Size x="100" y="1"/>
-                  </Frame>
-                </Frames>
-                <Scripts>
-                  <OnLoad>
-                    self:SetScrollChild(Tinom_ScrollFrame_HightFrame);
-                  </OnLoad>
-                  <OnMouseWheel>
-                    Tinom.OptionsMainPanel_ReplaceName_Scroll_OnMouseWheel(self, delta);
-                  </OnMouseWheel>
-                </Scripts>
-              </ScrollFrame>
-            </Frames>
-
-            <Scripts>
-              <OnLoad>
-              </OnLoad>
-            </Scripts>
-
-          </Frame>
-
-          <!-- 按关键字替换 -->
-          <Frame name="$parentKeywordList" hidden="true">
-            <Anchors>
-              <Anchor point="TOPLEFT" x="5" y="-110"/>
-              <Anchor point="BOTTOMRIGHT" x="-5" y="5"/>
-            </Anchors>
-            
-            <Backdrop bgFile="Interface\chatframe\chatframebackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-              <EdgeSize>
-                <AbsValue val="16"/>
-              </EdgeSize>
-
-              <BorderColor r="1" g="1" b="0" a="1"/>
-              <Color r="0.2" g="0.2" b="0.2" a="0.4"/>
-
-              <BackgroundInsets>
-                <AbsInset left="5" right="5" top="5" bottom="5"/>
-              </BackgroundInsets>
-            </Backdrop>
-
-            <Frames>
-              <EditBox name="$parentKeyword" inherits="TinomOptionsMainPanelEditBoxTemplate">
-                <Size x="120" y="20"/>
-                <Anchors>
-                  <Anchor point="BOTTOMLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="12" y="4"/>
-                </Anchors>
-                <Scripts>
-                  <OnLoad>
-                    self:SetText(Tinom.L["关键字"])
-                  </OnLoad>
-                  <OnEditFocusGained>
-                    if (self:GetText() == Tinom.L["关键字"]) then
-                      self:SetText("");
-                    end
-                  </OnEditFocusGained>
-                  <OnEditFocusLost>
-                    self:HighlightText(0,0);
-                  </OnEditFocusLost>
-                  <OnTextChanged>
-                    Tinom.OptionsMainPanel_Replace_EditBoxName_OnTextChanged(self,"Keyword");
-                  </OnTextChanged>
-                  <OnTabPressed>
-                    _G[self:GetParent():GetName().."NewWord"]:SetFocus();
-                  </OnTabPressed>
-                </Scripts>
-              </EditBox>
-              <EditBox name="$parentNewWord" inherits="TinomOptionsMainPanelEditBoxTemplate">
-                <Size x="120" y="20"/>
-                <Anchors>
-                  <Anchor point="LEFT" relativeTo="$parentKeyword" relativePoint="RIGHT" x="10"/>
-                </Anchors>
-                <Scripts>
-                  <OnLoad>
-                    self:SetText(Tinom.L["新关键字-可选"])
-                  </OnLoad>
-                  <OnEditFocusGained>
-                    if (self:GetText() == Tinom.L["新关键字-可选"]) then
-                      self:SetText("");
-                    end
-                  </OnEditFocusGained>
-                  <OnEditFocusLost>
-                    self:HighlightText(0,0);
-                  </OnEditFocusLost>
-                  <OnTabPressed>
-                    _G[self:GetParent():GetName().."NewMsg"]:SetFocus();
-                  </OnTabPressed>
-                </Scripts>
-              </EditBox>
-              <EditBox name="$parentNewMsg" inherits="TinomOptionsMainPanelEditBoxTemplate">
-                <Size x="220" y="20"/>
-                <Anchors>
-                  <Anchor point="LEFT" relativeTo="$parentNewWord" relativePoint="RIGHT" x="10"/>
-                </Anchors>
-                <Layers>
-                <Layer>
-                <Texture file="Interface\ChatFrame\UI-ChatInputBorder-Left">
-                  <Size>
-                    <AbsDimension x="100" y="32"></AbsDimension>
-                  </Size>
-                  <Anchors>
-                    <Anchor point="LEFT" relativeTo="$parent">
-                      <Offset>
-                        <AbsDimension x="60" y="0"></AbsDimension>
-                      </Offset>
-                    </Anchor>
-                  </Anchors>
-                  <TexCoords left="0.2" right="0.7" top="0" bottom="1.0"></TexCoords>
-                </Texture>
-                </Layer>
-                </Layers>
-                <Scripts>
-                  <OnLoad>
-                    self:SetText(Tinom.L["新消息-可选"])
-                  </OnLoad>
-                  <OnEditFocusGained>
-                    if (self:GetText() == Tinom.L["新消息-可选"]) then
-                      self:SetText("");
-                    end
-                  </OnEditFocusGained>
-                  <OnEditFocusLost>
-                    self:HighlightText(0,0);
-                  </OnEditFocusLost>
-                  <OnTabPressed>
-                    self:ClearFocus();
-                  </OnTabPressed>
-                </Scripts>
-              </EditBox>
-              <!-- 新增条目按钮模块 -->
-              <Button name="$parentButtonAdd" inherits="UIPanelButtonTemplate" text="">
-                <Size>
-                  <AbsDimension x="45" y="26"/>
-                </Size>
-                <Anchors>
-                  <Anchor point="LEFT" relativeTo="$parentNewMsg" relativePoint="RIGHT" x="10">
-                  </Anchor>
-                </Anchors>
-                <Scripts>
-                  <OnLoad>
-                    self:SetText(Tinom.L["新增"])
-                  </OnLoad>
-                  <OnClick>
-                    Tinom.OptionsMainPanel_ReplaceKeyword_ButtonAdd_OnClick();
-                  </OnClick>
-                </Scripts>
-                <NormalFont style="GameFontNormalSmall"/>
-                <HighlightFont style="GameFontHighlightSmall"/>
-              </Button>
-              <!-- 删除条目按钮模块 -->
-              <Button name="$parentButtonDel" inherits="UIPanelButtonTemplate" text="">
-                <Size>
-                  <AbsDimension x="45" y="26"/>
-                </Size>
-                <Anchors>
-                  <Anchor point="LEFT" relativeTo="$parentButtonAdd" relativePoint="RIGHT">
-                  </Anchor>
-                </Anchors>
-                <Scripts>
-                  <OnLoad>
-                    self:SetText(Tinom.L["删除"])
-                  </OnLoad>
-                  <OnClick>
-                    Tinom.OptionsMainPanel_ReplaceKeyword_ButtonDel_OnClick();
-                  </OnClick>
-                </Scripts>
-                <NormalFont style="GameFontNormalSmall"/>
-                <HighlightFont style="GameFontHighlightSmall"/>
-              </Button>
-
-              <Button name="$parentButton1" inherits="TinomOptionsMainPanelKeywordListButton" id="1">
-                <Anchors>
-                  <Anchor point="TOPLEFT" x="5" y="-5"/>
-                  <Anchor point="RIGHT" x="-26"/>
-                </Anchors>
-              </Button>
-              <Button name="$parentButton2" inherits="TinomOptionsMainPanelKeywordListButton" id="2">
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parentButton1" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-              </Button>
-              <Button name="$parentButton3" inherits="TinomOptionsMainPanelKeywordListButton" id="3">
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parentButton2" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-              </Button>
-              <Button name="$parentButton4" inherits="TinomOptionsMainPanelKeywordListButton" id="4">
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parentButton3" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-              </Button>
-              <Button name="$parentButton5" inherits="TinomOptionsMainPanelKeywordListButton" id="5">
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parentButton4" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-              </Button>
-              <Button name="$parentButton6" inherits="TinomOptionsMainPanelKeywordListButton" id="6">
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parentButton5" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-              </Button>
-              <Button name="$parentButton7" inherits="TinomOptionsMainPanelKeywordListButton" id="7">
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parentButton6" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-              </Button>
-              <Button name="$parentButton8" inherits="TinomOptionsMainPanelKeywordListButton" id="8">
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parentButton7" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-              </Button>
-              <Button name="$parentButton9" inherits="TinomOptionsMainPanelKeywordListButton" id="9">
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parentButton8" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-              </Button>
-              <Button name="$parentButton10" inherits="TinomOptionsMainPanelKeywordListButton" id="10">
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parentButton9" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-              </Button>
-              <!-- 滚动条 -->
-              <!-- inherits="UIPanelScrollFrameTemplate -->
-              <ScrollFrame name="$parentScrollFrame" inherits="UIPanelScrollFrameTemplate">
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="6" y="-6"/>
-                  <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-28" y="6"/>
-                </Anchors>
-                
-                <Frames>
-                  <Frame name="Tinom_ScrollFrame_HightFrame2">
-                    <Size x="100" y="1"/>
-                  </Frame>
-                </Frames>
-                <Scripts>
-                  <OnLoad>
-                    self:SetScrollChild(Tinom_ScrollFrame_HightFrame2);
-                  </OnLoad>
-                  <OnMouseWheel>
-                    Tinom.OptionsMainPanel_ReplaceKeyword_Scroll_OnMouseWheel(self, delta);
-                  </OnMouseWheel>
-                </Scripts>
-              </ScrollFrame>
-            </Frames>
-
-            <Scripts>
-              <OnLoad>
-              </OnLoad>
-            </Scripts>
-
-          </Frame>
-
-          <!-- 框架选择下拉菜单 -->
-          <Frame name="$parentDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true">
-            <Anchors>
-              <Anchor point="TOPLEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT" x="-20" y="-20"/>
-            </Anchors>
-            <Scripts>
-              <OnLoad>
-                self.type = CONTROLTYPE_DROPDOWN;
-                BlizzardOptionsPanel_RegisterControl(self, self:GetParent());
-              </OnLoad>
-              <OnEnter>
-                if ( not self.isDisabled ) then
-                  GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT");
-                  GameTooltip:SetText(self.tooltip, nil, nil, nil, nil, true);
-                end
-              </OnEnter>
-              <OnEvent>
-              
-              </OnEvent>
-              <OnLeave function="GameTooltip_Hide"/>
-              <OnShow>
-                Tinom.OptionsReplaceDropDown_OnShow(self,event);
-              </OnShow>
-            </Scripts>
-          </Frame>
-        </Frames>
-        
-        <Scripts>
-          <OnLoad>
-            _G[self:GetName().."Title"]:SetText(Tinom.L["替换单设置:"])
+            local FrameName = self:GetName();
+            local lastButton = _G[FrameName.."FilterButton1"]
+            for i=2,14 do
+              local Button2 = CreateFrame("Frame",FrameName.."FilterButton"..i,self,"TinomFilterButtonTemplate",i)
+              Button2:SetPoint("TOPLEFT", lastButton ,"BOTTOMLEFT", 0, 0)
+              lastButton = Button2;
+            end
           </OnLoad>
         </Scripts>
       </Frame>
@@ -1759,10 +1301,8 @@
         </Scripts>
       </Button>
 
-
-
       <!-- 替换标签按钮 -->
-      <Button name="$parentReplaceListTabButton" inherits="TinomOptionsMainPanelTabButtonTemplate" text="">
+      <!-- <Button name="$parentReplaceListTabButton" inherits="TinomOptionsMainPanelTabButtonTemplate" text="">
         <Anchors>
           <Anchor point="LEFT" relativeTo="$parentBaseTabButton" relativePoint="RIGHT" x="5" y="0"/>
         </Anchors>
@@ -1771,7 +1311,8 @@
             self:SetText(Tinom.L["替换单设置"]);
           </OnLoad>
         </Scripts>
-      </Button>
+      </Button> -->
+
       <!-- 白名单标签按钮 -->
       <!-- <Button name="$parentWhiteListTabButton" inherits="TinomOptionsMainPanelTabButtonTemplate" text="">
         <Anchors>
@@ -1795,6 +1336,7 @@
           </OnLoad>
         </Scripts>
       </Button> -->
+
       <!-- 应用按钮 -->
       <Button name="$parentButton_Apply" inherits="TinomButtonTemplate">
         <Size x="100" y="26"/>
@@ -1810,8 +1352,6 @@
             Tinom.OptionsMainPanel_Updata();
           </OnClick>
         </Scripts>
-        <!--<NormalFont style="GameFontNormalSmall"/>
-        <HighlightFont style="GameFontHighlightSmall"/>-->
       </Button>
     </Frames>
 
