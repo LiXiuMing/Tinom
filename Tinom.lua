@@ -99,35 +99,11 @@ end
 
 function Tinom.Check()
     Tinom.Updata_A();
-    --	脏话过滤
-    Tinom.profanityFilter = GetCVarInfo("profanityFilter")
-    if Tinom.profanityFilter == "1" then
-        print("脏话过滤已开")
-        SetCVar("profanityFilter",0);
-    else
-        print("脏话过滤未开")
-    end
-    --  角色名染色
-    Tinom.chatClassColorOverride = GetCVarInfo("chatClassColorOverride")
-    if Tinom.chatClassColorOverride == "0" then
-        print("角色名染色已开")
-    else
-        print("角色名染色未开")
-        SetCVar("chatClassColorOverride",0);
-    end
-    
-    --  模型河蟹
-    Tinom.overrideArchive = GetCVarInfo("overrideArchive")
-    if Tinom.overrideArchive == "1" then
-        print("模型河蟹已开")
-        SetCVar("overrideArchive",0);
-    else
-        print("模型河蟹未开")
-    end
 end
 
 function Tinom.Updata_A()
     if TinomDB.UpDataDate and TinomDB.UpDataDate >= 20191022 then
+        Tinom.Updata_B()
         return;
     end
     if TinomDB.filterDB.replaceKeyword and (not TinomDB.filterDB.replaceKeywordMsg) then
@@ -149,4 +125,20 @@ function Tinom.Updata_A()
         end
     end
     TinomDB.UpDataDate = 20191022;
+    Tinom.Updata_B();
+end
+
+function Tinom.Updata_B()
+    if TinomDB.UpDataDate and TinomDB.UpDataDate >= 20191023 then
+        return;
+    end
+    TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackKeywordCaseSensitive = true;
+    TinomDB.Options.Default.Tinom_Switch_AddMessageFilter_AuthorAliasName = false;
+    for i,v in ipairs(TinomDB.Options.Default.Tinom_Value_MsgFilter_FiltersList) do
+        if v[3]=="ReplaceName" then
+            TinomDB.Options.Default.Tinom_Value_MsgFilter_FiltersList = nil;
+            break;
+        end
+    end
+    TinomDB.UpDataDate = 20191023;
 end

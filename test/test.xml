@@ -572,7 +572,7 @@
           <Layer level="BACKGROUND">
             <Texture file="Interface\ChatFrame\UI-ChatInputBorder-Left">
               <Size>
-                <AbsDimension x="75" y="200"></AbsDimension>
+                <AbsDimension x="75" y="32"></AbsDimension>
               </Size>
               <Anchors>
                 <Anchor point="LEFT">
@@ -621,7 +621,7 @@
       <OnLoad>
         self.name = "子面板2不折叠";
         self.parent = TinomInterfaceOptionsMainPanel;
-        InterfaceOptions_AddCategory(self);
+        <!-- InterfaceOptions_AddCategory(self); -->
       </OnLoad>
     </Scripts>
 
@@ -1007,7 +1007,7 @@
 			</OnDragStop>
 
       <OnEvent>
-        WhoIsTinomss:Show();
+        <!-- WhoIsTinomss:Show(); -->
       </OnEvent>
 
       <OnShow>

@@ -544,22 +544,15 @@
           <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="6" y="-6"/>
           <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="-28" y="6"/>
         </Anchors>
-        
         <Frames>
           <EditBox name="$parentEditBox" multiLine="true" autoFocus="false">
             <Scripts>
-              <OnLoad>
-                <!-- Test.ScrollFrame_EditBox_OnLoad(self) -->
-              </OnLoad>
               <OnShow>
                 self:SetWidth(self:GetParent():GetWidth());
               </OnShow>
               <OnEscapePressed>
                 self:ClearFocus();
               </OnEscapePressed>
-              <OnCursorChanged>
-                <!-- Tinom.OptionsPanel_EditBox_OnCursorChanged(self); -->
-              </OnCursorChanged>
             </Scripts>
             <FontString inherits="ChatFontNormal"></FontString>
           </EditBox>
@@ -568,6 +561,9 @@
           <OnLoad>
             self:SetScrollChild(_G[self:GetName().."EditBox"]);
           </OnLoad>
+          <OnMouseUp>
+            _G[self:GetName().."EditBox"]:SetFocus();
+          </OnMouseUp>
         </Scripts>
       </ScrollFrame>
     </Frames>
@@ -989,7 +985,7 @@
           <Frame name="$parentFilterButton1" inherits="TinomFilterButtonTemplate" id="1">
             <Anchors>
               <Anchor point="TOPLEFT" relativeTo="$parentFiltersList" relativePoint="TOPLEFT">
-                <Offset x="4" y="-26"/>
+                <Offset x="4" y="-72"/>
               </Anchor>
             </Anchors>
           </Frame>
@@ -1010,10 +1006,24 @@
               </OnClick>
             </Scripts>
           </Button>
+          <Button name="$parentFilterSettingFrame_AliasName" inherits="TinomButtonTemplate">
+            <Size x="60" y="26"/>
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="$parentFilterSettingFrame_Show" relativePoint="RIGHT" x="2" y="0"/>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                self:SetText(Tinom.L["别名"]);
+              </OnLoad>
+              <OnClick>
+                Tinom.FilterSettingFramesAllHide()
+                TinomOptionsMainPanelBaseFilterSetting_ReplaceName:Show();
+              </OnClick>
+            </Scripts>
+          </Button>
 
           <Frame name="$parentFilterSetting" hidden="false" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate" >
             <Frames>
-              <!-- 频道与姓名缩写 -->
               <CheckButton name="$parentCheckButton_AbbrChannelName" inherits="TinomOptionsMainPanelCheckButton_Template">
                 <Anchors>
                   <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
@@ -1021,7 +1031,16 @@
                   </Anchor>
                 </Anchors>
               </CheckButton>
-              <!-- 屏蔽灰色物品拾取消息 -->
+              <CheckButton name="$parentCheckButton_AbbrAuthorName" inherits="TinomOptionsMainPanelCheckButton_Template">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_AbbrChannelName" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+              </CheckButton>
+              <CheckButton name="$parentCheckButton_AuthorAliasName" inherits="TinomOptionsMainPanelCheckButton_Template">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_AbbrAuthorName" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+              </CheckButton>
               <CheckButton name="$parentCheckButton_IgnoreGrayItems" inherits="TinomOptionsMainPanelCheckButton_Template">
                 <Anchors>
                   <Anchor point="LEFT" relativeTo="$parentCheckButton_AbbrChannelName" relativePoint="RIGHT">
@@ -1029,19 +1048,77 @@
                   </Anchor>
                 </Anchors>
               </CheckButton>
-              <!-- 姓名缩写隐藏服务器 -->
-              <CheckButton name="$parentCheckButton_AbbrAuthorName" inherits="TinomOptionsMainPanelCheckButton_Template">
+              <CheckButton name="$parentCheckButton_ProfanityFilter" inherits="TinomOptionsMainPanelCheckButton_Template">
                 <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_AbbrChannelName" relativePoint="BOTTOMLEFT">
-                    <Offset x="0" y="-5"/>
-                  </Anchor>
+                  <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_IgnoreGrayItems" relativePoint="BOTTOMLEFT" x="0" y="0"/>
                 </Anchors>
+                <Scripts>
+                  <OnShow>
+                    self.Text:SetText("关闭脏话过滤");
+                    if GetCVarInfo("profanityFilter") == "1" then
+                      self:SetChecked(false)
+                    else
+                      self:SetChecked(true)
+                    end
+                  </OnShow>
+                  <OnClick>
+                    if self:GetChecked() then
+                      SetCVar("profanityFilter",0);
+                    else
+                      SetCVar("profanityFilter",1);
+                    end
+                  </OnClick>
+                </Scripts>
+              </CheckButton>
+              <CheckButton name="$parentCheckButton_OverrideArchive" inherits="TinomOptionsMainPanelCheckButton_Template">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_ProfanityFilter" relativePoint="BOTTOMLEFT" x="0" y="0"/>
+                </Anchors>
+                <Scripts>
+                  <OnShow>
+                    self.Text:SetText("原汁原味(需重启)");
+                    if GetCVarInfo("overrideArchive") == "1" then
+                      self:SetChecked(false)
+                    else
+                      self:SetChecked(true)
+                    end
+                  </OnShow>
+                  <OnClick>
+                    if self:GetChecked() then
+                      SetCVar("overrideArchive",0);
+                    else
+                      SetCVar("overrideArchive",1);
+                    end
+                  </OnClick>
+                </Scripts>
+              </CheckButton>
+              <CheckButton name="$parentCheckButton_ChatClassColorOverride" inherits="TinomOptionsMainPanelCheckButton_Template">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_OverrideArchive" relativePoint="BOTTOMLEFT" x="0" y="0"/>
+                </Anchors>
+                <Scripts>
+                  <OnShow>
+                    self.Text:SetText("聊天框职业染色名");
+                    if GetCVarInfo("chatClassColorOverride") == "1" then
+                      self:SetChecked(false)
+                    else
+                      self:SetChecked(true)
+                    end
+                  </OnShow>
+                  <OnClick>
+                    if self:GetChecked() then
+                      SetCVar("chatClassColorOverride",0);
+                    else
+                      SetCVar("chatClassColorOverride",1);
+                    end
+                  </OnClick>
+                </Scripts>
               </CheckButton>
               <!-- 调试按钮 -->
               <Button name="$parentShowChatStatFrame" inherits="TinomButtonTemplate">
                 <Size x="100" y="26"/>
                 <Anchors>
-                  <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_AbbrAuthorName" relativePoint="BOTTOMLEFT"/>
+                  <Anchor point="TOPLEFT" relativeTo="$parentCheckButton_AuthorAliasName" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
                 <Scripts>
                   <OnLoad>
@@ -1066,6 +1143,25 @@
           <Frame name="$parentFilterSetting_BlackList" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate_List" >
           </Frame>
           <Frame name="$parentFilterSetting_BlackListKeyword" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate_List" >
+            <Frames>
+              <CheckButton name="$parentCheckButton_CaseSensitive" inherits="TinomOptionsMainPanelCheckButton_Template">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativeTo="$parentEditBox" relativePoint="TOPRIGHT" x="10" y="-10"/>
+                </Anchors>
+                <Scripts>
+                  <OnLoad>
+                    self.Text:SetText("区分大小写");
+                  </OnLoad>
+                  <OnClick>
+                    <!-- if (self:GetChecked()) then
+                      TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackKeywordCaseSensitive = false;
+                    else
+                      TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackKeywordCaseSensitive = true;
+                    end -->
+                  </OnClick>
+                </Scripts>
+              </CheckButton>
+            </Frames>
           </Frame>
           <Frame name="$parentFilterSetting_ReplaceName" parentArray="TinomFilterSettingFrames" inherits="TinomOptionsMainPanelBaseSettingFunctionsFrameTemplate_Replace" >
           </Frame>
@@ -1280,7 +1376,7 @@
             Tinom.FilterSettingFrames_SetTitle();
             local FrameName = self:GetName();
             local lastButton = _G[FrameName.."FilterButton1"]
-            for i=2,14 do
+            for i=2,#Tinom.defaultCheckButtons do
               local Button2 = CreateFrame("Frame",FrameName.."FilterButton"..i,self,"TinomFilterButtonTemplate",i)
               Button2:SetPoint("TOPLEFT", lastButton ,"BOTTOMLEFT", 0, 0)
               lastButton = Button2;
@@ -1362,6 +1458,71 @@
       <OnShow>
         Tinom.OptionsPanel_EditBox_LoadOptions(self);
       </OnShow>
+    </Scripts>
+  </Frame>
+  <!-- 正则表达式教程 -->
+  <Frame name="TinomOptionsMainPanelRegularExpressionTutorial" parent="TinomOptionsMainPanel">
+    <Layers>
+      <Layer level="ARTWORK">
+        <FontString name="$parentTitle" text="TINOM_OPTION_MAINPANEL_TITLE" inherits="GameFontNormalLarge" justifyH="LEFT" justifyV="TOP">
+          <Anchors>
+            <Anchor point="TOPLEFT" x="16" y="-16"/>
+          </Anchors>
+        </FontString>
+      </Layer>
+    </Layers>
+    <Frames>
+      <Frame name="$parentExplain" inherits="TinomNormalFrameTemplate">
+        <Anchors>
+          <Anchor point="TOPLEFT" x="10" y="-60" />
+          <Anchor point="BOTTOMRIGHT" x="-10" y="10"/>
+        </Anchors>
+        <Layers>
+          <Layer level="ARTWORK">
+            <FontString name="$parentText" text="TINOM_REGULAR_EXPRESSION_TUTORIAL" parentKey="Text" inherits="ChatFontNormal" justifyH="LEFT" justifyV="TOP">
+              <Anchors>
+                <Anchor point="TOPLEFT" x="16" y="-16"/>
+                <Anchor point="BOTTOMRIGHT" x="-16" y="16"/>
+              </Anchors>
+            </FontString>
+          </Layer>
+        </Layers>
+      </Frame>
+      <Button name="$parentNext" inherits="TinomButtonNoTooltipTemplate">
+        <Size x="120" y="26"/>
+        <Anchors>
+          <Anchor point="BOTTOMRIGHT" x="-10" y="10"/>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            self:SetText("下一页")
+          </OnLoad>
+          <OnClick>
+            _G[self:GetParent():GetName().."ExplainText"]:SetText(TINOM_REGULAR_EXPRESSION_TUTORIAL2)
+          </OnClick>
+        </Scripts>
+      </Button>
+      <Button name="$parentPrevious" inherits="TinomButtonNoTooltipTemplate">
+        <Size x="120" y="26"/>
+        <Anchors>
+          <Anchor point="BOTTOMLEFT" x="10" y="10"/>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            self:SetText("上一页")
+          </OnLoad>
+          <OnClick>
+            _G[self:GetParent():GetName().."ExplainText"]:SetText(TINOM_REGULAR_EXPRESSION_TUTORIAL)
+          </OnClick>
+        </Scripts>
+      </Button>
+    </Frames>
+    <Scripts>
+      <OnLoad>
+        self.name = Tinom.L["正则表达式教程"];
+        self.parent = TinomOptionsMainPanel.name;
+        InterfaceOptions_AddCategory(self);
+      </OnLoad>
     </Scripts>
   </Frame>
 </Ui>

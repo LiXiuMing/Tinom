@@ -17,7 +17,44 @@ Tinom.version = GetAddOnMetadata("Tinom", "Version")
 TINOM_OPTION_MAINPANEL_TITLE = L["Tinom聊天过滤v"]..Tinom.version;
 TINOM_OPTION_MAINPANEL_SUBTEXT = L["Beta测试阶段,更新频繁.更新贴:NGA:搜索\"Tinom\".|cffffff00关键字默认支持正则表达式,若关键字中带有符号\( \) \. \% \+ \- \* \\ \? \[ \^ \$,请在符号前加\"\%\".如\"1\-60\"写成\"1\%\-60\"|r"];
 TINOM_OPTION_MAINPANEL_CHACKBUTTON_MAINENABLE_TEXT = L["开启过滤"];
-
+local regexTutorialStr = {};
+regexTutorialStr[1] = L["正则表达式:\nLua的正则表达式是精简版,缺少部分功能,即便如此也足以满足我们的需要.\n|cffffff00字符类:|r 用于表示一个字符集合。\n"]
+regexTutorialStr[2] = L["|cffffff00x|r : 表示字符 x 自身\n    (这里 x 不能是 魔法字符 ^ $ ( ) % . [ ] * + - ? 中的一员)。\n"]
+regexTutorialStr[3] = L["|cffffff00%x|r : 表示字符 x\n    (这里的 x 是任意非字母或数字的字符)。\n    这是对魔法字符转义的标准方法。\n     所有非字母或数字的字符(包括所有标点，也包括非魔法字符)\n    都可以用前置一个 '%' 放在模式串中表示自身。 \n"]
+regexTutorialStr[4] = L["|cffffff00.|r : (一个点)可表示任何字符。\n"]
+regexTutorialStr[5] = L["|cffffff00%a|r : 表示任何字母。\n"]
+regexTutorialStr[6] = L["|cffffff00%d|r : 表示任何数字。\n"]
+regexTutorialStr[7] = L["|cffffff00%l|r : 表示所有小写字母。\n"]
+regexTutorialStr[8] = L["|cffffff00%u|r : 表示所有大写字母。\n"]
+regexTutorialStr[9] = L["|cffffff00%w|r : 表示所有字母及数字。\n"]
+regexTutorialStr[10] = L["|cffffff00%p|r : 表示所有标点符号。\n"]
+regexTutorialStr[11] = L["|cffffff00%s|r : 表示所有空白字符。\n"]
+regexTutorialStr[12] = L["|cffffff00[set]|r: 表示 set 中所有字符的联合。\n    可以以 '-' 连接，升序书写范围两端的字符来表示一个范围的字符集。\n    上面提到的 %x 形式也可以在 set 中使用 表示其中的一个元素。\n    其它出现在 set 中的字符则代表它们自己。\n    例如，[%w_] （或 [_%w]） 表示所有的字母数字加下划线），\n    [0-7] 表示 8 进制数字，\n    [0-7%l%-]　表示 8 进制数字加小写字母与 '-' 字符。\n"]
+regexTutorialStr[13] = L[""]
+regexTutorialStr[14] = L["|cffffff00[^set]|r: 表示 set 的补集， 其中 set 如上面的解释。\n"]
+regexTutorialStr[15] = L["所有单个字母表示的类别(%a，%c，等)， 若将其字母改为大写，均表示对应的补集。\n    例如，%S 表示所有非空格的字符。"]
+TINOM_REGULAR_EXPRESSION_TUTORIAL = "";
+for i,v in ipairs(regexTutorialStr) do
+	TINOM_REGULAR_EXPRESSION_TUTORIAL = TINOM_REGULAR_EXPRESSION_TUTORIAL..v;
+end
+local regexTutorialStr2 = {};
+--regexTutorialStr2[1] = L[""]
+regexTutorialStr2[1] = L["|cffffff00模式条目:|r\n"]
+regexTutorialStr2[2] = L["单个字符类匹配该类别中任意单个字符;\n"]
+regexTutorialStr2[3] = L["单个字符类跟一个 '*', 将匹配零或多个该类的字符。 这个条目总是匹配尽可能长的串;\n"]
+regexTutorialStr2[4] = L["单个字符类跟一个 '+'， 将匹配一或更多个该类的字符。 这个条目总是匹配尽可能长的串;\n"]
+regexTutorialStr2[5] = L["单个字符类跟一个 '-'， 将匹配零或更多个该类的字符。 和 '*' 不同， 这个条目总是匹配尽可能短的串;\n"]
+regexTutorialStr2[6] = L["单个字符类跟一个 '?'， 将匹配零或一个该类的字符。 只要有可能，它会匹配一个;\n"]
+regexTutorialStr2[7] = L["%n， 这里的 n 可以从 1 到 9; 这个条目匹配一个等于 n 号捕获物（后面有描述）的子串。\n"]
+regexTutorialStr2[8] = L["%bxy， 这里的 x 和 y 是两个明确的字符; 这个条目匹配以 x 开始 y 结束， 且其中 x 和 y 保持 平衡 的字符串。 意思是，如果从左到右读这个字符串，对每次读到一个 x 就 +1 ，读到一个 y 就 -1， 最终结束处的那个 y 是第一个记数到 0 的 y。 举个例子，条目 %b() 可以匹配到括号平衡的表达式。\n"]
+regexTutorialStr2[9] = L["%f[set]， 指 边境模式; 这个条目会匹配到一个位于 set 内某个字符之前的一个空串， 且这个位置的前一个字符不属于 set 。 集合 set 的含义如前面所述。 匹配出的那个空串之开始和结束点的计算就看成该处有个字符 '\\0' 一样。\n"]
+regexTutorialStr2[10] = L["|cffffff00模式:|r指一个模式条目的序列。\n"]
+regexTutorialStr2[11] = L["在模式最前面加上符号 '^' 将锚定从字符串的开始处做匹配。\n在模式最后面加上符号 '$' 将使匹配过程锚定到字符串的结尾。\n如果 '^' 和 '$' 出现在其它位置，它们均没有特殊含义，只表示自身。\n"]
+regexTutorialStr2[12] = L["|cffffff00捕获:|r\n模式可以在内部用小括号括起一个子模式； 这些子模式被称为 捕获物。 当匹配成功时，由 捕获物 匹配到的字符串中的子串被保存起来用于未来的用途。\n捕获物以它们左括号的次序来编号。 例如，对于模式 '(a*(.)%w(%s*))'，\n字符串中匹配到 'a*(.)%w(%s*)' 的部分保存在第一个捕获物中 (因此是编号 %1 )；\n由 '.' 匹配到的字符是 %2 号捕获物，\n匹配到 '%s*' 的那部分是 %3 号。 "]
+TINOM_REGULAR_EXPRESSION_TUTORIAL2 = "";
+for i,v in ipairs(regexTutorialStr2) do
+	TINOM_REGULAR_EXPRESSION_TUTORIAL2 = TINOM_REGULAR_EXPRESSION_TUTORIAL2..v;
+end
 --[[-------------------------------------------------------------------------
 --  默认配置:开关
 -------------------------------------------------------------------------]]--
@@ -26,7 +63,7 @@ Tinom.defaultOptionsCheckButtons = {
 	Tinom_Value_MsgFilter_FiltersList = {};
 	Tinom_Switch_MsgFilter_AbbrChannelName = false,
 	Tinom_Switch_MsgFilter_AbbrAuthorName = false,
-	Tinom_Switch_MsgFilter_AutoBlackList = true,
+	Tinom_Switch_MsgFilter_AutoBlackList = false,
 	Tinom_Switch_MsgFilter_IgnoreGrayItems = false,
 	Tinom_Value_MsgFilter_RepeatMsgElapsed = 0,
 	Tinom_Value_MsgFilter_IntervalMsgTime = 0,
@@ -38,29 +75,34 @@ Tinom.defaultOptionsCheckButtons = {
 	Tinom_Switch_MsgFilter_SensitiveKeywordSound = false,
 	Tinom_Switch_MsgFilter_SensitiveKeywordSoundID = 12867,
 	Tinom_Switch_MsgFilter_SensitiveKeywordHighlight = false,
+
+	Tinom_Switch_MsgFilter_BlackKeywordCaseSensitive = true,
+	Tinom_Switch_AddMessageFilter_AuthorAliasName = false,
 };
 --[[-------------------------------------------------------------------------
 --  默认配置:复选按钮文本
 -------------------------------------------------------------------------]]--
 Tinom.defaultCheckButtonsName = {
-	WhiteList = "白名单",
-	WhiteListKeyword = "白关键字",
-	BlackList = "黑名单",
-	BlackListKeyword = "黑关键字",
-	ReplaceName = "替换角色名",
-	ReplaceNameMsg = "替换角色消息",
-	ReplaceKeyword = "替换关键字",
-	ReplaceKeywordMsg = "替换关键字消息",
-	RepeatMsg = "屏蔽重复消息",
-	SensitiveList = "敏感名单",
-	SensitiveKeyword = "敏感关键字",
-	AutoBlackList = "黑名单(自动)",
-	WhiteListOnly = "只有白名单",
-	AbbrChannelName = "缩写频道名",
-	FoldMsg = "折叠复读消息",
-	IgnoreGrayItems = "屏蔽灰色物品拾取消息",
-	IntervalMsg = "发言间隔限制",
-	AbbrAuthorName = "缩写玩家名",
+	WhiteList 				= "白名单",
+	WhiteListKeyword 		= "白关键字",
+	BlackList 				= "黑名单",
+	BlackListKeyword 		= "黑关键字",
+	ReplaceName 			= "玩家别名",
+	ReplaceNameMsg 			= "替换角色消息",
+	ReplaceKeyword 			= "替换关键字",
+	ReplaceKeywordMsg 		= "替换关键字消息",
+	RepeatMsg 				= "屏蔽重复消息",
+	SensitiveList 			= "敏感名单",
+	SensitiveKeyword 		= "敏感关键字",
+	AutoBlackList 			= "黑名单(自动)",
+	WhiteListOnly 			= "只有白名单",
+	AbbrChannelName 		= "缩写频道名",
+	FoldMsg 				= "折叠复读消息",
+	IgnoreGrayItems 		= "屏蔽灰色物品拾取消息",
+	IntervalMsg 			= "发言间隔限制",
+	AbbrAuthorName 			= "缩写玩家名",
+	CaseSensitive 			= "大小写敏感",
+	AuthorAliasName 		= "玩家别名",
 };
 Tinom.FilterFramesTitle = {
     WhiteList = 0,
@@ -81,18 +123,17 @@ Tinom.FilterFramesTitle = {
 Tinom.defaultCheckButtons = {
 	[1] = {1, false, "WhiteList", "MsgFilter_Whitelist",},
 	[2] = {2, false, "WhiteListKeyword", "MsgFilter_WhitelistKeyword",},
-	[3] = {3, true, "BlackList", "MsgFilter_Blacklist",},
-	[4] = {4, false, "BlackListKeyword", "MsgFilter_BlacklistKeyword",},
-	[5] = {5, false, "ReplaceName", "MsgFilter_ReplaceName",},
-	[6] = {6, false, "ReplaceNameMsg", "MsgFilter_ReplaceNameMsg",},
-	[7] = {7, true, "ReplaceKeyword", "MsgFilter_ReplaceKeyword",},
-	[8] = {8, false, "ReplaceKeywordMsg", "MsgFilter_ReplaceKeywordMsg",},
-	[9] = {9, true, "RepeatMsg", "MsgFilter_RepeatMsg",},
+	[3] = {3, true, "RepeatMsg", "MsgFilter_RepeatMsg",},
+	[4] = {4, false, "IntervalMsg", "MsgFilter_IntervalMsg",},
+	[5] = {5, false, "AutoBlackList", "MsgFilter_AutoBlackList",},
+	[6] = {6, true, "BlackList", "MsgFilter_Blacklist",},
+	[7] = {7, false, "BlackListKeyword", "MsgFilter_BlacklistKeyword",},
+	[8] = {8, true, "ReplaceKeyword", "MsgFilter_ReplaceKeyword",},
+	[9] = {9, false, "FoldMsg", "MsgFilter_FoldMsg",},
 	[10] = {10, false, "SensitiveList", "MsgFilter_SensitiveList",},
 	[11] = {11, false, "SensitiveKeyword", "MsgFilter_SensitiveKeyword",},
-	[12] = {12, false, "AutoBlackList", "MsgFilter_AutoBlackList",},
-	[13] = {13, false, "FoldMsg", "MsgFilter_FoldMsg",},
-	[14] = {14, false, "IntervalMsg", "MsgFilter_IntervalMsg",},
+	[12] = {12, false, "ReplaceNameMsg", "MsgFilter_ReplaceNameMsg",},
+	[13] = {13, false, "ReplaceKeywordMsg", "MsgFilter_ReplaceKeywordMsg",},
 };
 --[[-------------------------------------------------------------------------
 --  地址索引:标签按钮 = 子设置界面
@@ -207,24 +248,20 @@ function Tinom.OptionsMainPanel_LoadOptions()
 	TinomOptionsMainPanelBaseFilterSettingCheckButton_AbbrChannelName:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrChannelName);
 	TinomOptionsMainPanelBaseFilterSettingCheckButton_IgnoreGrayItems:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_IgnoreGrayItems);
 	TinomOptionsMainPanelBaseFilterSettingCheckButton_AbbrAuthorName:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrAuthorName);
+	TinomOptionsMainPanelBaseFilterSettingCheckButton_AuthorAliasName:SetChecked(TinomDB.Options.Default.Tinom_Switch_AddMessageFilter_AuthorAliasName);
 	TinomOptionsMainPanelBaseFilterSetting_AutoBlackListCheckButton:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_AutoBlackList);
 	TinomOptionsMainPanelBaseFilterSetting_RepeatMsgSlider:SetValue(TinomDB.Options.Default.Tinom_Value_MsgFilter_RepeatMsgElapsed or 0);
 	TinomOptionsMainPanelBaseFilterSetting_IntervalMsgSlider:SetValue(TinomDB.Options.Default.Tinom_Value_MsgFilter_IntervalMsgTime or 0);
-
 	TinomOptionsMainPanelBaseFilterSetting_SensitiveListSound:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_SensitiveListSound );
-	--TinomOptionsMainPanelBaseFilterSetting_SensitiveListDropDown:SetValue(TinomDB.Options.Default.Tinom_Value_MsgFilter_SensitiveListSoundID or 12867);
 	TinomOptionsMainPanelBaseFilterSetting_SensitiveListHighlight:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_SensitiveListHighlight);
-
 	TinomOptionsMainPanelBaseFilterSetting_SensitiveKeywordSound:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_SensitiveKeywordSound);
-	--TinomOptionsMainPanelBaseFilterSetting_SensitiveKeywordDropDown:SetValue(TinomDB.Options.Default.Tinom_Value_MsgFilter_SensitiveKeywordSoundID or 12867);
 	TinomOptionsMainPanelBaseFilterSetting_SensitiveKeywordHighlight:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_SensitiveKeywordHighlight);
-
+	TinomOptionsMainPanelBaseFilterSetting_BlackListKeywordCheckButton_CaseSensitive:SetChecked(TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackKeywordCaseSensitive);
 	Tinom.OptionsPanel_EditBox_LoadOptions();
 	Tinom.OptionsTabButton_OnLoad();
-	--Tinom.OptionsMainPanel_Replace_ListBrowseButton_LoadData( "Name" )
-	--Tinom.OptionsMainPanel_Replace_ListBrowseButton_LoadData( "Keyword" )
 	TinomFilterButtonsMixin.OnLoad()
 	Tinom.FiltersList_Updata()
+	Tinom.AddMessageFilter_Updata()
 	Tdebug(self,"log","OptionsMainPanel_OnLoad.配置加载完成");
 end
 
@@ -269,33 +306,32 @@ function Tinom.OptionsMainPanel_Updata(self)
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrChannelName 				= TinomOptionsMainPanelBaseFilterSettingCheckButton_AbbrChannelName:GetChecked();
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_IgnoreGrayItems 				= TinomOptionsMainPanelBaseFilterSettingCheckButton_IgnoreGrayItems:GetChecked();
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrAuthorName 				= TinomOptionsMainPanelBaseFilterSettingCheckButton_AbbrAuthorName:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_AddMessageFilter_AuthorAliasName 		= TinomOptionsMainPanelBaseFilterSettingCheckButton_AuthorAliasName:GetChecked();
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_AutoBlackList 				= TinomOptionsMainPanelBaseFilterSetting_AutoBlackListCheckButton:GetChecked();
 	TinomDB.Options.Default.Tinom_Value_MsgFilter_RepeatMsgElapsed				= TinomOptionsMainPanelBaseFilterSetting_RepeatMsgSlider:GetValue();
 	TinomDB.Options.Default.Tinom_Value_MsgFilter_IntervalMsgTime				= TinomOptionsMainPanelBaseFilterSetting_IntervalMsgSlider:GetValue();
-
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_SensitiveListSound 		= TinomOptionsMainPanelBaseFilterSetting_SensitiveListSound:GetChecked();
-	--TinomDB.Options.Default.Tinom_Value_MsgFilter_SensitiveListSoundID = TinomOptionsMainPanelBaseFilterSetting_SensitiveListDropDown:GetValue();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_SensitiveListHighlight 			= TinomOptionsMainPanelBaseFilterSetting_SensitiveListHighlight:GetChecked();
-
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_SensitiveListSound 			= TinomOptionsMainPanelBaseFilterSetting_SensitiveListSound:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_SensitiveListHighlight 		= TinomOptionsMainPanelBaseFilterSetting_SensitiveListHighlight:GetChecked();
 	TinomDB.Options.Default.Tinom_Switch_MsgFilter_SensitiveKeywordSound 		= TinomOptionsMainPanelBaseFilterSetting_SensitiveKeywordSound:GetChecked();
-	--TinomDB.Options.Default.Tinom_Value_MsgFilter_SensitiveKeywordSoundID = TinomOptionsMainPanelBaseFilterSetting_SensitiveKeywordDropDown:GetValue();
-	TinomDB.Options.Default.Tinom_Switch_MsgFilter_SensitiveKeywordHighlight 			= TinomOptionsMainPanelBaseFilterSetting_SensitiveKeywordHighlight:GetChecked();
-	Tdebug(self,"log","Options.Tinom配置已保存");
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_SensitiveKeywordHighlight 	= TinomOptionsMainPanelBaseFilterSetting_SensitiveKeywordHighlight:GetChecked();
+	TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackKeywordCaseSensitive 	= TinomOptionsMainPanelBaseFilterSetting_BlackListKeywordCheckButton_CaseSensitive:GetChecked();
 	Tinom.OptionsPanel_EditBox_Updata();
 	Tinom.FiltersList_Updata();
+	Tinom.AddMessageFilter_Updata()
+	Tdebug(self,"log","Options.Tinom配置已保存");
 end
 
 --[[-------------------------------------------------------------------------
 --  保存设置:名单文本框保存函数:
 -------------------------------------------------------------------------]]--
 function Tinom.OptionsPanel_EditBox_Updata()
-	TinomDB.filterDB.whiteList = Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelBaseFilterSetting_WhiteListEditBoxScrollFrameEditBox:GetText());
-	TinomDB.filterDB.whiteListKeyword = Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelBaseFilterSetting_WhiteListKeywordEditBoxScrollFrameEditBox:GetText());
-	TinomDB.filterDB.blackList = Tinom.TextToTable(TinomOptionsMainPanelBaseFilterSetting_BlackListEditBoxScrollFrameEditBox:GetText());
-	TinomDB.filterDB.autoBlackList = Tinom.TextToTable(TinomOptionsMainPanelBaseFilterSetting_AutoBlackListEditBoxScrollFrameEditBox:GetText());
-	TinomDB.filterDB.blackListKeyword = Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelBaseFilterSetting_BlackListKeywordEditBoxScrollFrameEditBox:GetText());
-	TinomDB.filterDB.sensitiveList = Tinom.TextToTable(TinomOptionsMainPanelBaseFilterSetting_SensitiveListEditBoxScrollFrameEditBox:GetText() or "");
-	TinomDB.filterDB.sensitiveKeyword = Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelBaseFilterSetting_SensitiveKeywordEditBoxScrollFrameEditBox:GetText() or "");
+	TinomDB.filterDB.whiteList 				= Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelBaseFilterSetting_WhiteListEditBoxScrollFrameEditBox:GetText());
+	TinomDB.filterDB.whiteListKeyword 		= Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelBaseFilterSetting_WhiteListKeywordEditBoxScrollFrameEditBox:GetText());
+	TinomDB.filterDB.blackList 				= Tinom.TextToTable(TinomOptionsMainPanelBaseFilterSetting_BlackListEditBoxScrollFrameEditBox:GetText());
+	TinomDB.filterDB.autoBlackList 			= Tinom.TextToTable(TinomOptionsMainPanelBaseFilterSetting_AutoBlackListEditBoxScrollFrameEditBox:GetText());
+	TinomDB.filterDB.blackListKeyword 		= Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelBaseFilterSetting_BlackListKeywordEditBoxScrollFrameEditBox:GetText());
+	TinomDB.filterDB.sensitiveList 			= Tinom.TextToTable(TinomOptionsMainPanelBaseFilterSetting_SensitiveListEditBoxScrollFrameEditBox:GetText() or "");
+	TinomDB.filterDB.sensitiveKeyword 		= Tinom.OptionsPanel_TextToTable(TinomOptionsMainPanelBaseFilterSetting_SensitiveKeywordEditBoxScrollFrameEditBox:GetText() or "");
 	
 	Tinom.OptionsPanel_EditBox_LoadOptions()
 	Tdebug(self,"log","Options.名单已保存");
@@ -540,7 +576,8 @@ end
 
 function TinomFilterButtonsMixin:OnLoad()
 	for i,v in ipairs(TinomOptionsMainPanelBase.TinomFilterButtons) do
-		v:SetInfo( i, TinomDB.Options.Default.Tinom_Value_MsgFilter_FiltersList[i] or Tinom.defaultCheckButtons[i] )
+		local tableTemp = TinomDB.Options.Default.Tinom_Value_MsgFilter_FiltersList or Tinom.defaultCheckButtons;
+		v:SetInfo( i, tableTemp[i] )
 		v.CheckButton.tooltipText = "."
 		--v.CheckButton.tooltipRequirement = "."
 		v.Button.tooltip = "."
@@ -556,9 +593,11 @@ function Tinom.FiltersList_Updata()
 		buttonInfo = v:GetInfo()
 		tinsert(TinomDB.Options.Default.Tinom_Value_MsgFilter_FiltersList,i,buttonInfo);
 		if v.CheckButton:GetChecked() then
-			--print(v.filterFunc)
 			Tinom.MsgFilter_AddMsgFilter(Tinom[v.filterFunc])
 		end
+	end
+	if ( #msgFilters == 0 ) then
+		msgFilters = nil;
 	end
 end
 
@@ -741,5 +780,23 @@ function Tinom.OptionsMainPanel_Replace_OnTextChanged( self )
 		_G[self:GetParent():GetName().."ButtonAdd"]:SetText(L["修改"]);
 	else
 		_G[self:GetParent():GetName().."ButtonAdd"]:SetText(L["新增"]);
+	end
+end
+
+Tinom.AddMessageFilterList = {
+	{"TinomOptionsMainPanelBaseFilterSettingCheckButton_AbbrChannelName","AddMessageFilter_AbbrChannelName",},
+	{"TinomOptionsMainPanelBaseFilterSettingCheckButton_AbbrAuthorName","AddMessageFilter_AbbrAuthorName",},
+	{"TinomOptionsMainPanelBaseFilterSettingCheckButton_AuthorAliasName","AddMessageFilter_AuthorAliasName",},
+};
+function Tinom.AddMessageFilter_Updata()
+	Tinom.addMsgFilters = {};
+
+	for i,v in ipairs(Tinom.AddMessageFilterList) do
+		if _G[v[1]]:GetChecked() then
+			Tinom.AddMessageFilter_AddMsgFilter(Tinom[v[2]]);
+		end
+	end
+	if ( #Tinom.addMsgFilters == 0 ) then
+		Tinom.addMsgFilters = nil;
 	end
 end

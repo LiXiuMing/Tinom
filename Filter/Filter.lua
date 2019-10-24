@@ -34,8 +34,7 @@ Tinom.ReminderType = {
 };
 
 --[[-------------------------------------------------------------------------
---  聊天频道名替换函数:因上级函数使用频道名字符串长度作为逻辑条件不便更改,
---  故通过接管聊天框的AddMessage函数替换字符串,此处为把频道序号后的频道名隐藏.
+--  AddMessage过滤
 -------------------------------------------------------------------------]]--
 function Tinom.ReplaceChannelName()
     for i=1,NUM_CHAT_WINDOWS do
@@ -43,11 +42,10 @@ function Tinom.ReplaceChannelName()
             local chatFrame = _G["ChatFrame"..i]
             local addmsg = chatFrame.AddMessage
             chatFrame.AddMessage = function(frame, text,...)
-                if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrChannelName) then
-                    text = text:gsub( "%[(%d).-%]", "[%1]", 1 )
-                end
-                if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrAuthorName) then
-                    text = text:gsub( "%[|cff([0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f])(.-)(%-%S%S%S).-|r%]", "[|cff%1%2%3|r]", 1 );
+                if (Tinom.addMsgFilters) then
+                    for _, filterFunc in next, Tinom.addMsgFilters do
+                        text = filterFunc(text);
+                    end
                 end
                 Tdebug(self,"log",frame.name..":"..text)
                 return addmsg(frame,text,...)
@@ -55,15 +53,80 @@ function Tinom.ReplaceChannelName()
         end
     end
 end
+function Tinom.AddMessageFilter_AddMsgFilter (filter)
+	assert(filter);
 
-function Tinom.CheckChannelLsit(self,arg9)
-    for i,v in ipairs(self.channelList) do
-        if arg9 == v then
-            return true;
+	if ( Tinom.addMsgFilters ) then
+		-- Only allow a filter to be added once
+		for index, filterFunc in next, Tinom.addMsgFilters do
+			if ( filterFunc == filter ) then
+				return;
+			end
+		end
+	else
+		Tinom.addMsgFilters = {};
+	end
+
+	tinsert(Tinom.addMsgFilters, filter);
+end
+
+function Tinom.AddMessageFilter_RemoveMsgFilter (filter)
+	assert(filter);
+
+	if ( Tinom.addMsgFilters ) then
+		for index, filterFunc in next, Tinom.addMsgFilters do
+			if ( filterFunc == filter ) then
+				tremove(Tinom.addMsgFilters, index);
+			end
+		end
+
+		if ( #Tinom.addMsgFilters == 0 ) then
+			Tinom.addMsgFilters = nil;
+		end
+	end
+end
+
+function Tinom.AddMessageFilter_AbbrChannelName( text )
+    --local player, lineID, channelName, channelNum, playerName = string.match( text,"|Hplayer:(.-):(.-):(.-):(.-)|h%[(.-)%]|h")
+    if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrChannelName) then
+        text = text:gsub( "%[(%d).-%]", "[%1]", 1 )
+    end
+    return text;
+end
+
+function Tinom.AddMessageFilter_AbbrAuthorName( text )
+    --local player, lineID, channelName, channelNum, playerName = string.match( text,"|Hplayer:(.-):(.-):(.-):(.-)|h%[(.-)%]|h")
+    if (TinomDB.Options.Default.Tinom_Switch_MsgFilter_AbbrAuthorName) then
+        text = text:gsub( "%[|cff(%x%x%x%x%x%x)(.-)(%-%S%S%S).-|r%]", "[|cff%1%2%3|r]", 1 );
+    end
+    return text;
+end
+
+function Tinom.AddMessageFilter_AuthorAliasName( text )
+    local fullName, authorName, authorServer = string.match( text,"|Hplayer:((.-)%-(.-)):")
+    for k,v in pairs(TinomDB.filterDB.replaceName) do
+        if ( authorName and (authorName == k) ) then
+            if (v) then
+                text = text:gsub(authorName,v,2);
+                text = text:gsub(v,authorName,1);
+                Tinom.ChatStat_Filtered("ReplaceName",authorName);
+                return text;
+            end
+        elseif ( fullName and (fullName == k) ) then
+            if (v) then
+                text = text:gsub(authorName,v,2);
+                text = text:gsub(v,authorName,1);
+                Tinom.ChatStat_Filtered("ReplaceName",authorName);
+                return text;
+            end
         end
     end
-    return false;
+    return text;
 end
+
+--[[-------------------------------------------------------------------------
+--  频道过滤
+-------------------------------------------------------------------------]]--
 function Tinom.MsgFilter( self,event,... )
     if ( not TinomDB.Options.Default.Tinom_Switch_MsgFilter_MainEnable )then
         return false;
@@ -111,6 +174,15 @@ function Tinom.MsgFilter( self,event,... )
         end
     end
     return ignore, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14;
+end
+
+function Tinom.CheckChannelLsit(self,arg9)
+    for i,v in ipairs(self.channelList) do
+        if arg9 == v then
+            return true;
+        end
+    end
+    return false;
 end
 
 function Tinom.MsgFilter_AddMsgFilter (filter)
@@ -183,8 +255,14 @@ end
 
 function Tinom.MsgFilter_BlacklistKeyword( msg,authorName,authorServer, remind )
     assert(authorName and msg);
-    
+
+    if not TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackKeywordCaseSensitive then
+        msg = string.lower(msg);
+    end
     for _,keyword in pairs(TinomDB.filterDB.blackListKeyword) do
+        if not TinomDB.Options.Default.Tinom_Switch_MsgFilter_BlackKeywordCaseSensitive then
+            keyword = string.lower(keyword);
+        end
         if msg:find(keyword) then
             Tinom.ChatStat_Filtered("BlackListKeyword",authorName);
             return true, nil, nil, remind;
@@ -297,29 +375,28 @@ function Tinom.MsgFilter_FoldMsg( msg,authorName,authorServer, remind )
     return false, msg, nil, remind;
 end
 
-function Tinom.MsgFilter_ReplaceName( msg,authorName,authorServer, remind )
-    local newMsg,newName;
-    local name = authorName.."-"..authorServer;
+-- function Tinom.MsgFilter_ReplaceName( msg,authorName,authorServer, remind )
+--     local newMsg,newName;
+--     local name = authorName.."-"..authorServer;
 
-    for k,v in pairs(TinomDB.filterDB.replaceName) do
-        if ( authorName == k ) then
-            if (v) then
-                Tinom.ChatStat_Filtered("ReplaceName",authorName);
-                newName = v.."-"..authorServer;
-                return false, newMsg, newName, remind;
-            end
-        elseif ( name == k ) then
-            if (v) then
-                Tinom.ChatStat_Filtered("ReplaceName",authorName);
-                newName = v;
-                return false, newMsg, newName, remind;
-            end
-        end
-    end
-    return false, newMsg, newName, remind;
-end
+--     for k,v in pairs(TinomDB.filterDB.replaceName) do
+--         if ( authorName == k ) then
+--             if (v) then
+--                 Tinom.ChatStat_Filtered("ReplaceName",authorName);
+--                 newName = v.."-"..authorServer;
+--                 return false, newMsg, newName, remind;
+--             end
+--         elseif ( name == k ) then
+--             if (v) then
+--                 Tinom.ChatStat_Filtered("ReplaceName",authorName);
+--                 newName = v;
+--                 return false, newMsg, newName, remind;
+--             end
+--         end
+--     end
+--     return false, newMsg, newName, remind;
+-- end
 
---  替换角色消息:
 function Tinom.MsgFilter_ReplaceNameMsg( msg,authorName,authorServer, remind )
     local newMsg,newName;
     local name = authorName.."-"..authorServer;
@@ -342,7 +419,6 @@ function Tinom.MsgFilter_ReplaceNameMsg( msg,authorName,authorServer, remind )
     return false, newMsg, newName, remind;
 end
 
---  关键字替换:
 function Tinom.MsgFilter_ReplaceKeyword( msg,authorName,authorServer, remind )
     local newMsg = msg;
     for i=1,2 do
@@ -358,7 +434,6 @@ function Tinom.MsgFilter_ReplaceKeyword( msg,authorName,authorServer, remind )
     return false, newMsg, nil, remind;
 end
 
---  关键字消息替换:
 function Tinom.MsgFilter_ReplaceKeywordMsg( msg,authorName,authorServer, remind )
     local newMsg;
     for k,v in pairs(TinomDB.filterDB.replaceKeywordMsg) do
@@ -373,7 +448,6 @@ function Tinom.MsgFilter_ReplaceKeywordMsg( msg,authorName,authorServer, remind 
     return false, nil, nil, remind;
 end
 
---  声音提醒  --
 function Tinom.Reminder( type )
     if not type then return; end
 
@@ -383,7 +457,7 @@ function Tinom.Reminder( type )
 end
 
 --[[-------------------------------------------------------------------------
---  消息过滤函数:过滤物品消息,屏蔽灰色物品
+--  拾取过滤
 -------------------------------------------------------------------------]]--
 function Tinom.MsgFilter_Item( self, event, ... )
     if not TinomDB.Options.Default.Tinom_Switch_MsgFilter_IgnoreGrayItems then return; end
